@@ -1,0 +1,2 @@
+yarn test:all:no-watch
+yarn tsc

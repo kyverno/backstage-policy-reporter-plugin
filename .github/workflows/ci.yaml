@@ -1,0 +1,24 @@
+name: ci
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  workflow_dispatch:
+
+jobs:
+  test_and_build:
+    if: github.event.pull_request.merged == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run test and build
+        run: |
+          yarn install
+          yarn test:all:no-watch
+          yarn tsc
+          yarn build:all

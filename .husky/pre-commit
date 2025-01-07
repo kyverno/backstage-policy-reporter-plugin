@@ -1,0 +1,3 @@
+echo "lint-staged failed during the pre-commit hook. Please fix the linting errors and try committing again."
+echo "(If you're seeing this in a terminal, you can ignore the previous message.)"
+yarn lint-staged

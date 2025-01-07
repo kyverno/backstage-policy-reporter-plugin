@@ -1,0 +1,32 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: dev
+  description: Development Cluster
+  annotations:
+    kyverno.io/endpoint: 'http://localhost:8080/policy-reporter/api/'
+spec:
+  type: kubernetes-cluster
+  owner: user:guest
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: test
+  description: Testing Cluster
+  annotations:
+    kyverno.io/endpoint: 'http://localhost:8080/policy-reporter/api/'
+spec:
+  type: kubernetes-cluster
+  owner: user:guest
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: database
+  description: some databasse
+spec:
+  type: database
+  owner: user:guest
+---

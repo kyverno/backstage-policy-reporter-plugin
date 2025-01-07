@@ -1,0 +1,34 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node
+{
+  "name": "Backstage Workspace",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:20",
+
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  // "features": {},
+
+  "containerEnv": {
+    "NPM_TOKEN": "NPM_TOKEN" // NPM_TOKEN is only used in the GitHub Actions. Just need to be defined
+  },
+
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      "settings": {},
+      "extensions": ["esbenp.prettier-vscode"]
+    }
+  },
+
+  // Mount node_modules following https://code.visualstudio.com/remote/advancedcontainers/improve-performance
+  "mounts": [
+    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+  ],
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [3000, 7007],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // 'sudo chown node node_modules' is needed to make sure the user can access the node_modules folder
+  "postCreateCommand": "sudo chown node node_modules && yarn install"
+}
