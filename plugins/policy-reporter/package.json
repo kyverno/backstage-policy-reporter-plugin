@@ -28,6 +28,11 @@
     "prepack": "backstage-cli package prepack",
     "postpack": "backstage-cli package postpack"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kyverno/backstage-policy-reporter-plugin",
+    "directory": "plugins/policy-reporter"
+  },
   "dependencies": {
     "@backstage/catalog-client": "^1.8.0",
     "@backstage/catalog-model": "^1.7.1",
