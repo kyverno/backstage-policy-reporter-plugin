@@ -5,7 +5,7 @@ import {
   StatusOK,
   StatusWarning,
 } from '@backstage/core-components';
-import type { Status } from 'backstage-plugin-policy-reporter-common';
+import type { Status } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 type StatusComponentProps = {
   status: Status;

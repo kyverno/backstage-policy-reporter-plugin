@@ -2,7 +2,7 @@ import {
   KYVERNO_KIND_ANNOTATION,
   KYVERNO_NAMESPACE_ANNOTATION,
   KYVERNO_RESOURCE_NAME_ANNOTATION,
-} from 'backstage-plugin-policy-reporter-common';
+} from '@kyverno/backstage-plugin-policy-reporter-common';
 
 // Define all annotations required for the component to work
 export const annotationsRequired: string[] = [

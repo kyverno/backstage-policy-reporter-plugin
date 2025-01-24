@@ -4,7 +4,7 @@ import {
   Filter,
   Pagination,
   ResultList,
-} from 'backstage-plugin-policy-reporter-common';
+} from '@kyverno/backstage-plugin-policy-reporter-common';
 
 export class KyvernoPolicyReportClient implements KyvernoPolicyReportApi {
   private readonly discoveryApi: DiscoveryApi;
