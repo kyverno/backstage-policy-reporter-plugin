@@ -13,6 +13,11 @@
       "@kyverno/backstage-plugin-policy-reporter-common"
     ]
   },
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.esm.js",
+    "types": "dist/index.d.ts"
+  },
   "scripts": {
     "start": "backstage-cli package start",
     "build": "backstage-cli package build",
