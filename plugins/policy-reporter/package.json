@@ -1,6 +1,6 @@
 {
-  "name": "backstage-plugin-policy-reporter",
-  "version": "0.2.2",
+  "name": "@kyverno/backstage-plugin-policy-reporter",
+  "version": "2.0.0",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "license": "Apache-2.0",
@@ -8,9 +8,9 @@
     "role": "frontend-plugin",
     "pluginId": "policy-reporter",
     "pluginPackages": [
-      "backstage-plugin-policy-reporter",
-      "backstage-plugin-policy-reporter-backend",
-      "backstage-plugin-policy-reporter-common"
+      "@kyverno/backstage-plugin-policy-reporter",
+      "@kyverno/backstage-plugin-policy-reporter-backend",
+      "@kyverno/backstage-plugin-policy-reporter-common"
     ]
   },
   "sideEffects": false,
@@ -30,10 +30,10 @@
     "@backstage/core-plugin-api": "^1.10.1",
     "@backstage/plugin-catalog-react": "^1.14.2",
     "@backstage/theme": "^0.6.2",
+    "@kyverno/backstage-plugin-policy-reporter-common": "workspace:^",
     "@material-ui/core": "^4.9.13",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "4.0.0-alpha.61",
-    "backstage-plugin-policy-reporter-common": "^0.2.2",
     "react-use": "^17.2.4"
   },
   "peerDependencies": {
