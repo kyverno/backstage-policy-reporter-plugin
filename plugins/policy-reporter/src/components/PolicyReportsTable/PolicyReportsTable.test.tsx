@@ -1,6 +1,6 @@
 import React from 'react';
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
-import { KyvernoPolicyReportsTable } from './KyvernoPolicyReportsTable';
+import { PolicyReportsTable } from './PolicyReportsTable';
 import { kyvernoPolicyReportApiRef } from '../../api';
 
 const mockKyvernoPolicyReportApiRef = {
@@ -39,7 +39,7 @@ describe('KyvernoPolicyReportsTable', () => {
           [kyvernoPolicyReportApiRef, mockKyvernoPolicyReportApiRef as any],
         ]}
       >
-        <KyvernoPolicyReportsTable
+        <PolicyReportsTable
           currentEnvironment={{
             id: 1,
             name: 'dev',
@@ -73,7 +73,7 @@ describe('KyvernoPolicyReportsTable', () => {
           [kyvernoPolicyReportApiRef, mockKyvernoPolicyReportApiRef as any],
         ]}
       >
-        <KyvernoPolicyReportsTable
+        <PolicyReportsTable
           currentEnvironment={{
             id: 1,
             name: 'dev',
@@ -110,7 +110,7 @@ describe('KyvernoPolicyReportsTable', () => {
           [kyvernoPolicyReportApiRef, mockKyvernoPolicyReportApiRef as any],
         ]}
       >
-        <KyvernoPolicyReportsTable
+        <PolicyReportsTable
           currentEnvironment={{
             id: 1,
             name: 'dev',
@@ -142,7 +142,7 @@ describe('KyvernoPolicyReportsTable', () => {
           [kyvernoPolicyReportApiRef, mockKyvernoPolicyReportApiRef as any],
         ]}
       >
-        <KyvernoPolicyReportsTable
+        <PolicyReportsTable
           currentEnvironment={{
             id: 1,
             name: 'dev',

@@ -16,7 +16,7 @@ import Launch from '@material-ui/icons/Launch';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { usePaginatedPolicies } from '../../hooks/usePaginatedPolicies';
 
-interface KyvernoPolicyReportsTableProps {
+interface PolicyReportsTableProps {
   currentEnvironment: Environment;
   filter: Filter;
   title: string;
@@ -24,13 +24,13 @@ interface KyvernoPolicyReportsTableProps {
   policyDocumentationUrl?: string;
 }
 
-export const KyvernoPolicyReportsTable = ({
+export const PolicyReportsTable = ({
   title,
   emptyContentText,
   currentEnvironment,
   filter,
   policyDocumentationUrl,
-}: KyvernoPolicyReportsTableProps) => {
+}: PolicyReportsTableProps) => {
   const useStyles = makeStyles(theme => ({
     empty: {
       padding: theme.spacing(2),

@@ -10,7 +10,7 @@ import {
   useEntity,
 } from '@backstage/plugin-catalog-react';
 import { Grid } from '@material-ui/core';
-import { KyvernoPolicyReportsTable } from '../KyvernoPolicyReportsTable';
+import { PolicyReportsTable } from '../PolicyReportsTable';
 import { SelectEnvironment } from '../SelectEnvironment';
 import {
   containsRequiredAnnotations,
@@ -93,7 +93,7 @@ export const EntityKyvernoPoliciesContent = ({
       </ContentHeader>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <KyvernoPolicyReportsTable
+          <PolicyReportsTable
             currentEnvironment={currentEnvironment}
             filter={{
               namespaces,
@@ -108,7 +108,7 @@ export const EntityKyvernoPoliciesContent = ({
           />
         </Grid>
         <Grid item xs={12}>
-          <KyvernoPolicyReportsTable
+          <PolicyReportsTable
             currentEnvironment={currentEnvironment}
             filter={{
               namespaces,
@@ -123,7 +123,7 @@ export const EntityKyvernoPoliciesContent = ({
           />
         </Grid>
         <Grid item xs={12}>
-          <KyvernoPolicyReportsTable
+          <PolicyReportsTable
             currentEnvironment={currentEnvironment}
             filter={{
               namespaces,
