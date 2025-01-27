@@ -1,2 +1,2 @@
-export * from './kyvernoPolicyReportApi';
-export * from './kyvernoPolicyReportClient';
+export * from './PolicyReporterApi';
+export * from './PolicyReporterApi';

@@ -1,7 +1,7 @@
 import { useAsync } from 'react-use';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { useApi } from '@backstage/core-plugin-api';
-import { kyvernoPolicyReportApiRef } from '../api';
+import { policyReporterApiRef } from '../api';
 import {
   Filter,
   ResultList,
@@ -15,7 +15,7 @@ export const usePaginatedPolicies = (
   currentEnvironment: Environment,
   filter: Filter,
 ) => {
-  const kyvernoApi = useApi(kyvernoPolicyReportApiRef);
+  const policyReporterApi = useApi(policyReporterApiRef);
   const [currentPage, setCurrentPage] = useState<number>(DEFAULT_PAGE);
   const [currentOffset, setCurrentOffset] = useState<number>(DEFAULT_OFFSET);
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
@@ -29,7 +29,7 @@ export const usePaginatedPolicies = (
     loading: policiesLoading,
     error: policiesError,
   } = useAsync(async (): Promise<ResultList> => {
-    const data = await kyvernoApi.namespacedResults(
+    const data = await policyReporterApi.namespacedResults(
       currentEnvironment.entityRef,
       filter,
       {

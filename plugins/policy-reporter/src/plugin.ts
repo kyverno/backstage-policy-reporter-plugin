@@ -5,8 +5,8 @@ import {
   discoveryApiRef,
   fetchApiRef,
 } from '@backstage/core-plugin-api';
-import { kyvernoPolicyReportApiRef } from './api/kyvernoPolicyReportApi';
-import { KyvernoPolicyReportClient } from './api/kyvernoPolicyReportClient';
+import { policyReporterApiRef } from './api/PolicyReporterApi';
+import { PolicyReporterApiClient } from './api/PolicyReporterClient';
 
 import { rootRouteRef } from './routes';
 
@@ -14,10 +14,10 @@ export const kyvernoPolicyReportsPlugin = createPlugin({
   id: 'policy-reporter',
   apis: [
     createApiFactory({
-      api: kyvernoPolicyReportApiRef,
+      api: policyReporterApiRef,
       deps: { fetchApi: fetchApiRef, discoveryApi: discoveryApiRef },
       factory: ({ discoveryApi, fetchApi }) =>
-        new KyvernoPolicyReportClient({ discoveryApi, fetchApi }),
+        new PolicyReporterApiClient({ discoveryApi, fetchApi }),
     }),
   ],
 });

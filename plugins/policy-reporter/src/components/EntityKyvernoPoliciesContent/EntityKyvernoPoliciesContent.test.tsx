@@ -1,11 +1,11 @@
 import React from 'react';
-import { kyvernoPolicyReportApiRef } from '../../api';
+import { policyReporterApiRef } from '../../api';
 import { Entity } from '@backstage/catalog-model';
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
 import { EntityKyvernoPoliciesContent } from './EntityKyvernoPoliciesContent';
 import { EntityProvider, catalogApiRef } from '@backstage/plugin-catalog-react';
 
-const mockKyvernoPolicyReportApiRef = {
+const mockPolicyReportApiRef = {
   namespacedResults: jest.fn(),
 };
 
@@ -49,7 +49,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
     const extension = await renderInTestApp(
       <TestApiProvider
         apis={[
-          [kyvernoPolicyReportApiRef, mockKyvernoPolicyReportApiRef as any],
+          [policyReporterApiRef, mockPolicyReportApiRef as any],
           [catalogApiRef, mockCatalogApiRef],
         ]}
       >
@@ -79,7 +79,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
     const extension = await renderInTestApp(
       <TestApiProvider
         apis={[
-          [kyvernoPolicyReportApiRef, mockKyvernoPolicyReportApiRef as any],
+          [policyReporterApiRef, mockPolicyReportApiRef as any],
           [catalogApiRef, mockCatalogApiRef],
         ]}
       >
@@ -106,7 +106,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
     const extension = await renderInTestApp(
       <TestApiProvider
         apis={[
-          [kyvernoPolicyReportApiRef, mockKyvernoPolicyReportApiRef as any],
+          [policyReporterApiRef, mockPolicyReportApiRef as any],
           [catalogApiRef, mockCatalogApiRef],
         ]}
       >
