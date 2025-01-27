@@ -22,3 +22,21 @@ jobs:
           yarn test:all:no-watch
           yarn tsc
           yarn build:all
+  publish:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Publish package
+        run: |
+          yarn install
+          yarn tsc
+          yarn build:all
+          yarn lerna publish from-package --yes
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
