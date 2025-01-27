@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAsync } from 'react-use';
-import { Environment } from '../components/EntityKyvernoPolicyReportsContent/EntityKyvernoPolicyReportsContent';
+import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import {
   CATALOG_FILTER_EXISTS,
   catalogApiRef,

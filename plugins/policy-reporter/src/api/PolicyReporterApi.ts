@@ -5,11 +5,11 @@ import {
   ResultList,
 } from '@kyverno/backstage-plugin-policy-reporter-common';
 
-export const kyvernoPolicyReportApiRef = createApiRef<KyvernoPolicyReportApi>({
-  id: 'plugin.kyvernopolicyreports.service',
+export const policyReporterApiRef = createApiRef<PolicyReporterApi>({
+  id: 'plugin.policy-reporter.service',
 });
 
-export type KyvernoPolicyReportApi = {
+export type PolicyReporterApi = {
   namespacedResults: (
     environment: string,
     filter?: Filter,

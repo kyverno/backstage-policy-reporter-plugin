@@ -1,1 +1,0 @@
-export { KyvernoPolicyReportsTable } from './KyvernoPolicyReportsTable';

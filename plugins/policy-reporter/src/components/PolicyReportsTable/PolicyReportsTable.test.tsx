@@ -1,16 +1,16 @@
 import React from 'react';
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
-import { KyvernoPolicyReportsTable } from './KyvernoPolicyReportsTable';
-import { kyvernoPolicyReportApiRef } from '../../api';
+import { PolicyReportsTable } from './PolicyReportsTable';
+import { policyReporterApiRef } from '../../api';
 
-const mockKyvernoPolicyReportApiRef = {
+const mockPolicyReportApiRef = {
   namespacedResults: jest.fn(),
 };
 
 describe('KyvernoPolicyReportsTable', () => {
   it('should render table displaying the fetched data', async () => {
     // Arrange
-    mockKyvernoPolicyReportApiRef.namespacedResults.mockImplementationOnce(() =>
+    mockPolicyReportApiRef.namespacedResults.mockImplementationOnce(() =>
       Promise.resolve({
         items: [
           {
@@ -35,11 +35,9 @@ describe('KyvernoPolicyReportsTable', () => {
     // Act
     const extension = await renderInTestApp(
       <TestApiProvider
-        apis={[
-          [kyvernoPolicyReportApiRef, mockKyvernoPolicyReportApiRef as any],
-        ]}
+        apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
       >
-        <KyvernoPolicyReportsTable
+        <PolicyReportsTable
           currentEnvironment={{
             id: 1,
             name: 'dev',
@@ -59,7 +57,7 @@ describe('KyvernoPolicyReportsTable', () => {
   });
   it('should render table displaying the emptyContentText when there are no policies', async () => {
     // Arrange
-    mockKyvernoPolicyReportApiRef.namespacedResults.mockImplementationOnce(() =>
+    mockPolicyReportApiRef.namespacedResults.mockImplementationOnce(() =>
       Promise.resolve({
         items: [],
         count: 0,
@@ -69,11 +67,9 @@ describe('KyvernoPolicyReportsTable', () => {
     // Act
     const extension = await renderInTestApp(
       <TestApiProvider
-        apis={[
-          [kyvernoPolicyReportApiRef, mockKyvernoPolicyReportApiRef as any],
-        ]}
+        apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
       >
-        <KyvernoPolicyReportsTable
+        <PolicyReportsTable
           currentEnvironment={{
             id: 1,
             name: 'dev',
@@ -93,24 +89,20 @@ describe('KyvernoPolicyReportsTable', () => {
 
   it('should render the table displaying loading icon when data is undefined', async () => {
     // Arrange
-    mockKyvernoPolicyReportApiRef.namespacedResults.mockImplementationOnce(
-      () => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve({});
-          }, 1000);
-        });
-      },
-    );
+    mockPolicyReportApiRef.namespacedResults.mockImplementationOnce(() => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve({});
+        }, 1000);
+      });
+    });
 
     // Act
     const extension = await renderInTestApp(
       <TestApiProvider
-        apis={[
-          [kyvernoPolicyReportApiRef, mockKyvernoPolicyReportApiRef as any],
-        ]}
+        apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
       >
-        <KyvernoPolicyReportsTable
+        <PolicyReportsTable
           currentEnvironment={{
             id: 1,
             name: 'dev',
@@ -131,18 +123,16 @@ describe('KyvernoPolicyReportsTable', () => {
   it('should render ResponseErrorPanel when fetching data fails', async () => {
     // Arrange
     // Change the mock implementation of the getPolicies method to throw an error
-    mockKyvernoPolicyReportApiRef.namespacedResults.mockImplementationOnce(() =>
+    mockPolicyReportApiRef.namespacedResults.mockImplementationOnce(() =>
       Promise.reject(new Error('Failed to fetch policies')),
     );
 
     // Act
     const extension = await renderInTestApp(
       <TestApiProvider
-        apis={[
-          [kyvernoPolicyReportApiRef, mockKyvernoPolicyReportApiRef as any],
-        ]}
+        apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
       >
-        <KyvernoPolicyReportsTable
+        <PolicyReportsTable
           currentEnvironment={{
             id: 1,
             name: 'dev',

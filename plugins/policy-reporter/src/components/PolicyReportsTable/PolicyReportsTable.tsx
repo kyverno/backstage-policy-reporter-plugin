@@ -13,10 +13,10 @@ import Chip from '@material-ui/core/Chip';
 import { StatusComponent } from '../StatusComponent';
 import { SeverityComponent } from '../SeverityComponent';
 import Launch from '@material-ui/icons/Launch';
-import { Environment } from '../EntityKyvernoPolicyReportsContent/EntityKyvernoPolicyReportsContent';
-import { usePaginatedKyvernoPolicies } from '../../hooks/usePaginatedKyvernoPolicies';
+import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
+import { usePaginatedPolicies } from '../../hooks/usePaginatedPolicies';
 
-interface KyvernoPolicyReportsTableProps {
+interface PolicyReportsTableProps {
   currentEnvironment: Environment;
   filter: Filter;
   title: string;
@@ -24,13 +24,13 @@ interface KyvernoPolicyReportsTableProps {
   policyDocumentationUrl?: string;
 }
 
-export const KyvernoPolicyReportsTable = ({
+export const PolicyReportsTable = ({
   title,
   emptyContentText,
   currentEnvironment,
   filter,
   policyDocumentationUrl,
-}: KyvernoPolicyReportsTableProps) => {
+}: PolicyReportsTableProps) => {
   const useStyles = makeStyles(theme => ({
     empty: {
       padding: theme.spacing(2),
@@ -106,7 +106,7 @@ export const KyvernoPolicyReportsTable = ({
     setCurrentPage,
     setCurrentOffset,
     initialLoading,
-  } = usePaginatedKyvernoPolicies(currentEnvironment, filter);
+  } = usePaginatedPolicies(currentEnvironment, filter);
 
   if (policiesError) return <ResponseErrorPanel error={policiesError} />;
 

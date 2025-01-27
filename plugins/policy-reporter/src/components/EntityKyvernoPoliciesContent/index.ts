@@ -1,0 +1,1 @@
+export { EntityKyvernoPoliciesContent } from './EntityKyvernoPoliciesContent';

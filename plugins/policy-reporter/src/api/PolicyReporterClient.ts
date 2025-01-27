@@ -1,12 +1,12 @@
 import { DiscoveryApi, FetchApi } from '@backstage/core-plugin-api';
-import { KyvernoPolicyReportApi } from './kyvernoPolicyReportApi';
+import { PolicyReporterApi } from './PolicyReporterApi';
 import {
   Filter,
   Pagination,
   ResultList,
 } from '@kyverno/backstage-plugin-policy-reporter-common';
 
-export class KyvernoPolicyReportClient implements KyvernoPolicyReportApi {
+export class PolicyReporterApiClient implements PolicyReporterApi {
   private readonly discoveryApi: DiscoveryApi;
   private readonly fetchApi: FetchApi;
 
@@ -45,9 +45,7 @@ export class KyvernoPolicyReportClient implements KyvernoPolicyReportApi {
     filter?: Filter,
     pagination?: Pagination,
   ): Promise<ResultList> {
-    const baseUrl = await this.discoveryApi.getBaseUrl(
-      'policy-reporter',
-    );
+    const baseUrl = await this.discoveryApi.getBaseUrl('policy-reporter');
 
     const urlParams = this.createUrlParams({ ...filter, ...pagination });
 

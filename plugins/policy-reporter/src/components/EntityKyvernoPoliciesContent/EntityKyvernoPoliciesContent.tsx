@@ -10,7 +10,7 @@ import {
   useEntity,
 } from '@backstage/plugin-catalog-react';
 import { Grid } from '@material-ui/core';
-import { KyvernoPolicyReportsTable } from '../KyvernoPolicyReportsTable';
+import { PolicyReportsTable } from '../PolicyReportsTable';
 import { SelectEnvironment } from '../SelectEnvironment';
 import {
   containsRequiredAnnotations,
@@ -24,15 +24,9 @@ import {
   KYVERNO_RESOURCE_NAME_ANNOTATION,
 } from '@kyverno/backstage-plugin-policy-reporter-common';
 
-type KyvernoPolicyReportsContentProps = {
+type KyvernoPoliciesContentProps = {
   annotationsDocumentationUrl?: string;
   policyDocumentationUrl?: string;
-};
-
-export type Environment = {
-  id: number;
-  entityRef: string;
-  name: string;
 };
 
 type PageContentProps = {
@@ -45,10 +39,10 @@ const PageContent = ({ children }: PageContentProps) => (
   </Page>
 );
 
-export const EntityKyvernoPolicyReportsContent = ({
+export const EntityKyvernoPoliciesContent = ({
   annotationsDocumentationUrl,
   policyDocumentationUrl,
-}: KyvernoPolicyReportsContentProps) => {
+}: KyvernoPoliciesContentProps) => {
   const { entity } = useEntity();
   const annotations = entity.metadata.annotations;
 
@@ -99,10 +93,11 @@ export const EntityKyvernoPolicyReportsContent = ({
       </ContentHeader>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <KyvernoPolicyReportsTable
+          <PolicyReportsTable
             currentEnvironment={currentEnvironment}
             filter={{
               namespaces,
+              sources: ['kyverno'],
               kinds,
               status: ['fail'],
               search: resourceName,
@@ -113,10 +108,11 @@ export const EntityKyvernoPolicyReportsContent = ({
           />
         </Grid>
         <Grid item xs={12}>
-          <KyvernoPolicyReportsTable
+          <PolicyReportsTable
             currentEnvironment={currentEnvironment}
             filter={{
               namespaces,
+              sources: ['kyverno'],
               kinds,
               status: ['pass'],
               search: resourceName,
@@ -127,10 +123,11 @@ export const EntityKyvernoPolicyReportsContent = ({
           />
         </Grid>
         <Grid item xs={12}>
-          <KyvernoPolicyReportsTable
+          <PolicyReportsTable
             currentEnvironment={currentEnvironment}
             filter={{
               namespaces,
+              sources: ['kyverno'],
               kinds,
               status: ['skip'],
               search: resourceName,

@@ -52,3 +52,9 @@ export enum Direction {
   ASC = 'asc',
   DESC = 'desc',
 }
+
+export type Environment = {
+  id: number;
+  entityRef: string;
+  name: string;
+};
