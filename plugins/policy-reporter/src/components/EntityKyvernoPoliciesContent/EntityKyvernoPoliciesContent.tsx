@@ -24,15 +24,9 @@ import {
   KYVERNO_RESOURCE_NAME_ANNOTATION,
 } from '@kyverno/backstage-plugin-policy-reporter-common';
 
-type KyvernoPolicyReportsContentProps = {
+type KyvernoPoliciesContentProps = {
   annotationsDocumentationUrl?: string;
   policyDocumentationUrl?: string;
-};
-
-export type Environment = {
-  id: number;
-  entityRef: string;
-  name: string;
 };
 
 type PageContentProps = {
@@ -45,10 +39,10 @@ const PageContent = ({ children }: PageContentProps) => (
   </Page>
 );
 
-export const EntityKyvernoPolicyReportsContent = ({
+export const EntityKyvernoPoliciesContent = ({
   annotationsDocumentationUrl,
   policyDocumentationUrl,
-}: KyvernoPolicyReportsContentProps) => {
+}: KyvernoPoliciesContentProps) => {
   const { entity } = useEntity();
   const annotations = entity.metadata.annotations;
 
@@ -103,6 +97,7 @@ export const EntityKyvernoPolicyReportsContent = ({
             currentEnvironment={currentEnvironment}
             filter={{
               namespaces,
+              sources: ['kyverno'],
               kinds,
               status: ['fail'],
               search: resourceName,
@@ -117,6 +112,7 @@ export const EntityKyvernoPolicyReportsContent = ({
             currentEnvironment={currentEnvironment}
             filter={{
               namespaces,
+              sources: ['kyverno'],
               kinds,
               status: ['pass'],
               search: resourceName,
@@ -131,6 +127,7 @@ export const EntityKyvernoPolicyReportsContent = ({
             currentEnvironment={currentEnvironment}
             filter={{
               namespaces,
+              sources: ['kyverno'],
               kinds,
               status: ['skip'],
               search: resourceName,

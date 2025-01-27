@@ -2,7 +2,7 @@ import React from 'react';
 import { kyvernoPolicyReportApiRef } from '../../api';
 import { Entity } from '@backstage/catalog-model';
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
-import { EntityKyvernoPolicyReportsContent } from './EntityKyvernoPolicyReportsContent';
+import { EntityKyvernoPoliciesContent } from './EntityKyvernoPoliciesContent';
 import { EntityProvider, catalogApiRef } from '@backstage/plugin-catalog-react';
 
 const mockKyvernoPolicyReportApiRef = {
@@ -54,7 +54,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
         ]}
       >
         <EntityProvider entity={mockEntityNoAnnotations}>
-          <EntityKyvernoPolicyReportsContent />
+          <EntityKyvernoPoliciesContent />
         </EntityProvider>
         ,
       </TestApiProvider>,
@@ -84,7 +84,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
         ]}
       >
         <EntityProvider entity={mockEntityNoAnnotations}>
-          <EntityKyvernoPolicyReportsContent />
+          <EntityKyvernoPoliciesContent />
         </EntityProvider>
         ,
       </TestApiProvider>,
@@ -111,7 +111,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
         ]}
       >
         <EntityProvider entity={mockEntity}>
-          <EntityKyvernoPolicyReportsContent />
+          <EntityKyvernoPoliciesContent />
         </EntityProvider>
       </TestApiProvider>,
     );

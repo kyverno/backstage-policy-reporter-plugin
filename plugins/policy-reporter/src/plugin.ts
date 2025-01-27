@@ -25,10 +25,10 @@ export const kyvernoPolicyReportsPlugin = createPlugin({
 export const EntityKyvernoPolicyReportsContent =
   kyvernoPolicyReportsPlugin.provide(
     createRoutableExtension({
-      name: 'KyvernoPolicyReportsContent',
+      name: 'EntityKyvernoPoliciesContent',
       component: () =>
-        import('./components/EntityKyvernoPolicyReportsContent').then(
-          m => m.EntityKyvernoPolicyReportsContent,
+        import('./components/EntityKyvernoPoliciesContent').then(
+          m => m.EntityKyvernoPoliciesContent,
         ),
       mountPoint: rootRouteRef,
     }),
