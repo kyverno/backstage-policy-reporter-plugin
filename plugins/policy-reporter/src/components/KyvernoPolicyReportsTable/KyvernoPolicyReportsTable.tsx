@@ -14,7 +14,7 @@ import { StatusComponent } from '../StatusComponent';
 import { SeverityComponent } from '../SeverityComponent';
 import Launch from '@material-ui/icons/Launch';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
-import { usePaginatedKyvernoPolicies } from '../../hooks/usePaginatedKyvernoPolicies';
+import { usePaginatedPolicies } from '../../hooks/usePaginatedPolicies';
 
 interface KyvernoPolicyReportsTableProps {
   currentEnvironment: Environment;
@@ -106,7 +106,7 @@ export const KyvernoPolicyReportsTable = ({
     setCurrentPage,
     setCurrentOffset,
     initialLoading,
-  } = usePaginatedKyvernoPolicies(currentEnvironment, filter);
+  } = usePaginatedPolicies(currentEnvironment, filter);
 
   if (policiesError) return <ResponseErrorPanel error={policiesError} />;
 

@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 const DEFAULT_OFFSET = 5;
 const DEFAULT_PAGE = 0;
 
-export const usePaginatedKyvernoPolicies = (
+export const usePaginatedPolicies = (
   currentEnvironment: Environment,
   filter: Filter,
 ) => {
