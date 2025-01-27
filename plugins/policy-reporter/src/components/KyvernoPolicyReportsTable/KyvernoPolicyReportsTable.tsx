@@ -7,7 +7,7 @@ import React from 'react';
 import {
   Filter,
   ListResult,
-} from 'backstage-plugin-policy-reporter-common';
+} from '@kyverno/backstage-plugin-policy-reporter-common';
 import { makeStyles } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
 import { StatusComponent } from '../StatusComponent';

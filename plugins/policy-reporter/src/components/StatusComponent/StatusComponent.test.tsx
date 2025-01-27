@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusComponent } from './StatusComponent';
-import { Status } from 'backstage-plugin-policy-reporter-common';
+import { Status } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { renderInTestApp } from '@backstage/test-utils';
 
 describe('StatusComponent', () => {

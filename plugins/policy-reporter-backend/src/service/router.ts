@@ -6,7 +6,7 @@ import {
   KYVERNO_ENDPOINT_ANNOTATION,
   Severity,
   Status,
-} from 'backstage-plugin-policy-reporter-common';
+} from '@kyverno/backstage-plugin-policy-reporter-common';
 import { MiddlewareFactory } from '@backstage/backend-defaults/rootHttpRouter';
 import { CatalogService } from '@backstage/plugin-catalog-node';
 

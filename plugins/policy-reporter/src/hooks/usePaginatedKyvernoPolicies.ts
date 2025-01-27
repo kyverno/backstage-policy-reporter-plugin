@@ -5,7 +5,7 @@ import { kyvernoPolicyReportApiRef } from '../api';
 import {
   Filter,
   ResultList,
-} from 'backstage-plugin-policy-reporter-common';
+} from '@kyverno/backstage-plugin-policy-reporter-common';
 import { useEffect, useState } from 'react';
 
 const DEFAULT_OFFSET = 5;
