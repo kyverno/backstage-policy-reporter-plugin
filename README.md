@@ -37,18 +37,18 @@ From your backstage root directory, run the following commands:
 
 ```bash
 
-yarn --cwd packages/app add backstage-plugin-policy-reporter
-yarn --cwd packages/backend add backstage-plugin-policy-reporter-backend
+yarn --cwd packages/app add @kyverno/backstage-plugin-policy-reporter
+yarn --cwd packages/backend add @kyverno/backstage-plugin-policy-reporter-backend
 
 ```
 
 ### Step 2: Add the route
 
-Add the **EntityKyvernoPolicyReportsContent** component to the Entity routes in `packages/app/src/components/catalog/EntityPage.tsx`
+Add the **EntityKyvernoPoliciesContent** component to the Entity routes in `packages/app/src/components/catalog/EntityPage.tsx`
 
 ```diff
 
-+ import { EntityKyvernoPolicyReportsContent } from 'backstage-plugin-policy-reporter';
++ import { EntityKyvernoPoliciesContent } from '@kyverno/backstage-plugin-policy-reporter';
 
 const serviceEntityPage = (
 
@@ -57,7 +57,7 @@ const serviceEntityPage = (
     // ...
 
 +    <EntityLayout.Route path="/kyverno" title="kyverno policy">
-+      <EntityKyvernoPolicyReportsContent />
++      <EntityKyvernoPoliciesContent />
 +    </EntityLayout.Route>
 
     // ..
@@ -75,7 +75,7 @@ for the new backend system, add the plugin in `packages/backend/src/index.ts`
 const backend = createBackend();
 
 // ..
-+backend.add(import('backstage-plugin-policy-reporter-backend'));
++backend.add(import('@kyverno/backstage-plugin-policy-reporter-backend'));
 // ..
 
 backend.start();
@@ -130,7 +130,7 @@ const serviceEntityPage = (
   <EntityLayout>
     // ...
     <EntityLayout.Route path="/kyverno" title="kyverno policy">
-      <EntityKyvernoPolicyReportsContent policyDocumentationUrl="Your full URL link" />
+      <EntityKyvernoPoliciesContent policyDocumentationUrl="Your full URL link" />
     </EntityLayout.Route>
     // ..
   </EntityLayout>
