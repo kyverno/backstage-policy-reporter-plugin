@@ -13,7 +13,7 @@ import Chip from '@material-ui/core/Chip';
 import { StatusComponent } from '../StatusComponent';
 import { SeverityComponent } from '../SeverityComponent';
 import Launch from '@material-ui/icons/Launch';
-import { Environment } from '../EntityKyvernoPolicyReportsContent/EntityKyvernoPolicyReportsContent';
+import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { usePaginatedKyvernoPolicies } from '../../hooks/usePaginatedKyvernoPolicies';
 
 interface KyvernoPolicyReportsTableProps {

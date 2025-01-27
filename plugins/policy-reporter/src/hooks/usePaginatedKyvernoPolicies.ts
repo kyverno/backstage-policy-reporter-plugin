@@ -1,5 +1,5 @@
 import { useAsync } from 'react-use';
-import { Environment } from '../components/EntityKyvernoPolicyReportsContent/EntityKyvernoPolicyReportsContent';
+import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { useApi } from '@backstage/core-plugin-api';
 import { kyvernoPolicyReportApiRef } from '../api';
 import {

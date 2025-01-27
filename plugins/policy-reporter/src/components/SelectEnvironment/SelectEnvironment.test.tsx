@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderInTestApp } from '@backstage/test-utils';
 import { SelectEnvironment } from './SelectEnvironment';
-import { Environment } from '../EntityKyvernoPolicyReportsContent/EntityKyvernoPolicyReportsContent';
+import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 const setCurrentEnvironment = jest.fn();
 
