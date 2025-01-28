@@ -8118,15 +8118,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@spotify/prettier-config@npm:^12.0.0":
-  version: 12.0.0
-  resolution: "@spotify/prettier-config@npm:12.0.0"
-  peerDependencies:
-    prettier: 2.x
-  checksum: 10c0/c19ea09a0c6937dc08917a5890a01c800450ed8f20f614ec2239e09a5897a7d40eb28e5af70ae58c7f41d56769c0fc516ab0ae672d2fd7585016cd54ad514336
-  languageName: node
-  linkType: hard
-
 "@sucrase/webpack-loader@npm:^2.0.0":
   version: 2.0.0
   resolution: "@sucrase/webpack-loader@npm:2.0.0"
@@ -25962,7 +25953,6 @@ __metadata:
     "@backstage/cli": "npm:^0.29.5"
     "@backstage/e2e-test-utils": "npm:^0.1.1"
     "@playwright/test": "npm:^1.32.3"
-    "@spotify/prettier-config": "npm:^12.0.0"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     husky: "npm:^9.1.1"
