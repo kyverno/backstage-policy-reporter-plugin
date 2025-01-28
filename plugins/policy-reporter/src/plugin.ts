@@ -10,7 +10,7 @@ import { PolicyReporterApiClient } from './api/PolicyReporterClient';
 
 import { rootRouteRef } from './routes';
 
-export const kyvernoPolicyReportsPlugin = createPlugin({
+export const policyReporterPlugin = createPlugin({
   id: 'policy-reporter',
   apis: [
     createApiFactory({
@@ -22,14 +22,13 @@ export const kyvernoPolicyReportsPlugin = createPlugin({
   ],
 });
 
-export const EntityKyvernoPolicyReportsContent =
-  kyvernoPolicyReportsPlugin.provide(
-    createRoutableExtension({
-      name: 'EntityKyvernoPoliciesContent',
-      component: () =>
-        import('./components/EntityKyvernoPoliciesContent').then(
-          m => m.EntityKyvernoPoliciesContent,
-        ),
-      mountPoint: rootRouteRef,
-    }),
-  );
+export const EntityKyvernoPoliciesContent = policyReporterPlugin.provide(
+  createRoutableExtension({
+    name: 'EntityKyvernoPoliciesContent',
+    component: () =>
+      import('./components/EntityKyvernoPoliciesContent').then(
+        m => m.EntityKyvernoPoliciesContent,
+      ),
+    mountPoint: rootRouteRef,
+  }),
+);

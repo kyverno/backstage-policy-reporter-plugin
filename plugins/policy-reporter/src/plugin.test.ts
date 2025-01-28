@@ -1,7 +1,7 @@
-import { kyvernoPolicyReportsPlugin } from './plugin';
+import { policyReporterPlugin } from './plugin';
 
 describe('policy-reporter', () => {
   it('should export plugin', () => {
-    expect(kyvernoPolicyReportsPlugin).toBeDefined();
+    expect(policyReporterPlugin).toBeDefined();
   });
 });

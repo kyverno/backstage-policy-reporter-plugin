@@ -1,8 +1,8 @@
 import React from 'react';
 import { createDevApp } from '@backstage/dev-utils';
 import {
-  kyvernoPolicyReportsPlugin,
-  EntityKyvernoPolicyReportsContent,
+  policyReporterPlugin,
+  EntityKyvernoPoliciesContent,
 } from '../src/plugin';
 import { EntityProvider, catalogApiRef } from '@backstage/plugin-catalog-react';
 import { Entity } from '@backstage/catalog-model';
@@ -91,14 +91,14 @@ createDevApp()
         new CatalogClient({ fetchApi, discoveryApi }),
     }),
   )
-  .registerPlugin(kyvernoPolicyReportsPlugin)
+  .registerPlugin(policyReporterPlugin)
   .addPage({
     path: '/catalog-example',
     title: 'Example one',
     // Wrap the plugin in entity mock
     element: (
       <EntityProvider entity={mockEntity}>
-        <EntityKyvernoPolicyReportsContent
+        <EntityKyvernoPoliciesContent
           annotationsDocumentationUrl="https://github.com/"
           policyDocumentationUrl="https://github.com/"
         />
@@ -111,7 +111,7 @@ createDevApp()
     // Wrap the plugin in entity mock
     element: (
       <EntityProvider entity={mockEntityNoAnnotations}>
-        <EntityKyvernoPolicyReportsContent
+        <EntityKyvernoPoliciesContent
           annotationsDocumentationUrl="https://github.com/"
           policyDocumentationUrl="https://github.com/"
         />
@@ -124,7 +124,7 @@ createDevApp()
     // Wrap the plugin in entity mock
     element: (
       <EntityProvider entity={mockEntityNoEnvironments}>
-        <EntityKyvernoPolicyReportsContent
+        <EntityKyvernoPoliciesContent
           annotationsDocumentationUrl="https://github.com/"
           policyDocumentationUrl="https://github.com/"
         />
