@@ -22,9 +22,9 @@ const mockEntity: Entity = {
     annotations: {
       'github.com/project-slug': 'kyverno/policy-reporter',
 
-      'kyverno.io/namespace': 'default',
+      'kyverno.io/namespace': 'kyverno',
       'kyverno.io/kind': 'Deployment,Pod',
-      'kyverno.io/resource-name': 'policy-reporter',
+      'kyverno.io/resource-name': 'kyverno-background-controller',
     },
   },
   spec: {
