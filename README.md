@@ -28,9 +28,6 @@ The Backstage-policy-reporter-plugin integrates [Policy Reporter](https://kyvern
 
 ## Setup Backstage with policy-reporter plugin
 
-> [!NOTE]
-> It's currently not possible to integrate this with a Backstage instance since the packages aren't published yet.
-
 ### Step 1: Install packages
 
 From your backstage root directory, run the following commands:

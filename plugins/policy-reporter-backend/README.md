@@ -1,14 +1,27 @@
-# kyverno-policy-reports
+# backstage-policy-reporter-plugin-backend
 
-Welcome to the kyverno-policy-reports backend plugin!
+The Backend for the Policy Reporter plugin
 
-_This plugin was created through the Backstage CLI_
+This plugin integrates [Policy Reporter](https://kyverno.github.io/policy-reporter/) with Backstage to provide a clear and detailed view of Kyverno Policies applied to your entities
 
-## Getting started
+## Installation
 
-Your plugin has been added to the example app in this repository, meaning you'll be able to access it by running `yarn
-start` in the root directory, and then navigating to [/kyvernoPolicyReportsPlugin/health](http://localhost:7007/api/kyvernoPolicyReportsPlugin/health).
+From your backstage root directory, run the following commands:
 
-You can also serve the plugin in isolation by running `yarn start` in the plugin directory.
-This method of serving the plugin provides quicker iteration speed and a faster startup and hot reloads.
-It is only meant for local development, and the setup for it can be found inside the [/dev](/dev) directory.
+```bash
+yarn --cwd packages/backend add @kyverno/backstage-plugin-policy-reporter-backend
+```
+
+Then add the plugin to your backend in `packages/backend/src/index.ts`
+
+```diff
+
+const backend = createBackend();
+
+// ..
++backend.add(import('@kyverno/backstage-plugin-policy-reporter-backend'));
+// ..
+
+backend.start();
+
+```

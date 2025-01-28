@@ -1,5 +1,9 @@
 # backstage-plugin-policy-reporter-common
 
-Welcome to the common package for the policy-reporter plugin!
+This package provides shared types and utilities for the policy-reporter plugin.
 
-_This plugin was created through the Backstage CLI_
+## Installation
+
+```bash
+yarn add @kyverno/backstage-plugin-policy-reporter-common
+```
