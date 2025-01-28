@@ -1,4 +1,1 @@
-export {
-  kyvernoPolicyReportsPlugin,
-  EntityKyvernoPolicyReportsContent,
-} from './plugin';
+export { policyReporterPlugin, EntityKyvernoPoliciesContent } from './plugin';
