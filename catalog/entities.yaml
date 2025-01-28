@@ -5,7 +5,7 @@ metadata:
   name: dev
   description: Development Cluster
   annotations:
-    kyverno.io/endpoint: 'http://localhost:8080/policy-reporter/api/'
+    kyverno.io/endpoint: 'http://localhost:8080/'
 spec:
   type: kubernetes-cluster
   owner: user:guest
@@ -16,7 +16,7 @@ metadata:
   name: test
   description: Testing Cluster
   annotations:
-    kyverno.io/endpoint: 'http://localhost:8080/policy-reporter/api/'
+    kyverno.io/endpoint: 'http://localhost:8080/'
 spec:
   type: kubernetes-cluster
   owner: user:guest

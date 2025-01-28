@@ -4,6 +4,8 @@
 
 - Node.js: This project requires Node.js version 18 or 20 to run.
 - Yarn: This project uses Yarn version 4 for package management.
+- Kind: This project uses Kind to run a local Kubernetes cluster.
+- Kubectl: This project uses Kubectl to interact with the Kubernetes cluster.
 - Policy Reporter: Ensure you have a Policy Reporter instance running. The plugin is configured to query `http://localhost:8080/api/policy-reporter`.
 
 ## Step 1: Install Dependencies
@@ -15,6 +17,47 @@ yarn install
 ```
 
 ## Step 2: Start Local Development
+
+Prerequired Steps (without existing Cluster)
+
+1. Create a local cluster (e.g. with Kind or Minikube)
+
+```bash
+kind create cluster -n kyverno
+```
+
+NOTE: if you get error on [too many open files](https://kind.sigs.k8s.io/docs/user/known-issues/#pod-errors-due-to-too-many-open-files) you need to increase the inotify limits.
+
+2. Install Kyverno + Kyverno PSS Policies
+
+Kyverno installs the required CRDS and you get some sample PolicyReports by installing the PSS policies.
+
+Add Helm chart
+
+```bash
+helm repo add kyverno https://kyverno.github.io/kyverno/
+helm repo add policy-reporter https://kyverno.github.io/policy-reporter
+helm repo update
+```
+
+install Kyverno + CRDs
+
+```bash
+helm upgrade --install kyverno kyverno/kyverno -n kyverno --create-namespace
+```
+
+Add Pod Security Standard Policies
+
+```bash
+helm upgrade --install kyverno-policies kyverno/kyverno-policies -n kyverno --set podSecurityStandard=restricted
+```
+
+Add Policy Reporter
+
+```bash
+helm install policy-reporter policy-reporter/policy-reporter --create-namespace -n policy-reporter --set ui.enabled=true --set kyverno-plugin.enabled=true --version ^2.0.0
+kubectl port-forward service/policy-reporter 8080:8080 -n policy-reporter
+```
 
 To start local development, use the `yarn dev` command. This command starts the local development server using the `dev` folders inside the `kyverno-policy-reports` and `kyverno-policy-reports-backend` directories.
 
