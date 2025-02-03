@@ -3045,9 +3045,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/cli@npm:^0.29.5":
-  version: 0.29.5
-  resolution: "@backstage/cli@npm:0.29.5"
+"@backstage/cli@npm:^0.29.6":
+  version: 0.29.6
+  resolution: "@backstage/cli@npm:0.29.6"
   dependencies:
     "@backstage/catalog-model": "npm:^1.7.3"
     "@backstage/cli-common": "npm:^0.1.15"
@@ -3175,7 +3175,7 @@ __metadata:
       optional: true
   bin:
     backstage-cli: bin/backstage-cli
-  checksum: 10c0/58e712db5f4ddf031531ff3eedac40a272483b36a5eba1093c46f931dc9c173ad01b4ec9a0b315829604afddab5e9d6ddaacb756d8071922ca1504ca6eda6142
+  checksum: 10c0/7dfe0ab16d1326c17f840593345b2b7c7adc603cc58caf50589b286b4d8a6f7fac1edb4a562c281f482c7e3c3ace7029819576df10052747589014ea6263ea67
   languageName: node
   linkType: hard
 
@@ -5655,7 +5655,7 @@ __metadata:
     "@backstage/backend-plugin-api": "npm:^1.1.1"
     "@backstage/backend-test-utils": "npm:^1.2.1"
     "@backstage/catalog-model": "npm:^1.7.3"
-    "@backstage/cli": "npm:^0.29.5"
+    "@backstage/cli": "npm:^0.29.6"
     "@backstage/config": "npm:^1.3.2"
     "@backstage/plugin-auth-backend": "npm:^0.24.2"
     "@backstage/plugin-auth-backend-module-guest-provider": "npm:^0.2.4"
@@ -5678,7 +5678,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@kyverno/backstage-plugin-policy-reporter-common@workspace:plugins/policy-reporter-common"
   dependencies:
-    "@backstage/cli": "npm:^0.29.5"
+    "@backstage/cli": "npm:^0.29.6"
   languageName: unknown
   linkType: soft
 
@@ -5688,7 +5688,7 @@ __metadata:
   dependencies:
     "@backstage/catalog-client": "npm:^1.9.1"
     "@backstage/catalog-model": "npm:^1.7.3"
-    "@backstage/cli": "npm:^0.29.5"
+    "@backstage/cli": "npm:^0.29.6"
     "@backstage/core-app-api": "npm:^1.15.4"
     "@backstage/core-components": "npm:^0.16.3"
     "@backstage/core-plugin-api": "npm:^1.10.3"
@@ -25905,7 +25905,7 @@ __metadata:
   resolution: "root@workspace:."
   dependencies:
     "@backstage/app-defaults": "npm:^1.5.16"
-    "@backstage/cli": "npm:^0.29.5"
+    "@backstage/cli": "npm:^0.29.6"
     "@backstage/e2e-test-utils": "npm:^0.1.1"
     "@playwright/test": "npm:^1.32.3"
     "@types/react": "npm:^18.3.3"
