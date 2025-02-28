@@ -17,6 +17,9 @@ export interface RouterOptions {
   authService: AuthService;
 }
 
+const ensureTrailingSlash = (url: string) =>
+  url.endsWith('/') ? url : `${url}/`;
+
 export async function createRouter(
   options: RouterOptions,
 ): Promise<express.Router> {
@@ -82,7 +85,9 @@ export async function createRouter(
           .json({ error: `Entity missing 'kyverno.io/endpoint' annotation` });
 
       const policyResponse = await fetch(
-        `${kyvernoEndpoint}v1/namespaced-resources/results?${urlParams.toString()}`,
+        `${ensureTrailingSlash(
+          kyvernoEndpoint,
+        )}v1/namespaced-resources/results?${urlParams.toString()}`,
       );
 
       if (!policyResponse.ok) {
