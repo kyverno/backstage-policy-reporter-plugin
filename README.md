@@ -95,6 +95,20 @@ spec:
   type: kubernetes-cluster
 ```
 
+#### Policy Reporter Endpoint Configuration
+
+The `kyverno.io/endpoint` annotation should point to the Policy Reporter API. Use one of the following configurations:
+
+##### When using Policy Reporter UI:
+
+- UI Version 1: Use `http://your-domain/policy-reporter/api/`
+- UI Version 2: Use `http://your-domain/policy-reporter/proxy/default/core/`
+
+##### When using standalone Policy Reporter:
+
+- The Policy Reporter backend needs to be exposed via an ingress (Ingress can be configured in the policy-reporter helmchart)
+- Point to your ingress URL that exposes the Policy Reporter API (e.g., `https://your-domain/api/`)
+
 ### Step 5: Annotate Services
 
 To show the policies on the service, add a dependency to the Kubernetes cluster resource in the `catalog-info.yaml` file of your service. Ensure that the necessary annotations are added as well. For more details, refer to the [How to annotate services](#how-to-annotate-services) section.
@@ -162,21 +176,3 @@ metadata:
 +    kyverno.io/kind: Deployment,Pod                 # Specify the kind(s) of the Kubernetes resource(s)
 +    kyverno.io/resource-name: policy-reporter       # Specify the name of the resource
 ```
-
-## Publishing New Versions of a Package
-
-### Step 1: Update the package.json version
-
-First, you need to update the `version` field in the `package.json` file of the package you want to update.
-
-### Step 2: Run Yarn Install
-
-Before creating a pull request, always run `yarn install` to ensure all dependencies are correctly installed and up-to-date.
-
-### Step 3: Include the updated yarn.lock in the pull request
-
-When creating a pull request, make sure to include the updated `yarn.lock` file. This file ensures that the exact same dependency tree is installed across all environments.
-
-### Step 4: Merge the branch with main
-
-After updating the `package.json` version, merge your branch with the `main` branch. The GitHub Actions workflow will automatically check if there's a new version and publish it.
