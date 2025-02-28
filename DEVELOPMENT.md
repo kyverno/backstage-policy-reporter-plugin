@@ -83,3 +83,21 @@ To change the endpoint used by the plugin locally, update the `endpoint` annotat
 Depending on what policies are present in your Policy Reporter instance, you might need to change the mock entity annotations used during `yarn dev` that define the policies to display.
 
 To update the mock entity annotations, modify the annotations in the `plugins/kyverno-policy-reports/dev/index.ts` file to match the policies available in your Policy Reporter instance.
+
+## Publishing New Versions of a Package
+
+### Step 1: Update the package.json version
+
+First, you need to update the `version` field in the `package.json` file of the package you want to update.
+
+### Step 2: Run Yarn Install
+
+Before creating a pull request, always run `yarn install` to ensure all dependencies are correctly installed and up-to-date.
+
+### Step 3: Include the updated yarn.lock in the pull request
+
+When creating a pull request, make sure to include the updated `yarn.lock` file. This file ensures that the exact same dependency tree is installed across all environments.
+
+### Step 4: Merge the branch with main
+
+After updating the `package.json` version, merge your branch with the `main` branch. The GitHub Actions workflow will automatically check if there's a new version and publish it.
