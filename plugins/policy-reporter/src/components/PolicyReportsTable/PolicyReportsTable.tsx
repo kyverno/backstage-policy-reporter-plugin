@@ -3,18 +3,19 @@ import {
   Table,
   TableColumn,
 } from '@backstage/core-components';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Filter,
   ListResult,
 } from '@kyverno/backstage-plugin-policy-reporter-common';
-import { makeStyles } from '@material-ui/core';
+import { Drawer, makeStyles } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
 import { StatusComponent } from '../StatusComponent';
 import { SeverityComponent } from '../SeverityComponent';
 import Launch from '@material-ui/icons/Launch';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { usePaginatedPolicies } from '../../hooks/usePaginatedPolicies';
+import { PolicyReportsDrawerComponent } from '../PolicyReportsDrawerComponent/PolicyReportsDrawerComponent';
 
 interface PolicyReportsTableProps {
   currentEnvironment: Environment;
@@ -39,6 +40,10 @@ export const PolicyReportsTable = ({
     },
   }));
 
+  const [showDrawer, setShowDrawer] = useState<boolean>(false);
+  const [drawerContent, setDrawerContent] = useState<ListResult | undefined>(
+    undefined,
+  );
   const classes = useStyles();
 
   const columns: TableColumn<ListResult>[] = [
@@ -123,19 +128,36 @@ export const PolicyReportsTable = ({
     );
 
   return (
-    <Table
-      options={{
-        sorting: true,
-        padding: 'dense',
-      }}
-      data={policies?.items ?? []}
-      columns={columns}
-      title={title}
-      totalCount={policies?.count}
-      page={currentPage}
-      onRowsPerPageChange={page => setCurrentOffset(page)}
-      onPageChange={page => setCurrentPage(page)}
-      emptyContent={<div className={classes.empty}>{emptyContentText}</div>}
-    />
+    <>
+      <Drawer
+        anchor="right"
+        open={showDrawer}
+        onClose={() => setShowDrawer(false)}
+      >
+        <PolicyReportsDrawerComponent content={drawerContent} />
+      </Drawer>
+      <Table
+        options={{
+          sorting: true,
+          padding: 'dense',
+        }}
+        onRowClick={(
+          event?: React.MouseEvent<Element, MouseEvent>,
+          rowData?: ListResult,
+        ) => {
+          event?.preventDefault();
+          setShowDrawer(true);
+          setDrawerContent(rowData);
+        }}
+        data={policies?.items ?? []}
+        columns={columns}
+        title={title}
+        totalCount={policies?.count}
+        page={currentPage}
+        onRowsPerPageChange={page => setCurrentOffset(page)}
+        onPageChange={page => setCurrentPage(page)}
+        emptyContent={<div className={classes.empty}>{emptyContentText}</div>}
+      />
+    </>
   );
 };

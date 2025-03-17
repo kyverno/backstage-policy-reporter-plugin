@@ -1,4 +1,6 @@
 import React from 'react';
+import userEvent from '@testing-library/user-event';
+import { screen, waitFor } from '@testing-library/react';
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
 import { PolicyReportsTable } from './PolicyReportsTable';
 import { policyReporterApiRef } from '../../api';
@@ -147,5 +149,64 @@ describe('KyvernoPolicyReportsTable', () => {
     );
 
     expect(extension.getByText('Error: Failed to fetch policies')).toBeTruthy();
+  });
+
+  it('should render Drawer when clicking on a policy', async () => {
+    // Arrange
+    mockPolicyReportApiRef.namespacedResults.mockImplementationOnce(() =>
+      Promise.resolve({
+        items: [
+          {
+            id: '0',
+            kind: 'deployment',
+            namespace: 'default',
+            name: 'name',
+            resourceId: 'id',
+            message: 'Policy 1 passed successfully',
+            timestamp: 123456789,
+            policy: 'Policy1',
+            rule: 'Rule1',
+            status: 'pass',
+            severity: 'low',
+            properties: {},
+          },
+        ],
+        count: 1,
+      }),
+    );
+
+    // Act
+    const extension = await renderInTestApp(
+      <TestApiProvider
+        apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
+      >
+        <PolicyReportsTable
+          currentEnvironment={{
+            id: 1,
+            name: 'dev',
+            entityRef: 'resource:default/dev',
+          }}
+          filter={{}}
+          title="Policy Results"
+          emptyContentText="empty"
+        />
+        ,
+      </TestApiProvider>,
+    );
+    //
+
+    // Assert
+    const cell = extension.getByRole('cell', {
+      name: 'name',
+    });
+    expect(cell).toBeInTheDocument();
+
+    // simulate user clicking on a cell
+    const user = userEvent.setup();
+    await user.click(cell);
+    await waitFor(() => {
+      const drawer = screen.getByTestId('policy-reports-drawer');
+      expect(drawer).toBeInTheDocument();
+    });
   });
 });
