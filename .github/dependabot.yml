@@ -2,8 +2,6 @@ version: 2
 updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
-    registries:
-      - github
     schedule:
       interval: 'daily'
     groups:
