@@ -99,7 +99,7 @@ export const EntityKyvernoPoliciesContent = ({
               namespaces,
               sources: ['kyverno'],
               kinds,
-              status: ['fail'],
+              status: ['fail', 'warn', 'error'],
               search: resourceName,
             }}
             title="Failing Policy Results"
