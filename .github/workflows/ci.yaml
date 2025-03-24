@@ -17,9 +17,14 @@ jobs:
         uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e
         with:
           node-version: '20'
+
+      - name: yarn install
+        uses: backstage/actions/yarn-install@b3c1841fd69e1658ac631afafd0fb140a2309024 # v0.6.17
+        with:
+          cache-prefix: ${{ runner.os }}-v20
+
       - name: Run test and build
         run: |
-          yarn install
           yarn test:all:no-watch
           yarn tsc
           yarn build:all
@@ -35,9 +40,13 @@ jobs:
         with:
           node-version: '20'
 
+      - name: yarn install
+        uses: backstage/actions/yarn-install@b3c1841fd69e1658ac631afafd0fb140a2309024 # v0.6.17
+        with:
+          cache-prefix: ${{ runner.os }}-v20
+
       - name: Publish package
         run: |
-          yarn install
           yarn tsc
           yarn build:all
           yarn lerna publish from-package --yes
