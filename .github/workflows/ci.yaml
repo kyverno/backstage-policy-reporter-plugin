@@ -58,7 +58,7 @@ jobs:
 
       - name: Publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@06245a4e0a36c064a573d4150030f5ec548e4fcc
         with:
           publish: yarn changeset publish
         env:
