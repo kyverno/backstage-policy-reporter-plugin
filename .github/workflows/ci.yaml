@@ -28,6 +28,7 @@ jobs:
           yarn test:all:no-watch
           yarn tsc
           yarn build:all
+
   publish:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
@@ -45,10 +46,18 @@ jobs:
         with:
           cache-prefix: ${{ runner.os }}-v20
 
-      - name: Publish package
+      - name: Build
         run: |
           yarn tsc
           yarn build:all
-          yarn lerna publish from-package --yes
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: yarn changeset publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
