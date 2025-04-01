@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e
@@ -28,6 +30,8 @@ jobs:
           yarn test:all:no-watch
           yarn tsc
           yarn build:all
+          yarn changeset status --since=origin/main
+
   publish:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
@@ -45,10 +49,18 @@ jobs:
         with:
           cache-prefix: ${{ runner.os }}-v20
 
-      - name: Publish package
+      - name: Build
         run: |
           yarn tsc
           yarn build:all
-          yarn lerna publish from-package --yes
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish
+        id: changesets
+        uses: changesets/action@06245a4e0a36c064a573d4150030f5ec548e4fcc
+        with:
+          publish: yarn changeset publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
