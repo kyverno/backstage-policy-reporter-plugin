@@ -30,11 +30,13 @@ jobs:
           yarn test:all:no-watch
           yarn tsc
           yarn build:all
-          yarn changeset status --since=origin/main
 
   publish:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -60,6 +62,7 @@ jobs:
         id: changesets
         uses: changesets/action@06245a4e0a36c064a573d4150030f5ec548e4fcc
         with:
+          version: node .github/changeset-version.cjs
           publish: yarn changeset publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
