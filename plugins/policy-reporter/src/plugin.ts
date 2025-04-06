@@ -32,3 +32,14 @@ export const EntityKyvernoPoliciesContent = policyReporterPlugin.provide(
     mountPoint: rootRouteRef,
   }),
 );
+
+export const EntityCustomPoliciesContent = policyReporterPlugin.provide(
+  createRoutableExtension({
+    name: 'EntityCustomPoliciesContent',
+    component: () =>
+      import('./components/EntityCustomPoliciesContent').then(
+        m => m.EntityCustomPoliciesContent,
+      ),
+    mountPoint: rootRouteRef,
+  }),
+);
