@@ -96,7 +96,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
     ).toBeTruthy();
   });
 
-  it('should render KyvernoPolicyReportsTable if annotations and environments are valid', async () => {
+  it('should render PolicyReportsTable if annotations and environments are valid', async () => {
     // Arrange
     mockCatalogApiRef.getEntitiesByRefs.mockImplementationOnce(() => {
       return Promise.resolve({ items: [{ metadata: { name: 'dev' } }] });
