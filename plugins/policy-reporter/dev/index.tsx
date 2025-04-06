@@ -3,6 +3,7 @@ import { createDevApp } from '@backstage/dev-utils';
 import {
   policyReporterPlugin,
   EntityKyvernoPoliciesContent,
+  EntityCustomPoliciesContent,
 } from '../src/plugin';
 import { EntityProvider, catalogApiRef } from '@backstage/plugin-catalog-react';
 import { Entity } from '@backstage/catalog-model';
@@ -93,8 +94,8 @@ createDevApp()
   )
   .registerPlugin(policyReporterPlugin)
   .addPage({
-    path: '/catalog-example',
-    title: 'Example one',
+    path: '/kyverno',
+    title: 'Kyverno Valid',
     // Wrap the plugin in entity mock
     element: (
       <EntityProvider entity={mockEntity}>
@@ -106,8 +107,8 @@ createDevApp()
     ),
   })
   .addPage({
-    path: '/example-2',
-    title: 'Missing annotations',
+    path: '/kyverno/annotations',
+    title: 'Kyverno Missing annotations',
     // Wrap the plugin in entity mock
     element: (
       <EntityProvider entity={mockEntityNoAnnotations}>
@@ -119,12 +120,57 @@ createDevApp()
     ),
   })
   .addPage({
-    path: '/example-3',
-    title: 'Missing environments',
+    path: '/kyverno/environments',
+    title: 'Kyverno Missing environments',
     // Wrap the plugin in entity mock
     element: (
       <EntityProvider entity={mockEntityNoEnvironments}>
         <EntityKyvernoPoliciesContent
+          annotationsDocumentationUrl="https://github.com/"
+          policyDocumentationUrl="https://github.com/"
+        />
+      </EntityProvider>
+    ),
+  })
+  .addPage({
+    path: '/custom',
+    title: 'Custom Valid',
+    // Wrap the plugin in entity mock
+    element: (
+      <EntityProvider entity={mockEntity}>
+        <EntityCustomPoliciesContent
+          title="Custom Source Policy Reports"
+          sources={['kyverno']}
+          annotationsDocumentationUrl="https://github.com/"
+          policyDocumentationUrl="https://github.com/"
+        />
+      </EntityProvider>
+    ),
+  })
+  .addPage({
+    path: '/custom/environments',
+    title: 'Custom Missing environments',
+    // Wrap the plugin in entity mock
+    element: (
+      <EntityProvider entity={mockEntityNoEnvironments}>
+        <EntityCustomPoliciesContent
+          title="Custom Source Policy Reports"
+          sources={['kyverno']}
+          annotationsDocumentationUrl="https://github.com/"
+          policyDocumentationUrl="https://github.com/"
+        />
+      </EntityProvider>
+    ),
+  })
+  .addPage({
+    path: '/custom/annotations',
+    title: 'Custom Missing annotations',
+    // Wrap the plugin in entity mock
+    element: (
+      <EntityProvider entity={mockEntityNoAnnotations}>
+        <EntityCustomPoliciesContent
+          title="Custom Source Policy Reports"
+          sources={['kyverno']}
           annotationsDocumentationUrl="https://github.com/"
           policyDocumentationUrl="https://github.com/"
         />
