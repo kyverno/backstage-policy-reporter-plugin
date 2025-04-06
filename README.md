@@ -41,7 +41,15 @@ yarn --cwd packages/backend add @kyverno/backstage-plugin-policy-reporter-backen
 
 ### Step 2: Add the route
 
-Add the **EntityKyvernoPoliciesContent** component to the Entity routes in `packages/app/src/components/catalog/EntityPage.tsx`
+Add the desired policy-reporter component(s) to your Entity routes in `packages/app/src/components/catalog/EntityPage.tsx`
+Choose from the available components:
+
+- [EntityKyvernoPoliciesContent](/docs/component-setup.md#entitykyvernopoliciescontent) - Displays kyverno policies for an entity using the `kyverno` source
+- [EntityCustomPoliciesContent](/docs/component-setup.md#entitycustompoliciescontent) - Displays policy reports from a custom source
+
+For detailed setup instructions including screenshots, see the [Component Setup Guide](/docs/component-setup.md).
+
+#### EntityKyvernoPoliciesContent example
 
 ```diff
 
