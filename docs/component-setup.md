@@ -45,6 +45,10 @@ const serviceEntityPage = (
 
 The `EntityCustomPoliciesContent` component displays policy reports from a custom source.
 
+This plugin aims to provide specialized components for different policy sources. If you need a component for a specific policy source that isn't currently available, please [open an issue](https://github.com/kyverno/backstage-policy-reporter-plugin/issues/new) with details about your use case.
+
+New source-specific components are being developed based on user needs.
+
 ### Screenshot
 
 ![EntityCustomPoliciesContent](./assets/screenshot.PNG)
