@@ -2,7 +2,7 @@ import React from 'react';
 import { policyReporterApiRef } from '../../api';
 import { Entity } from '@backstage/catalog-model';
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
-import { EntityKyvernoPoliciesContent } from './EntityKyvernoPoliciesContent';
+import { EntityCustomPoliciesContent } from './EntityCustomPoliciesContent';
 import { EntityProvider, catalogApiRef } from '@backstage/plugin-catalog-react';
 
 const mockPolicyReportApiRef = {
@@ -33,7 +33,9 @@ const mockEntity: Entity = {
   },
 };
 
-describe('EntityKyvernoPolicyReportsContent component', () => {
+const title = 'Trivy Policy Reports';
+
+describe('EntityCustomPoliciesContent component', () => {
   it('should render Missing Annotation when annotations are missing', async () => {
     // Arrange
     // Modify the mock entity to not include annotations
@@ -54,7 +56,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
         ]}
       >
         <EntityProvider entity={mockEntityNoAnnotations}>
-          <EntityKyvernoPoliciesContent />
+          <EntityCustomPoliciesContent title={title} sources={['trivy']} />
         </EntityProvider>
         ,
       </TestApiProvider>,
@@ -84,7 +86,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
         ]}
       >
         <EntityProvider entity={mockEntityNoAnnotations}>
-          <EntityKyvernoPoliciesContent />
+          <EntityCustomPoliciesContent title={title} sources={['trivy']} />
         </EntityProvider>
         ,
       </TestApiProvider>,
@@ -96,7 +98,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
     ).toBeTruthy();
   });
 
-  it('should render PolicyReportsTable if annotations and environments are valid', async () => {
+  it('should render policyReportsTable if annotations and environments are valid', async () => {
     // Arrange
     mockCatalogApiRef.getEntitiesByRefs.mockImplementationOnce(() => {
       return Promise.resolve({ items: [{ metadata: { name: 'dev' } }] });
@@ -111,13 +113,13 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
         ]}
       >
         <EntityProvider entity={mockEntity}>
-          <EntityKyvernoPoliciesContent />
+          <EntityCustomPoliciesContent title={title} sources={['trivy']} />
         </EntityProvider>
       </TestApiProvider>,
     );
 
     // Assert
-    expect(extension.getByText('Kyverno Policy Reports')).toBeTruthy();
+    expect(extension.getByText(title)).toBeTruthy();
     expect(extension.getByText('Failing Policy Results')).toBeTruthy();
     expect(extension.getByText('Passing Policy Results')).toBeTruthy();
     expect(extension.getByText('Skipped Policy Results')).toBeTruthy();

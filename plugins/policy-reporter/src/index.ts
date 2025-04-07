@@ -1,1 +1,5 @@
-export { policyReporterPlugin, EntityKyvernoPoliciesContent } from './plugin';
+export {
+  policyReporterPlugin,
+  EntityKyvernoPoliciesContent,
+  EntityCustomPoliciesContent,
+} from './plugin';
