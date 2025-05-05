@@ -6,12 +6,11 @@
     "node": "20 || 22"
   },
   "scripts": {
-    "dev": "yarn workspaces foreach -A --include @kyverno/backstage-plugin-policy-reporter-backend --include @kyverno/backstage-plugin-policy-reporter --parallel -v -i run start",
-    "start": "yarn workspace @kyverno/backstage-plugin-policy-reporter start",
-    "start-backend": "yarn workspace @kyverno/backstage-plugin-policy-reporter-backend start",
+    "dev": "echo \"Use 'yarn start' instead\"",
+    "start": "backstage-cli repo start",
+    "start-backend": "echo \"Use 'yarn start backend' instead\"",
     "build:backend": "yarn workspace @kyverno/backstage-plugin-policy-reporter-backend build",
     "build:all": "backstage-cli repo build --all",
-    "build-image": "yarn workspace backend build-image",
     "tsc": "tsc",
     "tsc:full": "tsc --skipLibCheck false --incremental false",
     "clean": "backstage-cli repo clean",
