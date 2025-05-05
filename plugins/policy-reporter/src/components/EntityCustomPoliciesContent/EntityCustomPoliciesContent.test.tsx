@@ -1,4 +1,3 @@
-import React from 'react';
 import { policyReporterApiRef } from '../../api';
 import { Entity } from '@backstage/catalog-model';
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';

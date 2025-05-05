@@ -1,4 +1,3 @@
-import React from 'react';
 import { SeverityComponent } from './SeverityComponent';
 import { renderInTestApp } from '@backstage/test-utils';
 
