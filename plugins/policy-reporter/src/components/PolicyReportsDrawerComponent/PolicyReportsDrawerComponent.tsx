@@ -1,5 +1,4 @@
 import { ListResult } from '@kyverno/backstage-plugin-policy-reporter-common';
-import React from 'react';
 import {
   Card,
   CardHeader,

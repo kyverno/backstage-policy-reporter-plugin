@@ -62,7 +62,7 @@ kubectl port-forward service/policy-reporter 8080:8080 -n policy-reporter
 To start local development, use the `yarn dev` command. This command starts the local development server using the `dev` folders inside the `kyverno-policy-reports` and `kyverno-policy-reports-backend` directories.
 
 ```sh
-yarn dev
+yarn start
 ```
 
 ## Optional: Setting Up Local Development Using Dev Containers

@@ -1,4 +1,3 @@
-import React from 'react';
 import { PolicyReportsDrawerComponent } from './PolicyReportsDrawerComponent';
 import { renderInTestApp } from '@backstage/test-utils';
 import { ListResult } from '@kyverno/backstage-plugin-policy-reporter-common';
