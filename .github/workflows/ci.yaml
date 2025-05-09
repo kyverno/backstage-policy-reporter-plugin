@@ -60,7 +60,7 @@ jobs:
 
       - name: Publish
         id: changesets
-        uses: changesets/action@746c25e23caa47dceb6a48ee85b4cbc5a9f5f293
+        uses: changesets/action@001cd79f0a536e733315164543a727bdf2d70aff
         with:
           version: node .github/changeset-version.cjs
           publish: yarn changeset publish
