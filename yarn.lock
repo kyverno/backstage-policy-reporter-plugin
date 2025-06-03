@@ -5884,7 +5884,7 @@ __metadata:
     "@backstage/plugin-auth-backend-module-guest-provider": "backstage:^"
     "@backstage/plugin-catalog-backend": "backstage:^"
     "@backstage/plugin-catalog-node": "backstage:^"
-    "@kyverno/backstage-plugin-policy-reporter-common": "workspace:^"
+    "@kyverno/backstage-plugin-policy-reporter-common": "npm:2.0.3"
     "@types/express": "npm:*"
     "@types/supertest": "npm:^2.0.12"
     better-sqlite3: "npm:^9.0.0"
@@ -5897,7 +5897,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@kyverno/backstage-plugin-policy-reporter-common@workspace:^, @kyverno/backstage-plugin-policy-reporter-common@workspace:plugins/policy-reporter-common":
+"@kyverno/backstage-plugin-policy-reporter-common@npm:2.0.3, @kyverno/backstage-plugin-policy-reporter-common@workspace:plugins/policy-reporter-common":
   version: 0.0.0-use.local
   resolution: "@kyverno/backstage-plugin-policy-reporter-common@workspace:plugins/policy-reporter-common"
   dependencies:
@@ -5919,7 +5919,7 @@ __metadata:
     "@backstage/plugin-catalog-react": "backstage:^"
     "@backstage/test-utils": "backstage:^"
     "@backstage/theme": "backstage:^"
-    "@kyverno/backstage-plugin-policy-reporter-common": "workspace:^"
+    "@kyverno/backstage-plugin-policy-reporter-common": "npm:2.0.3"
     "@material-ui/core": "npm:^4.9.13"
     "@material-ui/icons": "npm:^4.9.1"
     "@material-ui/lab": "npm:4.0.0-alpha.61"
