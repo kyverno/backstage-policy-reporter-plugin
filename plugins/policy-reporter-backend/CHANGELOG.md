@@ -1,6 +1,6 @@
-# @kyverno/backstage-plugin-policy-reporter
+# @kyverno/backstage-plugin-policy-reporter-backend
 
-## 2.2.1
+## 2.1.1
 
 ### Patch Changes
 
@@ -10,9 +10,3 @@
 - Updated dependencies [2f2c362]
 - Updated dependencies [b8c72e7]
   - @kyverno/backstage-plugin-policy-reporter-common@2.0.4
-
-## 2.2.0
-
-### Minor Changes
-
-- 3722ec7: Add `EntityCustomPoliciesContent` component that can be used to view policies from custom sources
