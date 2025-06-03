@@ -42,7 +42,7 @@
     "@backstage/backend-plugin-api": "backstage:^",
     "@backstage/config": "backstage:^",
     "@backstage/plugin-catalog-node": "backstage:^",
-    "@kyverno/backstage-plugin-policy-reporter-common": "workspace:^",
+    "@kyverno/backstage-plugin-policy-reporter-common": "2.0.3",
     "@types/express": "*",
     "express": "^4.17.1",
     "express-promise-router": "^4.1.0",
