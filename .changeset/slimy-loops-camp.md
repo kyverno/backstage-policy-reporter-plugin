@@ -4,4 +4,4 @@
 '@kyverno/backstage-plugin-policy-reporter': patch
 ---
 
-The Yarn Backstage plugin has been temporarily disabled due to issues with `backstage:^`` not being replaced correctly during publishing with Changesets.
+The Yarn Backstage plugin has been temporarily disabled due to issues with `backstage:^` not being replaced correctly during publishing with Changesets.
