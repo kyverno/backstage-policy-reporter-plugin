@@ -12,6 +12,7 @@ import {
   fetchApiRef,
 } from '@backstage/core-plugin-api';
 import { CatalogClient } from '@backstage/catalog-client';
+import { PolicyReportsPage } from '../src/components/PolicyReportsPage';
 
 const mockEntity: Entity = {
   apiVersion: 'backstage.io/v1alpha1',
@@ -175,5 +176,11 @@ createDevApp()
         />
       </EntityProvider>
     ),
+  })
+  .addPage({
+    path: '/policyreporter-page',
+    title: 'Policy Reporter Page',
+    // Wrap the plugin in entity mock
+    element: <PolicyReportsPage />,
   })
   .render();
