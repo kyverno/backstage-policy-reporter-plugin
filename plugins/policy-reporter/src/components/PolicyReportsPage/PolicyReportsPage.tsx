@@ -10,7 +10,17 @@ import { SelectEnvironment } from '../SelectEnvironment';
 import { Grid } from '@material-ui/core';
 import { PolicyReportsTable } from '../PolicyReportsTable';
 
-export const PolicyReportsPage = ({}) => {
+interface EntityPolicyReportsPage {
+  title?: string;
+  policyDocumentationUrl?: string;
+  subtitle?: string;
+}
+
+export const PolicyReportsPage = ({
+  title = 'Policy Reports',
+  subtitle = 'View all policy reports across services',
+  policyDocumentationUrl,
+}: EntityPolicyReportsPage) => {
   const {
     environments,
     environmentsLoading,
@@ -26,7 +36,7 @@ export const PolicyReportsPage = ({}) => {
 
   return (
     <Page themeId="tool">
-      <Header title="Policy Reports" subtitle="View all policy reports" />
+      <Header title={title} subtitle={subtitle} />
       <Content>
         <ContentHeader>
           <SelectEnvironment
@@ -44,6 +54,7 @@ export const PolicyReportsPage = ({}) => {
               }}
               title="Failing Policy Results"
               emptyContentText="No failing policies"
+              policyDocumentationUrl={policyDocumentationUrl}
             />
           </Grid>
           <Grid item xs={12}>
@@ -54,6 +65,7 @@ export const PolicyReportsPage = ({}) => {
               }}
               title="Passing Policy Results"
               emptyContentText="No passing policies"
+              policyDocumentationUrl={policyDocumentationUrl}
             />
           </Grid>
           <Grid item xs={12}>
@@ -64,6 +76,7 @@ export const PolicyReportsPage = ({}) => {
               }}
               title="Skipped Policy Results"
               emptyContentText="No skipped policies"
+              policyDocumentationUrl={policyDocumentationUrl}
             />
           </Grid>
         </Grid>
