@@ -108,6 +108,7 @@ export const EntityCustomPoliciesContent = ({
             title="Failing Policy Results"
             emptyContentText="No failing policies"
             policyDocumentationUrl={policyDocumentationUrl}
+            enableSearch={false}
           />
         </Grid>
         <Grid item xs={12}>
@@ -123,6 +124,7 @@ export const EntityCustomPoliciesContent = ({
             title="Passing Policy Results"
             emptyContentText="No passing policies"
             policyDocumentationUrl={policyDocumentationUrl}
+            enableSearch={false}
           />
         </Grid>
         <Grid item xs={12}>
@@ -138,6 +140,7 @@ export const EntityCustomPoliciesContent = ({
             title="Skipped Policy Results"
             emptyContentText="No skipped policies"
             policyDocumentationUrl={policyDocumentationUrl}
+            enableSearch={false}
           />
         </Grid>
       </Grid>
