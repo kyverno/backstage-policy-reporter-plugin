@@ -1,5 +1,13 @@
 # @kyverno/backstage-plugin-policy-reporter-backend
 
+## 2.1.3
+
+### Patch Changes
+
+- ac24f2a: New release to validate updated publishing workflow
+- Updated dependencies [ac24f2a]
+  - @kyverno/backstage-plugin-policy-reporter-common@2.0.6
+
 ## 2.1.2
 
 ### Patch Changes
