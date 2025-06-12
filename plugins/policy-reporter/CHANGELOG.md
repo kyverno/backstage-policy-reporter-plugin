@@ -1,5 +1,13 @@
 # @kyverno/backstage-plugin-policy-reporter
 
+## 2.2.2
+
+### Patch Changes
+
+- 81cdccf: New release to validate updated publishing workflow
+- Updated dependencies [81cdccf]
+  - @kyverno/backstage-plugin-policy-reporter-common@2.0.5
+
 ## 2.2.1
 
 ### Patch Changes
