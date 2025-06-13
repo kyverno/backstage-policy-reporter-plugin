@@ -1,4 +1,6 @@
 dist
 dist-types
 coverage
+.github/changeset-version.cjs
 .vscode
+.yarnrc.yml
