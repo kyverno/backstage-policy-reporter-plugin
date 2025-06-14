@@ -3,7 +3,7 @@ import {
   Table,
   TableColumn,
 } from '@backstage/core-components';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Filter,
   ListResult,
@@ -23,6 +23,7 @@ interface PolicyReportsTableProps {
   title: string;
   emptyContentText: string;
   policyDocumentationUrl?: string;
+  enableSearch?: boolean;
 }
 
 export const PolicyReportsTable = ({
@@ -31,6 +32,7 @@ export const PolicyReportsTable = ({
   currentEnvironment,
   filter,
   policyDocumentationUrl,
+  enableSearch,
 }: PolicyReportsTableProps) => {
   const useStyles = makeStyles(theme => ({
     empty: {
@@ -39,6 +41,15 @@ export const PolicyReportsTable = ({
       justifyContent: 'center',
     },
   }));
+
+  const [search, setSearch] = useState<string | undefined>(undefined);
+  const mergedFilter = useMemo(
+    () => ({
+      ...filter,
+      search: search ?? filter.search, // override search if search state is defined
+    }),
+    [filter, search],
+  );
 
   const [showDrawer, setShowDrawer] = useState<boolean>(false);
   const [drawerContent, setDrawerContent] = useState<ListResult | undefined>(
@@ -111,7 +122,7 @@ export const PolicyReportsTable = ({
     setCurrentPage,
     setCurrentOffset,
     initialLoading,
-  } = usePaginatedPolicies(currentEnvironment, filter);
+  } = usePaginatedPolicies(currentEnvironment, mergedFilter);
 
   if (policiesError) return <ResponseErrorPanel error={policiesError} />;
 
@@ -140,6 +151,7 @@ export const PolicyReportsTable = ({
         options={{
           sorting: true,
           padding: 'dense',
+          search: enableSearch,
         }}
         onRowClick={(
           event?: React.MouseEvent<Element, MouseEvent>,
@@ -157,6 +169,7 @@ export const PolicyReportsTable = ({
         onRowsPerPageChange={page => setCurrentOffset(page)}
         onPageChange={page => setCurrentPage(page)}
         emptyContent={<div className={classes.empty}>{emptyContentText}</div>}
+        onSearchChange={searchText => setSearch(searchText)}
       />
     </>
   );

@@ -21,6 +21,7 @@ interface PolicyReportsDrawerProps {
 const useStyles = makeStyles(theme => ({
   root: {
     marginBottom: theme.spacing(2),
+    maxWidth: 800,
   },
   sectionTitle: {
     marginBottom: theme.spacing(1),

@@ -41,7 +41,7 @@ export const usePaginatedPolicies = (
     );
     setInitialLoading(false);
     return data;
-  }, [currentEnvironment, currentPage, currentOffset]);
+  }, [currentEnvironment, filter, currentPage, currentOffset]);
 
   return {
     policies,

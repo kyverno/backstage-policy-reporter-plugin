@@ -81,3 +81,70 @@ const serviceEntityPage = (
 | policyDocumentationUrl      | string   | undefined | Optional URL used to generate links to policy documentation. [More information](/README.md#optional-custom-policy-documentation) |
 
 </details>
+
+<details>
+  <summary><strong>PolicyReportsPage</strong> - Sidebar component used to display all policy reports for a given environment</summary>
+
+## PolicyReportsPage
+
+The `PolicyReportsPage` component displays all policy reports for a given environment. This component shows reports from all sources and is intended to be placed on the Backstage sidebar.
+
+> **Note:** This component is a work in progress. See https://github.com/kyverno/backstage-policy-reporter-plugin/issues/29 for current state of the component
+
+### Screenshot
+
+![EntityCustomPoliciesContent](./assets/policy-reports-page.PNG)
+
+### Setup Steps
+
+Add a new Route element with the path `/policy-reports` and element of `<PolicyReportsPage>` in `packages/app/src/App.tsx`
+
+```diff
++ import { PolicyReportsPage } from '@kyverno/backstage-plugin-policy-reporter';
+...
+
+const routes = (
+  <FlatRoutes>
+    {/* existing routes... */}
+
++    <Route
++      path='/policy-reports'
++      element={<PolicyReportsPage title='My Optional Title' />}
++    />
+  </FlatRoutes>
+);
+
+```
+
+Add a sidebar item that routes to the path setup in previous step
+
+```diff
++import PolicyIcon from '@material-ui/icons/Policy';
+
+export const Root = ({ children }: PropsWithChildren<{}>) => (
+  <SidebarPage>
+    <Sidebar>
+      <SidebarLogo />
+      {/* existing sidebar items... */}
+
+      <SidebarScrollWrapper>
+        {/* existing sidebar items... */}
+
++        <SidebarItem icon={PolicyIcon} to='policy-reports' text='Policy Reports' />
+      </SidebarScrollWrapper>
+    </Sidebar>
+  </SidebarPage>
+);
+
+
+```
+
+### Configuration Options
+
+| Prop                   | Type   | Default                                           | Description                                                                                                                      |
+| ---------------------- | ------ | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| title                  | string | Policy Reports                                    | Optional Title to use for the content page                                                                                       |
+| subtitle               | string | View all policy reports from a Kubernetes cluster | Optional Subtitle to use for the content page                                                                                    |
+| policyDocumentationUrl | string | undefined                                         | Optional URL used to generate links to policy documentation. [More information](/README.md#optional-custom-policy-documentation) |
+
+</details>
