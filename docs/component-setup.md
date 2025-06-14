@@ -141,10 +141,10 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
 
 ### Configuration Options
 
-| Prop                   | Type   | Default                 | Description                                                                                                                      |
-| ---------------------- | ------ | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| title                  | string | Policy Reports          | Optional Title to use for the content page                                                                                       |
-| subtitle               | string | View all policy reports | Optional Subtitle to use for the content page                                                                                    |
-| policyDocumentationUrl | string | undefined               | Optional URL used to generate links to policy documentation. [More information](/README.md#optional-custom-policy-documentation) |
+| Prop                   | Type   | Default                                           | Description                                                                                                                      |
+| ---------------------- | ------ | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| title                  | string | Policy Reports                                    | Optional Title to use for the content page                                                                                       |
+| subtitle               | string | View all policy reports from a Kubernetes cluster | Optional Subtitle to use for the content page                                                                                    |
+| policyDocumentationUrl | string | undefined                                         | Optional URL used to generate links to policy documentation. [More information](/README.md#optional-custom-policy-documentation) |
 
 </details>

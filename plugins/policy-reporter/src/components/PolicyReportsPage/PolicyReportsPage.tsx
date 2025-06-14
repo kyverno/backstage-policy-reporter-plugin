@@ -18,7 +18,7 @@ export interface PolicyReportsPageProps {
 
 export const PolicyReportsPage = ({
   title = 'Policy Reports',
-  subtitle = 'View all policy reports across services',
+  subtitle = 'View all policy reports from a Kubernetes cluster',
   policyDocumentationUrl,
 }: PolicyReportsPageProps) => {
   const {
