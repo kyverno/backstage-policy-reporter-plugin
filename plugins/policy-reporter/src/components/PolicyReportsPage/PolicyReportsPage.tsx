@@ -10,7 +10,7 @@ import { SelectEnvironment } from '../SelectEnvironment';
 import { Grid } from '@material-ui/core';
 import { PolicyReportsTable } from '../PolicyReportsTable';
 
-interface EntityPolicyReportsPage {
+export interface PolicyReportsPageProps {
   title?: string;
   policyDocumentationUrl?: string;
   subtitle?: string;
@@ -20,7 +20,7 @@ export const PolicyReportsPage = ({
   title = 'Policy Reports',
   subtitle = 'View all policy reports across services',
   policyDocumentationUrl,
-}: EntityPolicyReportsPage) => {
+}: PolicyReportsPageProps) => {
   const {
     environments,
     environmentsLoading,
@@ -32,7 +32,7 @@ export const PolicyReportsPage = ({
   if (environmentsLoading) return <Progress />;
 
   // Environments missing
-  if (environments === undefined || !currentEnvironment) return undefined; // TODO: display missing kubernetes environments
+  if (environments === undefined || !currentEnvironment) return null; // TODO: display missing kubernetes environments
 
   return (
     <Page themeId="tool">
