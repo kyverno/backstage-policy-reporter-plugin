@@ -30,3 +30,21 @@ spec:
   type: database
   owner: user:guest
 ---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: policy-reporter
+  description: Policy-Reporter
+  annotations:
+    github.com/project-slug: kyverno/policy-reporter
+    kyverno.io/namespace: kyverno
+    kyverno.io/kind: Deployment,Pod
+    kyverno.io/resource-name: kyverno-background-controller
+spec:
+  type: service
+  lifecycle: production
+  owner: user:guest
+  dependsOn:
+    - resource:default/dev
+    - resource:default/test
+    - resource:default/database
