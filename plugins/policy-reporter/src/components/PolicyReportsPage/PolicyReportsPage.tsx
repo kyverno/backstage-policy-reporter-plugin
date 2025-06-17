@@ -9,6 +9,9 @@ import { useEnvironments } from '../../hooks/useEnvironments';
 import { SelectEnvironment } from '../SelectEnvironment';
 import { Grid } from '@material-ui/core';
 import { PolicyReportsTable } from '../PolicyReportsTable';
+import { useState } from 'react';
+import { Status } from '@kyverno/backstage-plugin-policy-reporter-common';
+import { SelectStatus } from '../SelectStatus';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -28,6 +31,8 @@ export const PolicyReportsPage = ({
     currentEnvironment,
   } = useEnvironments();
 
+  const [status, setStatus] = useState<Status[]>(['fail']);
+
   // Fetching environments
   if (environmentsLoading) return <Progress />;
 
@@ -39,6 +44,7 @@ export const PolicyReportsPage = ({
       <Header title={title} subtitle={subtitle} />
       <Content>
         <ContentHeader>
+          <SelectStatus currentStatus={status} setStatus={setStatus} />
           <SelectEnvironment
             environments={environments}
             currentEnvironment={currentEnvironment}
@@ -50,33 +56,12 @@ export const PolicyReportsPage = ({
             <PolicyReportsTable
               currentEnvironment={currentEnvironment}
               filter={{
-                status: ['fail', 'warn', 'error'],
+                status: status,
               }}
-              title="Failing Policy Results"
-              emptyContentText="No failing policies"
+              title="Policy Results"
+              emptyContentText="No policies found"
               policyDocumentationUrl={policyDocumentationUrl}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <PolicyReportsTable
-              currentEnvironment={currentEnvironment}
-              filter={{
-                status: ['pass'],
-              }}
-              title="Passing Policy Results"
-              emptyContentText="No passing policies"
-              policyDocumentationUrl={policyDocumentationUrl}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <PolicyReportsTable
-              currentEnvironment={currentEnvironment}
-              filter={{
-                status: ['skip'],
-              }}
-              title="Skipped Policy Results"
-              emptyContentText="No skipped policies"
-              policyDocumentationUrl={policyDocumentationUrl}
+              pagination={{ offset: 25 }}
             />
           </Grid>
         </Grid>
