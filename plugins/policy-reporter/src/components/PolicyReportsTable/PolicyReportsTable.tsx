@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react';
 import {
   Filter,
   ListResult,
+  Pagination,
 } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Drawer, makeStyles } from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
@@ -24,6 +25,8 @@ interface PolicyReportsTableProps {
   emptyContentText: string;
   policyDocumentationUrl?: string;
   enableSearch?: boolean;
+  pagination?: Partial<Pagination>;
+  pageSizeOptions?: number[];
 }
 
 export const PolicyReportsTable = ({
@@ -33,6 +36,8 @@ export const PolicyReportsTable = ({
   filter,
   policyDocumentationUrl,
   enableSearch,
+  pagination,
+  pageSizeOptions,
 }: PolicyReportsTableProps) => {
   const useStyles = makeStyles(theme => ({
     empty: {
@@ -119,10 +124,11 @@ export const PolicyReportsTable = ({
     policies,
     policiesError,
     currentPage,
+    currentOffset,
     setCurrentPage,
     setCurrentOffset,
     initialLoading,
-  } = usePaginatedPolicies(currentEnvironment, mergedFilter);
+  } = usePaginatedPolicies(currentEnvironment, mergedFilter, pagination);
 
   if (policiesError) return <ResponseErrorPanel error={policiesError} />;
 
@@ -152,6 +158,8 @@ export const PolicyReportsTable = ({
           sorting: true,
           padding: 'dense',
           search: enableSearch,
+          pageSize: currentOffset,
+          pageSizeOptions: pageSizeOptions,
         }}
         onRowClick={(
           event?: React.MouseEvent<Element, MouseEvent>,
