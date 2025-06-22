@@ -10,8 +10,12 @@ import { SelectEnvironment } from '../SelectEnvironment';
 import { Grid } from '@material-ui/core';
 import { PolicyReportsTable } from '../PolicyReportsTable';
 import { useState } from 'react';
-import { Status } from '@kyverno/backstage-plugin-policy-reporter-common';
+import {
+  Severity,
+  Status,
+} from '@kyverno/backstage-plugin-policy-reporter-common';
 import { SelectStatus } from '../SelectStatus';
+import { SelectSeverity } from '../SelectSeverity';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -32,6 +36,7 @@ export const PolicyReportsPage = ({
   } = useEnvironments();
 
   const [status, setStatus] = useState<Status[]>(['fail']);
+  const [severity, setSeverity] = useState<Severity[]>([]);
 
   // Fetching environments
   if (environmentsLoading) return <Progress />;
@@ -45,6 +50,10 @@ export const PolicyReportsPage = ({
       <Content>
         <ContentHeader>
           <SelectStatus currentStatus={status} setStatus={setStatus} />
+          <SelectSeverity
+            currentSeverity={severity}
+            setSeverity={setSeverity}
+          />
           <SelectEnvironment
             environments={environments}
             currentEnvironment={currentEnvironment}
@@ -57,6 +66,7 @@ export const PolicyReportsPage = ({
               currentEnvironment={currentEnvironment}
               filter={{
                 status: status,
+                severities: severity,
               }}
               title="Policy Results"
               emptyContentText="No policies found"

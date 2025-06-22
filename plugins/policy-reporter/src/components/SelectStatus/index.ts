@@ -1,1 +1,1 @@
-export { SelectStatus } from './SelectStatus';
+export { SelectStatus, type SelectStatusProps } from './SelectStatus';
