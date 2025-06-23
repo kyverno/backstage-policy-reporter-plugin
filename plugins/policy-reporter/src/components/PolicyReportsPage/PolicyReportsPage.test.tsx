@@ -54,8 +54,6 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
 
     // Assert
     expect(extension.getByText('Policy Reports')).toBeTruthy();
-    expect(extension.getByText('Failing Policy Results')).toBeTruthy();
-    expect(extension.getByText('Passing Policy Results')).toBeTruthy();
-    expect(extension.getByText('Skipped Policy Results')).toBeTruthy();
+    expect(extension.getByText('Policy Results')).toBeTruthy();
   });
 });
