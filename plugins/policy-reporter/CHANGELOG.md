@@ -1,5 +1,15 @@
 # @kyverno/backstage-plugin-policy-reporter
 
+## 2.4.0
+
+### Minor Changes
+
+- 0d6cf4b: Add Status and Severity filter to `PolicyReportsPage` component and updates the UI to now be 1 big table that by default show all failing policies
+
+### Patch Changes
+
+- 0d6cf4b: Update the `PolicyReportsPage` component's exported name to match the documentation. It was previously set to `PolicyReporterPage` by mistake and has now been corrected to `PolicyReportsPage`.
+
 ## 2.3.0
 
 ### Minor Changes
