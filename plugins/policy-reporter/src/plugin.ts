@@ -44,9 +44,9 @@ export const EntityCustomPoliciesContent = policyReporterPlugin.provide(
   }),
 );
 
-export const PolicyReporterPage = policyReporterPlugin.provide(
+export const PolicyReportsPage = policyReporterPlugin.provide(
   createRoutableExtension({
-    name: 'PolicyReporterPage',
+    name: 'PolicyReportsPage',
     component: () =>
       import('./components/PolicyReportsPage').then(m => m.PolicyReportsPage),
     mountPoint: rootRouteRef,

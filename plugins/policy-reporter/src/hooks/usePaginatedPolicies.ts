@@ -1,5 +1,8 @@
 import { useAsync } from 'react-use';
-import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
+import {
+  Environment,
+  Pagination,
+} from '@kyverno/backstage-plugin-policy-reporter-common';
 import { useApi } from '@backstage/core-plugin-api';
 import { policyReporterApiRef } from '../api';
 import {
@@ -14,10 +17,15 @@ const DEFAULT_PAGE = 0;
 export const usePaginatedPolicies = (
   currentEnvironment: Environment,
   filter: Filter,
+  pagination?: Partial<Pagination>,
 ) => {
   const policyReporterApi = useApi(policyReporterApiRef);
-  const [currentPage, setCurrentPage] = useState<number>(DEFAULT_PAGE);
-  const [currentOffset, setCurrentOffset] = useState<number>(DEFAULT_OFFSET);
+  const [currentPage, setCurrentPage] = useState<number>(
+    pagination?.page ?? DEFAULT_PAGE,
+  );
+  const [currentOffset, setCurrentOffset] = useState<number>(
+    pagination?.offset ?? DEFAULT_OFFSET,
+  );
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
 
   useEffect(() => {

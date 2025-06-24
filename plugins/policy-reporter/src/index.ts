@@ -2,5 +2,5 @@ export {
   policyReporterPlugin,
   EntityKyvernoPoliciesContent,
   EntityCustomPoliciesContent,
-  PolicyReporterPage,
+  PolicyReportsPage,
 } from './plugin';
