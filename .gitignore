@@ -83,3 +83,4 @@ dist-types
 !.yarn/sdks
 !.yarn/versions
 
+/coverage

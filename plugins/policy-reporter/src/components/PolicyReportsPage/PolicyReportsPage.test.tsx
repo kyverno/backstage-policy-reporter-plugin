@@ -12,8 +12,6 @@ const mockCatalogApiRef = {
 };
 
 describe('EntityKyvernoPolicyReportsContent component', () => {
-  // TODO: This should be changed when a missing kubernetes-cluster component is implemented
-  // For now, we just validate that the component does not render
   it('should not render when kubernetes-cluster resources are missing', async () => {
     // Act
     const extension = await renderInTestApp(
@@ -28,10 +26,11 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
     );
 
     // Assert
+    expect(
+      extension.getByText('No kubernetes-cluster Resources found'),
+    ).toBeTruthy();
 
-    expect(() => {
-      extension.getByText('Policy Reports');
-    }).toThrow();
+    expect(extension.getByText('Policy Reports')).toBeTruthy();
   });
 
   it('should render PolicyReportsTable if environments are valid', async () => {
