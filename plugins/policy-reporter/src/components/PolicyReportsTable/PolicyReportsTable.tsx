@@ -16,7 +16,7 @@ import { SeverityComponent } from '../SeverityComponent';
 import Launch from '@material-ui/icons/Launch';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { usePaginatedPolicies } from '../../hooks/usePaginatedPolicies';
-import { PolicyReportsDrawerComponent } from '../PolicyReportsDrawerComponent/PolicyReportsDrawerComponent';
+import { PolicyReportsDrawerComponent } from '../PolicyReportsDrawerComponent';
 
 interface PolicyReportsTableProps {
   currentEnvironment: Environment;
