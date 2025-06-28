@@ -1,10 +1,7 @@
 import { Navigate, Route } from 'react-router-dom';
-import { apiDocsPlugin, ApiExplorerPage } from '@backstage/plugin-api-docs';
+import { apiDocsPlugin } from '@backstage/plugin-api-docs';
 import { CatalogEntityPage, CatalogIndexPage } from '@backstage/plugin-catalog';
-import {
-  CatalogImportPage,
-  catalogImportPlugin,
-} from '@backstage/plugin-catalog-import';
+import { catalogImportPlugin } from '@backstage/plugin-catalog-import';
 import { UserSettingsPage } from '@backstage/plugin-user-settings';
 import { apis } from './apis';
 import { entityPage } from './components/catalog/EntityPage';
@@ -18,8 +15,6 @@ import {
 import { createApp } from '@backstage/app-defaults';
 import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
-import { RequirePermission } from '@backstage/plugin-permission-react';
-import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
 import { PolicyReportsPage } from '@kyverno/backstage-plugin-policy-reporter';
 
 const app = createApp({
