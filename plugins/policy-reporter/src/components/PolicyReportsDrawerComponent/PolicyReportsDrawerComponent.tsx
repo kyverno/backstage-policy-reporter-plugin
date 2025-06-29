@@ -9,6 +9,7 @@ import {
   Box,
   Paper,
   makeStyles,
+  GridProps,
 } from '@material-ui/core';
 import { SeverityComponent } from '../SeverityComponent';
 import { StatusComponent } from '../StatusComponent';
@@ -64,6 +65,33 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+interface GridItemProps extends GridProps {
+  label: string;
+  value: string | React.ReactNode;
+}
+
+const GridItem = ({ label, value, ...gridProps }: GridItemProps) => {
+  const classes = useStyles();
+  const isString = typeof value === 'string';
+
+  return (
+    <Grid item {...gridProps}>
+      <Box className={classes.propertyContainer}>
+        <Typography variant="body2" className={classes.propertyLabel}>
+          {label}
+        </Typography>
+        <Typography
+          variant="body2"
+          className={classes.propertyValue}
+          component={isString ? 'p' : 'div'}
+        >
+          {value}
+        </Typography>
+      </Box>
+    </Grid>
+  );
+};
+
 export const PolicyReportsDrawerComponent = ({
   content,
 }: PolicyReportsDrawerProps) => {
@@ -93,66 +121,16 @@ export const PolicyReportsDrawerComponent = ({
           General Information
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Box className={classes.propertyContainer}>
-              <Typography variant="body2" className={classes.propertyLabel}>
-                ID
-              </Typography>
-              <Typography variant="body2" className={classes.propertyValue}>
-                {content.id}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box className={classes.propertyContainer}>
-              <Typography variant="body2" className={classes.propertyLabel}>
-                Name
-              </Typography>
-              <Typography variant="body2" className={classes.propertyValue}>
-                {content.name}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box className={classes.propertyContainer}>
-              <Typography variant="body2" className={classes.propertyLabel}>
-                Namespace
-              </Typography>
-              <Typography variant="body2" className={classes.propertyValue}>
-                {content.namespace}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box className={classes.propertyContainer}>
-              <Typography variant="body2" className={classes.propertyLabel}>
-                Kind
-              </Typography>
-              <Typography variant="body2" className={classes.propertyValue}>
-                {content.kind}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box className={classes.propertyContainer}>
-              <Typography variant="body2" className={classes.propertyLabel}>
-                Resource ID
-              </Typography>
-              <Typography variant="body2" className={classes.propertyValue}>
-                {content.resourceId}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box className={classes.propertyContainer}>
-              <Typography variant="body2" className={classes.propertyLabel}>
-                Timestamp
-              </Typography>
-              <Typography variant="body2" className={classes.propertyValue}>
-                {formattedDate}
-              </Typography>
-            </Box>
-          </Grid>
+          {[
+            { label: 'ID', value: content.id },
+            { label: 'Name', value: content.name },
+            { label: 'Namespace', value: content.namespace },
+            { label: 'Kind', value: content.kind },
+            { label: 'Resource ID', value: content.resourceId },
+            { label: 'Timestamp', value: formattedDate },
+          ].map(({ label, value }, index) => (
+            <GridItem label={label} key={index} value={value} xs={12} md={6} />
+          ))}
         </Grid>
 
         <Divider className={classes.divider} />
@@ -162,22 +140,18 @@ export const PolicyReportsDrawerComponent = ({
           Status Information
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Box className={classes.propertyContainer}>
-              <Typography variant="body2" className={classes.propertyLabel}>
-                Status
-              </Typography>
-              <StatusComponent status={content.status} />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box className={classes.propertyContainer}>
-              <Typography variant="body2" className={classes.propertyLabel}>
-                Severity
-              </Typography>
-              <SeverityComponent severity={content.severity} />
-            </Box>
-          </Grid>
+          <GridItem
+            label="Status"
+            value={<StatusComponent status={content.status} />}
+            xs={12}
+            md={6}
+          />
+          <GridItem
+            label="Severity"
+            value={<SeverityComponent severity={content.severity} />}
+            xs={12}
+            md={6}
+          />
         </Grid>
 
         <Divider className={classes.divider} />
@@ -187,26 +161,8 @@ export const PolicyReportsDrawerComponent = ({
           Policy Information
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Box className={classes.propertyContainer}>
-              <Typography variant="body2" className={classes.propertyLabel}>
-                Policy
-              </Typography>
-              <Typography variant="body2" className={classes.propertyValue}>
-                {content.policy}
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12}>
-            <Box className={classes.propertyContainer}>
-              <Typography variant="body2" className={classes.propertyLabel}>
-                Rule
-              </Typography>
-              <Typography variant="body2" className={classes.propertyValue}>
-                {content.rule}
-              </Typography>
-            </Box>
-          </Grid>
+          <GridItem label="Policy" value={content.policy} xs={12} />
+          <GridItem label="Rule" value={content.rule} xs={12} />
         </Grid>
 
         <Divider className={classes.divider} />

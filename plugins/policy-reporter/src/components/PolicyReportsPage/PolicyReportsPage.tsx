@@ -1,13 +1,15 @@
 import {
   Content,
   ContentHeader,
+  EmptyState,
   Header,
+  Link,
   Page,
   Progress,
 } from '@backstage/core-components';
 import { useEnvironments } from '../../hooks/useEnvironments';
 import { SelectEnvironment } from '../SelectEnvironment';
-import { Grid } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import { PolicyReportsTable } from '../PolicyReportsTable';
 import { useState } from 'react';
 import {
@@ -42,7 +44,36 @@ export const PolicyReportsPage = ({
   if (environmentsLoading) return <Progress />;
 
   // Environments missing
-  if (environments === undefined || !currentEnvironment) return null; // TODO: display missing kubernetes environments
+  if (environments === undefined || !currentEnvironment)
+    return (
+      <Page themeId="tool">
+        <Header title={title} subtitle={subtitle} />
+        <Content>
+          <EmptyState
+            missing="content"
+            title="No kubernetes-cluster Resources found"
+            description={
+              <>
+                You need to define a Resource with the kubernetes-cluster type
+                and a<code> kyverno.io/endpoint </code> annotation for this
+                plugin to work.
+              </>
+            }
+            action={
+              <>
+                <Button
+                  color="primary"
+                  component={Link}
+                  to="https://github.com/kyverno/backstage-policy-reporter-plugin"
+                >
+                  Read More
+                </Button>
+              </>
+            }
+          />
+        </Content>
+      </Page>
+    );
 
   return (
     <Page themeId="tool">
