@@ -1,5 +1,11 @@
 # @kyverno/backstage-plugin-policy-reporter
 
+## 2.4.1
+
+### Patch Changes
+
+- 3390a1d: Add missing environment component to the `PolicyReportsPage`, which is now shown when no `kubernetes-cluster` Resources with the `kyverno.io/endpoint` annotation are defined.
+
 ## 2.4.0
 
 ### Minor Changes
