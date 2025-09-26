@@ -7,6 +7,10 @@ export const KYVERNO_KIND_ANNOTATION = 'kyverno.io/kind';
 // The namespace of the resource to display policies
 export const KYVERNO_NAMESPACE_ANNOTATION = 'kyverno.io/namespace';
 
+// The namespace of the resource to display policies
+export const KUBERNETES_NAMESPACE_ANNOTATION =
+  'backstage.io/kubernetes-namespace';
+
 // The endpoint for the Policy Reporter API
 // EXAMPLE: https://kyverno.io/policy-reporter/api/
 export const KYVERNO_ENDPOINT_ANNOTATION = 'kyverno.io/endpoint';
