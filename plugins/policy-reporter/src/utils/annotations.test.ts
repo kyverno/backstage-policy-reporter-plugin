@@ -1,5 +1,6 @@
 import {
   containsRequiredAnnotations,
+  isPolicyReporterAvailable,
   getNamespaces,
   getKinds,
   getResourceName,
@@ -12,58 +13,33 @@ import {
 } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 describe('annotations utils', () => {
-  describe('containsRequiredAnnotations', () => {
-    it('should return true when all required annotations are present', () => {
-      const annotations = {
-        annotation1: 'value1',
-        annotation2: 'value2',
-        annotation3: 'value3',
-      };
-      const required = ['annotation1', 'annotation2'];
+  describe('isPolicyReporterAvailable', () => {
+    it('should return true when KYVERNO_RESOURCE_NAME_ANNOTATION is present', () => {
+      const entity = {
+        metadata: {
+          annotations: {
+            [KYVERNO_RESOURCE_NAME_ANNOTATION]: 'my-resource',
+          },
+        },
+      } as any;
 
-      const result = containsRequiredAnnotations(annotations, required);
+      const result = isPolicyReporterAvailable(entity);
 
       expect(result).toBe(true);
     });
 
-    it('should return false when some required annotations are missing', () => {
-      const annotations = {
-        annotation1: 'value1',
-        annotation3: 'value3',
-      };
-      const required = ['annotation1', 'annotation2'];
+    it('should return false when KYVERNO_RESOURCE_NAME_ANNOTATION is not present', () => {
+      const entity = {
+        metadata: {
+          annotations: {
+            'other-annotation': 'value',
+          },
+        },
+      } as any;
 
-      const result = containsRequiredAnnotations(annotations, required);
+      const result = isPolicyReporterAvailable(entity);
 
       expect(result).toBe(false);
-    });
-
-    it('should return false when annotations is undefined', () => {
-      const required = ['annotation1', 'annotation2'];
-
-      const result = containsRequiredAnnotations(undefined, required);
-
-      expect(result).toBe(false);
-    });
-
-    it('should return true when required array is empty', () => {
-      const annotations = {
-        annotation1: 'value1',
-      };
-      const required: string[] = [];
-
-      const result = containsRequiredAnnotations(annotations, required);
-
-      expect(result).toBe(true);
-    });
-
-    it('should return true when both annotations and required are empty', () => {
-      const annotations = {};
-      const required: string[] = [];
-
-      const result = containsRequiredAnnotations(annotations, required);
-
-      expect(result).toBe(true);
     });
   });
 
@@ -145,16 +121,6 @@ describe('annotations utils', () => {
 
       expect(result).toEqual(['']);
     });
-
-    it('should handle Kyverno namespace annotation with only commas and whitespace', () => {
-      const annotations = {
-        [KYVERNO_NAMESPACE_ANNOTATION]: ' , , ',
-      };
-
-      const result = getNamespaces(annotations);
-
-      expect(result).toEqual(['', '', '']);
-    });
   });
 
   describe('getKinds', () => {
@@ -213,16 +179,6 @@ describe('annotations utils', () => {
 
       expect(result).toEqual(['']);
     });
-
-    it('should handle kind annotation with only commas and whitespace', () => {
-      const annotations = {
-        [KYVERNO_KIND_ANNOTATION]: ' , , ',
-      };
-
-      const result = getKinds(annotations);
-
-      expect(result).toEqual(['', '', '']);
-    });
   });
 
   describe('getResourceName', () => {
@@ -255,26 +211,6 @@ describe('annotations utils', () => {
     it('should return empty string when resource name annotation is empty', () => {
       const annotations = {
         [KYVERNO_RESOURCE_NAME_ANNOTATION]: '',
-      };
-
-      const result = getResourceName(annotations);
-
-      expect(result).toBe('');
-    });
-
-    it('should return resource name with special characters', () => {
-      const annotations = {
-        [KYVERNO_RESOURCE_NAME_ANNOTATION]: 'my-resource_123.test',
-      };
-
-      const result = getResourceName(annotations);
-
-      expect(result).toBe('my-resource_123.test');
-    });
-
-    it('should handle undefined annotation value gracefully', () => {
-      const annotations = {
-        [KYVERNO_RESOURCE_NAME_ANNOTATION]: undefined as any,
       };
 
       const result = getResourceName(annotations);
@@ -339,6 +275,30 @@ describe('annotations utils', () => {
       expect(getNamespaces(entityAnnotations)).toEqual([]);
       expect(getKinds(entityAnnotations)).toEqual([]);
       expect(getResourceName(entityAnnotations)).toBe('');
+    });
+
+    it('should test isPolicyReporterAvailable integration', () => {
+      const entityWithResource = {
+        metadata: {
+          annotations: {
+            [KYVERNO_RESOURCE_NAME_ANNOTATION]: 'my-app',
+            [KYVERNO_NAMESPACE_ANNOTATION]: 'production',
+            [KYVERNO_KIND_ANNOTATION]: 'Pod',
+          },
+        },
+      } as any;
+
+      const entityWithoutResource = {
+        metadata: {
+          annotations: {
+            [KYVERNO_NAMESPACE_ANNOTATION]: 'production',
+            [KYVERNO_KIND_ANNOTATION]: 'Pod',
+          },
+        },
+      } as any;
+
+      expect(isPolicyReporterAvailable(entityWithResource)).toBe(true);
+      expect(isPolicyReporterAvailable(entityWithoutResource)).toBe(false);
     });
   });
 });

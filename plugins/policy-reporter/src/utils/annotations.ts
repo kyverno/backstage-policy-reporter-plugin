@@ -1,3 +1,4 @@
+import { Entity } from '@backstage/catalog-model';
 import {
   KYVERNO_KIND_ANNOTATION,
   KYVERNO_NAMESPACE_ANNOTATION,
@@ -22,6 +23,14 @@ export const containsRequiredAnnotations = (
 ): boolean => {
   return annotations ? required.every(key => key in annotations) : false;
 };
+
+/**
+ * Validates that an entity has configured policy reporter
+ * @param entity - The the Backstage entity
+ * @returns true if policy reporter is configured.
+ */
+export const isPolicyReporterAvailable = (entity: Entity) =>
+  Boolean(entity.metadata.annotations?.[KYVERNO_RESOURCE_NAME_ANNOTATION]);
 
 /**
  * Extracts namespace values from annotations, supporting both Kyverno and Kubernetes formats
