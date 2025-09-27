@@ -38,10 +38,8 @@ export const usePaginatedPolicies = (
     error: policiesError,
   } = useAsync(async (): Promise<ResultList> => {
     const data = await policyReporterApi.getNamespacedResults({
-      path: {
-        environment: encodeURI(currentEnvironment.entityRef),
-      },
       query: {
+        environment: encodeURI(currentEnvironment.entityRef),
         ...filter,
         // Material UI expects the first page to be 0. But the Policy Reporter API expects the first page to be 1
         // This increments the currentPage with 1 to match the expected page by the Policy Reporter API

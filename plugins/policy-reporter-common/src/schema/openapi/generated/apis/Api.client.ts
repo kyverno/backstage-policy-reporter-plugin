@@ -34,10 +34,8 @@ export interface RequestOptions {
  * @public
  */
 export type GetNamespacedResults = {
-  path: {
-    environment: string;
-  };
   query: {
+    environment: string;
     sources?: Array<string>;
     namespaces?: Array<string>;
     kinds?: Array<string>;
@@ -94,10 +92,9 @@ export class DefaultApiClient {
   ): Promise<TypedResponse<ResultList>> {
     const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
 
-    const uriTemplate = `/namespaced-resources/{environment}/results{?sources*,namespaces*,kinds*,resources*,categories*,policies*,status*,severities*,search,labels*,page,offset,direction}`;
+    const uriTemplate = `/namespaced-resources/results{?environment,sources*,namespaces*,kinds*,resources*,categories*,policies*,status*,severities*,search,labels*,page,offset,direction}`;
 
     const uri = parser.parse(uriTemplate).expand({
-      environment: request.path.environment,
       ...request.query,
     });
 

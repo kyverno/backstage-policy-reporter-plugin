@@ -14,10 +14,8 @@ import { Status } from '../models/Status.model';
  * @public
  */
 export type GetNamespacedResults = {
-  path: {
-    environment: string;
-  };
   query: {
+    environment: string;
     sources?: Array<string>;
     namespaces?: Array<string>;
     kinds?: Array<string>;
@@ -36,5 +34,5 @@ export type GetNamespacedResults = {
 };
 
 export type EndpointMap = {
-  '#get|/namespaced-resources/{environment}/results': GetNamespacedResults;
+  '#get|/namespaced-resources/results': GetNamespacedResults;
 };

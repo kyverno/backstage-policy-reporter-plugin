@@ -5,14 +5,14 @@ info:
   version: 1.0.0
 
 paths:
-  /namespaced-resources/{environment}/results:
+  /namespaced-resources/results:
     get:
       summary: Get namespaced policy results
       description: Retrieves policy results for a specific environment with optional filtering and pagination
       operationId: getNamespacedResults
       parameters:
         - name: environment
-          in: path
+          in: query
           required: true
           description: The environment entity reference (URL encoded)
           schema:

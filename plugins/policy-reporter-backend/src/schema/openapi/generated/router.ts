@@ -14,7 +14,7 @@ export const spec = {
     version: '1.0.0',
   },
   paths: {
-    '/namespaced-resources/{environment}/results': {
+    '/namespaced-resources/results': {
       get: {
         summary: 'Get namespaced policy results',
         description:
@@ -23,7 +23,7 @@ export const spec = {
         parameters: [
           {
             name: 'environment',
-            in: 'path',
+            in: 'query',
             required: true,
             description: 'The environment entity reference (URL encoded)',
             schema: {
