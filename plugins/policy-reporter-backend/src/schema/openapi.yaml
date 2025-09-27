@@ -136,13 +136,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/RequestError'
         '500':
           description: Internal server error - failed to fetch policies
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/RequestError'
 
 components:
   schemas:
@@ -320,7 +320,7 @@ components:
             type: string
           description: Additional key-value properties
 
-    Error:
+    RequestError:
       type: object
       required:
         - error

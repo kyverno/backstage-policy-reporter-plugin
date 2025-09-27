@@ -203,7 +203,7 @@ export const spec = {
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Error',
+                  $ref: '#/components/schemas/RequestError',
                 },
               },
             },
@@ -213,7 +213,7 @@ export const spec = {
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Error',
+                  $ref: '#/components/schemas/RequestError',
                 },
               },
             },
@@ -427,7 +427,7 @@ export const spec = {
           },
         },
       },
-      Error: {
+      RequestError: {
         type: 'object',
         required: ['error'],
         properties: {

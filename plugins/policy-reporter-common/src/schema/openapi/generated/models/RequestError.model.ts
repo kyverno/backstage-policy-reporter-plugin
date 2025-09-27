@@ -7,7 +7,7 @@
 /**
  * @public
  */
-export interface ModelError {
+export interface RequestError {
   /**
    * Error message
    */
