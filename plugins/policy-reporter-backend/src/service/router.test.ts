@@ -78,7 +78,7 @@ describe('createRouter', () => {
   describe('token', () => {
     it('Should return 400 if entity is missing kyverno.io/endpoint annotation', async () => {
       const response = await request(app).get(
-        `/namespaced-resources/resource%3Adefault%2Fdev/results`,
+        `/namespaced-resources/results?environment=resource%3Adefault%2Fdev`,
       );
 
       expect(response.status).toBe(400);
@@ -91,7 +91,7 @@ describe('createRouter', () => {
 
     it('Should return 400 if valid entity is not a kubernetes-cluster', async () => {
       const response = await request(app).get(
-        `/namespaced-resources/valid%3Aentity%2Fref/results`,
+        `/namespaced-resources/results?environment=valid%3Aentity%2Fref`,
       );
 
       expect(response.status).toBe(400);
@@ -102,7 +102,7 @@ describe('createRouter', () => {
 
     it('Should return 200 and valid response when entity is valid', async () => {
       const response = await request(app).get(
-        `/namespaced-resources/resource%3Adefault%2Fprod/results`,
+        `/namespaced-resources/results?environment=resource%3Adefault%2Fprod`,
       );
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual({

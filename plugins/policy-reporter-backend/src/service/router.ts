@@ -65,7 +65,7 @@ export async function createRouter(
 
     if (!policyResponse.ok) {
       return response.status(500).json({
-        error: `Failed to fetch policies: ${policyResponse.statusText}`,
+        error: `Failed to fetch policies ${policyResponse.status} ${policyResponse.statusText}`,
       });
     }
 
