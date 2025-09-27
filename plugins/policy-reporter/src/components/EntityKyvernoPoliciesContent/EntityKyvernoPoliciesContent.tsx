@@ -12,16 +12,14 @@ import { Grid } from '@material-ui/core';
 import { PolicyReportsTable } from '../PolicyReportsTable';
 import { SelectEnvironment } from '../SelectEnvironment';
 import {
-  containsRequiredAnnotations,
-  annotationsRequired,
+  getKinds,
+  getNamespaces,
+  getResourceName,
+  isPolicyReporterAvailable,
 } from '../../utils/annotations';
 import { MissingEnvironmentsEmptyState } from '../MissingEnvironmentsEmptyState';
 import { useEntityEnvironment } from '../../hooks/useEntityEnvironment';
-import {
-  KYVERNO_KIND_ANNOTATION,
-  KYVERNO_NAMESPACE_ANNOTATION,
-  KYVERNO_RESOURCE_NAME_ANNOTATION,
-} from '@kyverno/backstage-plugin-policy-reporter-common';
+import { KYVERNO_RESOURCE_NAME_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 type KyvernoPoliciesContentProps = {
   annotationsDocumentationUrl?: string;
@@ -46,7 +44,7 @@ export const EntityKyvernoPoliciesContent = ({
   const annotations = entity.metadata.annotations;
 
   // Boolean variable to validate that entity have required annotations
-  const annotationsState: boolean = containsRequiredAnnotations(annotations);
+  const annotationsState = isPolicyReporterAvailable(entity);
 
   const {
     environments,
@@ -61,7 +59,7 @@ export const EntityKyvernoPoliciesContent = ({
       <PageContent>
         <MissingAnnotationEmptyState
           readMoreUrl={annotationsDocumentationUrl}
-          annotation={annotationsRequired}
+          annotation={KYVERNO_RESOURCE_NAME_ANNOTATION}
         />
       </PageContent>
     );
@@ -77,9 +75,9 @@ export const EntityKyvernoPoliciesContent = ({
       </PageContent>
     );
 
-  const namespaces = annotations![KYVERNO_NAMESPACE_ANNOTATION].split(',');
-  const kinds = annotations![KYVERNO_KIND_ANNOTATION].split(',');
-  const resourceName = annotations![KYVERNO_RESOURCE_NAME_ANNOTATION];
+  const namespaces = getNamespaces(annotations);
+  const kinds = getKinds(annotations);
+  const resourceName = getResourceName(annotations);
 
   return (
     <PageContent>
