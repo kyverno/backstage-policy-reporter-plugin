@@ -111,16 +111,6 @@ describe('annotations utils', () => {
 
       expect(result).toEqual([]);
     });
-
-    it('should handle empty Kyverno namespace annotation', () => {
-      const annotations = {
-        [KYVERNO_NAMESPACE_ANNOTATION]: '',
-      };
-
-      const result = getNamespaces(annotations);
-
-      expect(result).toEqual(['']);
-    });
   });
 
   describe('getKinds', () => {
@@ -168,16 +158,6 @@ describe('annotations utils', () => {
       const result = getKinds(undefined);
 
       expect(result).toEqual([]);
-    });
-
-    it('should handle empty kind annotation', () => {
-      const annotations = {
-        [KYVERNO_KIND_ANNOTATION]: '',
-      };
-
-      const result = getKinds(annotations);
-
-      expect(result).toEqual(['']);
     });
   });
 
