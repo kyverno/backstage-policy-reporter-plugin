@@ -1,2 +1,1 @@
-export * from './PolicyReporterApi';
-export * from './PolicyReporterApi';
+export * from './PolicyReporterClient';

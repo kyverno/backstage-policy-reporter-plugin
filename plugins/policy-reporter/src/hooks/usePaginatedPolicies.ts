@@ -37,18 +37,21 @@ export const usePaginatedPolicies = (
     loading: policiesLoading,
     error: policiesError,
   } = useAsync(async (): Promise<ResultList> => {
-    const data = await policyReporterApi.namespacedResults(
-      currentEnvironment.entityRef,
-      filter,
-      {
+    const data = await policyReporterApi.getNamespacedResults({
+      path: {
+        environment: encodeURI(currentEnvironment.entityRef),
+      },
+      query: {
+        ...filter,
         // Material UI expects the first page to be 0. But the Policy Reporter API expects the first page to be 1
         // This increments the currentPage with 1 to match the expected page by the Policy Reporter API
         page: currentPage + 1,
         offset: currentOffset,
       },
-    );
+    });
+
     setInitialLoading(false);
-    return data;
+    return data.json();
   }, [currentEnvironment, filter, currentPage, currentOffset]);
 
   return {
