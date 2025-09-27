@@ -1,14 +1,12 @@
 import { AuthService, RootConfigService } from '@backstage/backend-plugin-api';
 import { LoggerService } from '@backstage/backend-plugin-api';
 import express from 'express';
-import Router from 'express-promise-router';
-import {
-  KYVERNO_ENDPOINT_ANNOTATION,
-  Severity,
-  Status,
-} from '@kyverno/backstage-plugin-policy-reporter-common';
+import { KYVERNO_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { MiddlewareFactory } from '@backstage/backend-defaults/rootHttpRouter';
 import { CatalogService } from '@backstage/plugin-catalog-node';
+import { createOpenApiRouter } from '../schema/openapi';
+
+import * as parser from 'uri-template';
 
 export interface RouterOptions {
   logger: LoggerService;
@@ -25,45 +23,12 @@ export async function createRouter(
 ): Promise<express.Router> {
   const { logger, config, catalogService, authService } = options;
 
-  const router = Router();
+  const router = await createOpenApiRouter();
   router.use(express.json());
 
   router.get(
     '/namespaced-resources/:environment/results',
     async (request, response) => {
-      // Decided to inline for now
-      // Could be refactored to use a generated typed express router from OpenAPI spec
-      type QueryParams = {
-        sources?: string[] | string; // Filter by a list of sources
-        namespaces?: string[] | string; // Filter by a list of namespaces
-        kinds?: string[] | string; // Filter by a list of kinds
-        resources?: string[] | string; // Filter by a list of resources
-        categories?: string[] | string; // Filter by a list of categories
-        policies?: string[] | string; // Filter by a list of policies
-        status?: Status[] | Status; // Filter by a list of status (fail, pass, warn, error, skip)
-        severities?: Severity[] | Severity; // Filter by a list of severities (low, medium, high)
-        search?: string; // Filter by search string
-        labels?: string[] | string; // Filter by polr label-value pairs
-        page?: string; // Requested List Page
-        offset?: string; // Results per Page
-        direction?: 'asc' | 'desc'; // Order of the results
-      };
-
-      const query: QueryParams = request.query;
-
-      // Append query parameters from the request to the external API call
-      const urlParams = new URLSearchParams();
-
-      // Iterate over the query parameters
-      for (const [key, value] of Object.entries(query)) {
-        if (Array.isArray(value)) {
-          // If the value is an array, append each item as a string
-          value.forEach(val => urlParams.append(key, val));
-        } else if (value) {
-          urlParams.append(key, value);
-        }
-      }
-
       // Get entityRef from params.
       const entityRef = decodeURIComponent(request.params.environment);
 
@@ -84,10 +49,20 @@ export async function createRouter(
           .status(400)
           .json({ error: `Entity missing 'kyverno.io/endpoint' annotation` });
 
+      const uriTemplate = `v1/namespaced-resources/results{?sources*,namespaces*,kinds*,resources*,categories*,policies*,status*,severities*,search,labels*,page,offset,direction}`;
+
+      const uri = parser.parse(uriTemplate).expand({
+        ...request.query,
+      });
+
       const policyResponse = await fetch(
-        `${ensureTrailingSlash(
-          kyvernoEndpoint,
-        )}v1/namespaced-resources/results?${urlParams.toString()}`,
+        `${ensureTrailingSlash(kyvernoEndpoint)}${uri}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+        },
       );
 
       if (!policyResponse.ok) {
