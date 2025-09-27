@@ -1,0 +1,330 @@
+openapi: 3.0.3
+info:
+  title: policy-reporter
+  description: Backend API for the Backstage Policy Reporter plugin
+  version: 1.0.0
+
+paths:
+  /namespaced-resources/{environment}/results:
+    get:
+      summary: Get namespaced policy results
+      description: Retrieves policy results for a specific environment with optional filtering and pagination
+      operationId: getNamespacedResults
+      parameters:
+        - name: environment
+          in: path
+          required: true
+          description: The environment entity reference (URL encoded)
+          schema:
+            type: string
+            example: 'default/component/my-service'
+        - name: sources
+          in: query
+          description: Filter by a list of sources
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: namespaces
+          in: query
+          description: Filter by a list of namespaces
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: kinds
+          in: query
+          description: Filter by a list of Kubernetes resource kinds
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: resources
+          in: query
+          description: Filter by a list of resources
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: categories
+          in: query
+          description: Filter by a list of categories
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: policies
+          in: query
+          description: Filter by a list of policies
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: status
+          in: query
+          description: Filter by policy result status
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Status'
+          style: form
+          explode: true
+        - name: severities
+          in: query
+          description: Filter by severity levels
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Severity'
+          style: form
+          explode: true
+        - name: search
+          in: query
+          description: Search string to filter results
+          schema:
+            type: string
+        - name: labels
+          in: query
+          description: Filter by label-value pairs
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: page
+          in: query
+          description: Requested list page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: offset
+          in: query
+          description: Number of results per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: direction
+          in: query
+          description: Sort direction for results
+          schema:
+            $ref: '#/components/schemas/Direction'
+      responses:
+        '200':
+          description: Policy results retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultList'
+        '400':
+          description: Bad request - invalid entityRef or missing annotation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error - failed to fetch policies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Status:
+      type: string
+      enum:
+        - fail
+        - skip
+        - pass
+        - warn
+        - error
+        - summary
+      description: Policy result status
+
+    Severity:
+      type: string
+      enum:
+        - unknown
+        - info
+        - low
+        - medium
+        - high
+        - critical
+      description: Policy result severity level
+
+    Direction:
+      type: string
+      enum:
+        - asc
+        - desc
+      description: Sort direction
+
+    Filter:
+      type: object
+      description: Filter options for policy results
+      properties:
+        sources:
+          type: array
+          items:
+            type: string
+          description: Filter by a list of sources
+        namespaces:
+          type: array
+          items:
+            type: string
+          description: Filter by a list of namespaces
+        kinds:
+          type: array
+          items:
+            type: string
+          description: Filter by a list of kinds
+        resources:
+          type: array
+          items:
+            type: string
+          description: Filter by a list of resources
+        categories:
+          type: array
+          items:
+            type: string
+          description: Filter by a list of categories
+        policies:
+          type: array
+          items:
+            type: string
+          description: Filter by a list of policies
+        status:
+          type: array
+          items:
+            $ref: '#/components/schemas/Status'
+          description: Filter by a list of status
+        severities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Severity'
+          description: Filter by a list of severities
+        search:
+          type: string
+          description: Filter by search string
+        labels:
+          type: array
+          items:
+            type: string
+          description: Filter by label-value pairs
+
+    Pagination:
+      type: object
+      description: Pagination options for results
+      properties:
+        page:
+          type: integer
+          minimum: 1
+          default: 1
+          description: Requested list page number
+        offset:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Number of results per page
+        sortBy:
+          type: array
+          items:
+            type: string
+          description: Fields to sort by
+        direction:
+          $ref: '#/components/schemas/Direction'
+          description: Sort direction for results
+
+    ResultList:
+      type: object
+      required:
+        - items
+        - count
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListResult'
+        count:
+          type: integer
+          description: Total number of results
+
+    ListResult:
+      type: object
+      required:
+        - id
+        - namespace
+        - kind
+        - name
+        - resourceId
+        - message
+        - policy
+        - rule
+        - status
+        - severity
+        - timestamp
+        - properties
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the result
+        namespace:
+          type: string
+          description: Kubernetes namespace
+        kind:
+          type: string
+          description: Kubernetes resource kind
+        name:
+          type: string
+          description: Resource name
+        resourceId:
+          type: string
+          description: Unique resource identifier
+        message:
+          type: string
+          description: Policy result message
+        policy:
+          type: string
+          description: Policy name
+        rule:
+          type: string
+          description: Policy rule name
+        status:
+          $ref: '#/components/schemas/Status'
+        severity:
+          $ref: '#/components/schemas/Severity'
+        timestamp:
+          type: integer
+          format: int64
+          description: Unix timestamp of the result
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+          description: Additional key-value properties
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
