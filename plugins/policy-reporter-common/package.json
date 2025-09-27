@@ -44,5 +44,9 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "cross-fetch": "^4.1.0",
+    "uri-template": "^2.0.0"
+  }
 }
