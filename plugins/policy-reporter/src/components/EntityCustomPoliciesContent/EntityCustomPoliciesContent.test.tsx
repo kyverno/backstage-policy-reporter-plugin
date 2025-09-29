@@ -4,8 +4,18 @@ import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
 import { EntityCustomPoliciesContent } from './EntityCustomPoliciesContent';
 import { EntityProvider, catalogApiRef } from '@backstage/plugin-catalog-react';
 
+const mockGetNamespacedResults = jest.fn().mockResolvedValue({
+  json: jest.fn().mockResolvedValue({
+    items: [],
+    count: 0,
+    page: 1,
+    offset: 5,
+    total: 0,
+  }),
+});
+
 const mockPolicyReportApiRef = {
-  namespacedResults: jest.fn(),
+  getNamespacedResults: mockGetNamespacedResults,
 };
 
 const mockCatalogApiRef = {

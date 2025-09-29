@@ -4,15 +4,25 @@ import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
 import { PolicyReportsTable } from './PolicyReportsTable';
 import { policyReporterApiRef } from '../../api';
 
+const mockGetNamespacedResults = jest.fn().mockResolvedValue({
+  json: jest.fn().mockResolvedValue({
+    items: [],
+    count: 0,
+    page: 1,
+    offset: 5,
+    total: 0,
+  }),
+});
+
 const mockPolicyReportApiRef = {
-  namespacedResults: jest.fn(),
+  getNamespacedResults: mockGetNamespacedResults,
 };
 
 describe('KyvernoPolicyReportsTable', () => {
   it('should render table displaying the fetched data', async () => {
     // Arrange
-    mockPolicyReportApiRef.namespacedResults.mockImplementationOnce(() =>
-      Promise.resolve({
+    mockGetNamespacedResults.mockResolvedValueOnce({
+      json: jest.fn().mockResolvedValue({
         items: [
           {
             id: '0',
@@ -31,7 +41,7 @@ describe('KyvernoPolicyReportsTable', () => {
         ],
         count: 1,
       }),
-    );
+    });
 
     // Act
     const extension = await renderInTestApp(
@@ -58,12 +68,12 @@ describe('KyvernoPolicyReportsTable', () => {
   });
   it('should render table displaying the emptyContentText when there are no policies', async () => {
     // Arrange
-    mockPolicyReportApiRef.namespacedResults.mockImplementationOnce(() =>
-      Promise.resolve({
+    mockGetNamespacedResults.mockResolvedValueOnce({
+      json: jest.fn().mockResolvedValue({
         items: [],
         count: 0,
       }),
-    );
+    });
 
     // Act
     const extension = await renderInTestApp(
@@ -90,10 +100,12 @@ describe('KyvernoPolicyReportsTable', () => {
 
   it('should render the table displaying loading icon when data is undefined', async () => {
     // Arrange
-    mockPolicyReportApiRef.namespacedResults.mockImplementationOnce(() => {
+    mockGetNamespacedResults.mockImplementationOnce(() => {
       return new Promise(resolve => {
         setTimeout(() => {
-          resolve({});
+          resolve({
+            json: jest.fn().mockResolvedValue({}),
+          });
         }, 1000);
       });
     });
@@ -124,8 +136,8 @@ describe('KyvernoPolicyReportsTable', () => {
   it('should render ResponseErrorPanel when fetching data fails', async () => {
     // Arrange
     // Change the mock implementation of the getPolicies method to throw an error
-    mockPolicyReportApiRef.namespacedResults.mockImplementationOnce(() =>
-      Promise.reject(new Error('Failed to fetch policies')),
+    mockGetNamespacedResults.mockRejectedValueOnce(
+      new Error('Failed to fetch policies'),
     );
 
     // Act
@@ -152,8 +164,8 @@ describe('KyvernoPolicyReportsTable', () => {
 
   it('should render Drawer when clicking on a policy', async () => {
     // Arrange
-    mockPolicyReportApiRef.namespacedResults.mockImplementationOnce(() =>
-      Promise.resolve({
+    mockGetNamespacedResults.mockResolvedValueOnce({
+      json: jest.fn().mockResolvedValue({
         items: [
           {
             id: '0',
@@ -172,7 +184,7 @@ describe('KyvernoPolicyReportsTable', () => {
         ],
         count: 1,
       }),
-    );
+    });
 
     // Act
     const extension = await renderInTestApp(
