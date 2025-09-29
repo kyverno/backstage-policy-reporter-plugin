@@ -3,8 +3,18 @@ import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
 import { catalogApiRef } from '@backstage/plugin-catalog-react';
 import { PolicyReportsPage } from './PolicyReportsPage';
 
+const mockGetNamespacedResults = jest.fn().mockResolvedValue({
+  json: jest.fn().mockResolvedValue({
+    items: [],
+    count: 0,
+    page: 1,
+    offset: 5,
+    total: 0,
+  }),
+});
+
 const mockPolicyReportApiRef = {
-  namespacedResults: jest.fn(),
+  getNamespacedResults: mockGetNamespacedResults,
 };
 
 const mockCatalogApiRef = {
