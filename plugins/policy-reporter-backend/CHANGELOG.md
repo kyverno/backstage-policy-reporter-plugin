@@ -1,5 +1,23 @@
 # @kyverno/backstage-plugin-policy-reporter-backend
 
+## 2.2.0
+
+### Minor Changes
+
+- ee217ed: Update to Backstage versions 1.43.0
+- e713e1f: Migrate to OpenAPI-generated ApiClient, typed Express router, and common types instead of manual definitions.
+
+  **BREAKING:** The backend endpoint now accepts environment entity as a query parameter instead of a path parameter.
+
+  Frontend and backend must be updated simultaneously to maintain compatibility.
+
+### Patch Changes
+
+- Updated dependencies [44376bd]
+- Updated dependencies [ee217ed]
+- Updated dependencies [e713e1f]
+  - @kyverno/backstage-plugin-policy-reporter-common@2.1.0
+
 ## 2.1.4
 
 ### Patch Changes
