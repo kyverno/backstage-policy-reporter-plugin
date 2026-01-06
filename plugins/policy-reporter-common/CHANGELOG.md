@@ -1,5 +1,20 @@
 # @kyverno/backstage-plugin-policy-reporter-common
 
+## 2.1.0
+
+### Minor Changes
+
+- 44376bd: Add support for the `backstage.io/kubernetes-namespace` annotation as an alternative for the `kyverno.io/namespace`. This is useful for anyone already using the Kubernetes plugin. The kyverno namespaced annotation will always be the first priority.
+
+  Add `isPolicyReporterAvailable` helper function to validate if PolicyReporter is configured for an entity.
+
+- ee217ed: Update to Backstage versions 1.43.0
+- e713e1f: Migrate to OpenAPI-generated ApiClient, typed Express router, and common types instead of manual definitions.
+
+  **BREAKING:** The backend endpoint now accepts environment entity as a query parameter instead of a path parameter.
+
+  Frontend and backend must be updated simultaneously to maintain compatibility.
+
 ## 2.0.7
 
 ### Patch Changes
