@@ -18,6 +18,8 @@ import {
 } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { SelectStatus } from '../SelectStatus';
 import { SelectSeverity } from '../SelectSeverity';
+import { SelectNamespace } from '../SelectNamespace';
+import { useNamespaces } from '../../hooks/useNamespaces';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -39,6 +41,8 @@ export const PolicyReportsPage = ({
 
   const [status, setStatus] = useState<Status[]>(['fail']);
   const [severity, setSeverity] = useState<Severity[]>([]);
+  const [selectedNamespaces, setSelectedNamespaces] = useState<string[]>([]);
+  const { namespaces: availableNamespaces } = useNamespaces(currentEnvironment);
 
   // Fetching environments
   if (environmentsLoading) return <Progress />;
@@ -85,6 +89,11 @@ export const PolicyReportsPage = ({
             currentSeverity={severity}
             setSeverity={setSeverity}
           />
+          <SelectNamespace
+            currentNamespaces={selectedNamespaces}
+            setNamespaces={setSelectedNamespaces}
+            availableNamespaces={availableNamespaces}
+          />
           <SelectEnvironment
             environments={environments}
             currentEnvironment={currentEnvironment}
@@ -98,6 +107,7 @@ export const PolicyReportsPage = ({
               filter={{
                 status: status,
                 severities: severity,
+                namespaces: selectedNamespaces,
               }}
               title="Policy Results"
               emptyContentText="No policies found"
