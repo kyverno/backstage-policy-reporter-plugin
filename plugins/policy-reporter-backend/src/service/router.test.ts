@@ -43,15 +43,24 @@ describe('createRouter', () => {
 
   const server = setupServer(
     // Setup the mock response for Connector alter offset
-    rest.get('**v1/namespaced-resources/results', (_req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json({
-          count: 0,
-          items: [],
-        }),
-      );
-    }),
+    rest.get(
+      'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/results',
+      (_req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.json({
+            count: 0,
+            items: [],
+          }),
+        );
+      },
+    ),
+    rest.get(
+      'http://kyverno.io/policy-reporter/api/v1/namespaces',
+      (_req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(['default', 'kube-system']));
+      },
+    ),
   );
 
   beforeAll(async () => {
@@ -87,16 +96,14 @@ describe('createRouter', () => {
       });
     });
 
-    it.todo('Should return 400 if entity is invalid');
-
-    it('Should return 400 if valid entity is not a kubernetes-cluster', async () => {
+    it('Should return 400 if entity is invalid', async () => {
       const response = await request(app).get(
-        `/namespaced-resources/results?environment=valid%3Aentity%2Fref`,
+        `/namespaced-resources/results?environment=resource%3Adefault%2Finvalid`,
       );
 
       expect(response.status).toBe(400);
       expect(response.body).toStrictEqual({
-        error: 'Invalid entityRef',
+        error: `Invalid entityRef`,
       });
     });
 
@@ -109,6 +116,39 @@ describe('createRouter', () => {
         count: 0,
         items: [],
       });
+    });
+  });
+
+  describe('namespaces', () => {
+    it('Should return 400 if entity is missing kyverno.io/endpoint annotation', async () => {
+      const response = await request(app).get(
+        `/v1/namespaces?environment=resource%3Adefault%2Fdev`,
+      );
+
+      expect(response.status).toBe(400);
+      expect(response.body).toStrictEqual({
+        error: `Entity missing 'kyverno.io/endpoint' annotation`,
+      });
+    });
+
+    it('Should return 400 if entity is invalid', async () => {
+      const response = await request(app).get(
+        `/v1/namespaces?environment=resource%3Adefault%2Finvalid`,
+      );
+
+      expect(response.status).toBe(400);
+      expect(response.body).toStrictEqual({
+        error: `Invalid entityRef`,
+      });
+    });
+
+    it('Should return 200 and valid response when entity is valid', async () => {
+      const response = await request(app).get(
+        `/v1/namespaces?environment=resource%3Adefault%2Fprod`,
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body).toStrictEqual(['default', 'kube-system']);
     });
   });
 });

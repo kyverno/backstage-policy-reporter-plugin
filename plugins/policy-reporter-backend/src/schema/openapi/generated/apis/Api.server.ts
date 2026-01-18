@@ -32,7 +32,21 @@ export type GetNamespacedResults = {
   };
   response: ResultList | RequestError | RequestError;
 };
+/**
+ * @public
+ */
+export type GetNamespaces = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+    categories?: Array<string>;
+    policies?: Array<string>;
+  };
+  response: Array<string> | RequestError | RequestError;
+};
 
 export type EndpointMap = {
   '#get|/namespaced-resources/results': GetNamespacedResults;
+
+  '#get|/v1/namespaces': GetNamespaces;
 };
