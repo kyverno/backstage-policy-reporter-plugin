@@ -22,7 +22,7 @@ export const useNamespaces = (currentEnvironment?: Environment) => {
   }, [api, currentEnvironment]);
 
   return {
-    namespaces: namespaces || [],
+    namespaces: namespaces ?? [],
     loading,
     error,
   };
