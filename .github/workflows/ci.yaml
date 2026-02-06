@@ -20,7 +20,7 @@ jobs:
           node-version: '20'
 
       - name: yarn install
-        uses: backstage/actions/yarn-install@d98113056c83b1b0a1293c8310d77d99db4ea22e # v0.7.3
+        uses: backstage/actions/yarn-install@d8f699b19b0d328865976ef5f4982dfa97db9952 # v0.7.4
         with:
           cache-prefix: ${{ runner.os }}-v20
 
