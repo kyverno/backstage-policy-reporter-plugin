@@ -1,5 +1,16 @@
 # @kyverno/backstage-plugin-policy-reporter-backend
 
+## 2.3.0
+
+### Minor Changes
+
+- 93bf028: Added namespace filtering to the `PolicyReportsPage`. Users can now filter the list of policy reports by selecting one or more namespaces from the selected cluster.
+
+### Patch Changes
+
+- Updated dependencies [93bf028]
+  - @kyverno/backstage-plugin-policy-reporter-common@2.2.0
+
 ## 2.2.0
 
 ### Minor Changes
