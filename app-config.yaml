@@ -2,6 +2,8 @@ app:
   title: Scaffolded Backstage App
   baseUrl: http://localhost:3000
 
+  packages: all
+
 organization:
   name: My Company
 
