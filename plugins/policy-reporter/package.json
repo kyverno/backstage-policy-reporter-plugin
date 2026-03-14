@@ -58,6 +58,7 @@
     "@backstage/catalog-model": "backstage:^",
     "@backstage/core-components": "backstage:^",
     "@backstage/core-plugin-api": "backstage:^",
+    "@backstage/frontend-plugin-api": "backstage:^",
     "@backstage/plugin-catalog-react": "backstage:^",
     "@backstage/theme": "backstage:^",
     "@kyverno/backstage-plugin-policy-reporter-common": "workspace:^",
