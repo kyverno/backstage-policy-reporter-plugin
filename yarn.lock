@@ -2261,7 +2261,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/core-compat-api@npm:^0.5.8":
+"@backstage/core-compat-api@backstage:^::backstage=1.48.5&npm=0.5.8, @backstage/core-compat-api@npm:^0.5.8":
   version: 0.5.8
   resolution: "@backstage/core-compat-api@npm:0.5.8"
   dependencies:
@@ -2442,7 +2442,56 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/frontend-plugin-api@npm:^0.14.0, @backstage/frontend-plugin-api@npm:^0.14.1":
+"@backstage/frontend-app-api@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "@backstage/frontend-app-api@npm:0.15.0"
+  dependencies:
+    "@backstage/config": "npm:^1.3.6"
+    "@backstage/core-app-api": "npm:^1.19.5"
+    "@backstage/core-plugin-api": "npm:^1.12.3"
+    "@backstage/errors": "npm:^1.2.7"
+    "@backstage/frontend-defaults": "npm:^0.4.0"
+    "@backstage/frontend-plugin-api": "npm:^0.14.0"
+    "@backstage/types": "npm:^1.2.2"
+    "@backstage/version-bridge": "npm:^1.0.12"
+    lodash: "npm:^4.17.21"
+    zod: "npm:^3.25.76"
+  peerDependencies:
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+    react-router-dom: ^6.30.2
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/cf4a656410446feb1a56c8fa5d0ae60cd5af74985d472e233fdb9faec309d1d515db8509bbaf7ba3a36632f68a9f04b3f5e5a85b49fb5cba750d48b6fa082bd8
+  languageName: node
+  linkType: hard
+
+"@backstage/frontend-defaults@backstage:^::backstage=1.48.5&npm=0.4.0, @backstage/frontend-defaults@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@backstage/frontend-defaults@npm:0.4.0"
+  dependencies:
+    "@backstage/config": "npm:^1.3.6"
+    "@backstage/core-components": "npm:^0.18.7"
+    "@backstage/errors": "npm:^1.2.7"
+    "@backstage/frontend-app-api": "npm:^0.15.0"
+    "@backstage/frontend-plugin-api": "npm:^0.14.0"
+    "@backstage/plugin-app": "npm:^0.4.0"
+    "@react-hookz/web": "npm:^24.0.0"
+  peerDependencies:
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+    react-router-dom: ^6.30.2
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/24dc34c8e3877d32fb4762d158cfa7d30daddd7ab35e6c1f520e18faeed4da82f287f01e9ae0d22c26bf2ef2cf897b3077020d070b657bd611886773518bdb9a
+  languageName: node
+  linkType: hard
+
+"@backstage/frontend-plugin-api@backstage:^::backstage=1.48.5&npm=0.14.1, @backstage/frontend-plugin-api@npm:^0.14.0, @backstage/frontend-plugin-api@npm:^0.14.1":
   version: 0.14.1
   resolution: "@backstage/frontend-plugin-api@npm:0.14.1"
   dependencies:
@@ -2629,6 +2678,38 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/d921dd907ab439792576dd21d0a2cc1959f54a46c3adeda72da45a9fc5cfdb4234c1388532a70a5977a55304379c3ddfc9d3dba80a24121c959fe0de4cbb03cc
+  languageName: node
+  linkType: hard
+
+"@backstage/plugin-app@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@backstage/plugin-app@npm:0.4.0"
+  dependencies:
+    "@backstage/core-components": "npm:^0.18.7"
+    "@backstage/core-plugin-api": "npm:^1.12.3"
+    "@backstage/frontend-plugin-api": "npm:^0.14.0"
+    "@backstage/integration-react": "npm:^1.2.15"
+    "@backstage/plugin-app-react": "npm:^0.2.0"
+    "@backstage/plugin-permission-react": "npm:^0.4.40"
+    "@backstage/theme": "npm:^0.7.2"
+    "@backstage/types": "npm:^1.2.2"
+    "@backstage/ui": "npm:^0.12.0"
+    "@backstage/version-bridge": "npm:^1.0.12"
+    "@material-ui/core": "npm:^4.9.13"
+    "@material-ui/icons": "npm:^4.9.1"
+    "@material-ui/lab": "npm:^4.0.0-alpha.61"
+    "@react-hookz/web": "npm:^24.0.0"
+    react-use: "npm:^17.2.4"
+    zod: "npm:^3.25.76"
+  peerDependencies:
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+    react-router-dom: ^6.30.2
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/80432b7697cd3a2e2998c911090c51d382858d9bd44002058f3e26e96a92bde80cc2b2aae8dba5139f53bdb3d14b5db73f4db43f25588ff206fe039f3804c3d8
   languageName: node
   linkType: hard
 
@@ -3295,7 +3376,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/ui@npm:^0.12.0":
+"@backstage/ui@backstage:^::backstage=1.48.5&npm=0.12.0, @backstage/ui@npm:^0.12.0":
   version: 0.12.0
   resolution: "@backstage/ui@npm:0.12.0"
   dependencies:
@@ -5509,6 +5590,7 @@ __metadata:
     "@backstage/core-components": "backstage:^"
     "@backstage/core-plugin-api": "backstage:^"
     "@backstage/dev-utils": "backstage:^"
+    "@backstage/frontend-plugin-api": "backstage:^"
     "@backstage/plugin-catalog-react": "backstage:^"
     "@backstage/test-utils": "backstage:^"
     "@backstage/theme": "backstage:^"
@@ -5719,7 +5801,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@material-ui/lab@npm:4.0.0-alpha.61":
+"@material-ui/lab@npm:4.0.0-alpha.61, @material-ui/lab@npm:^4.0.0-alpha.61":
   version: 4.0.0-alpha.61
   resolution: "@material-ui/lab@npm:4.0.0-alpha.61"
   dependencies:
@@ -13752,6 +13834,50 @@ __metadata:
   checksum: 10c0/60060daf71743539df845382bdfa0bffe2268bd02f0285d4714a4ed8ce610b5810eb157b831cf2b3133d248e6de338c83c48ab9164a5f6069bb0e9c146531b53
   languageName: node
   linkType: hard
+
+"app-migrated@workspace:packages/app-migrated":
+  version: 0.0.0-use.local
+  resolution: "app-migrated@workspace:packages/app-migrated"
+  dependencies:
+    "@backstage/app-defaults": "backstage:^"
+    "@backstage/catalog-model": "backstage:^"
+    "@backstage/cli": "backstage:^"
+    "@backstage/core-app-api": "backstage:^"
+    "@backstage/core-compat-api": "backstage:^"
+    "@backstage/core-components": "backstage:^"
+    "@backstage/core-plugin-api": "backstage:^"
+    "@backstage/frontend-defaults": "backstage:^"
+    "@backstage/frontend-plugin-api": "backstage:^"
+    "@backstage/integration-react": "backstage:^"
+    "@backstage/plugin-api-docs": "backstage:^"
+    "@backstage/plugin-catalog": "backstage:^"
+    "@backstage/plugin-catalog-common": "backstage:^"
+    "@backstage/plugin-catalog-graph": "backstage:^"
+    "@backstage/plugin-catalog-import": "backstage:^"
+    "@backstage/plugin-catalog-react": "backstage:^"
+    "@backstage/plugin-permission-react": "backstage:^"
+    "@backstage/plugin-user-settings": "backstage:^"
+    "@backstage/test-utils": "backstage:^"
+    "@backstage/theme": "backstage:^"
+    "@backstage/ui": "backstage:^"
+    "@kyverno/backstage-plugin-policy-reporter": "workspace:^"
+    "@material-ui/core": "npm:^4.12.2"
+    "@material-ui/icons": "npm:^4.9.1"
+    "@playwright/test": "npm:^1.32.3"
+    "@testing-library/dom": "npm:^9.0.0"
+    "@testing-library/jest-dom": "npm:^6.0.0"
+    "@testing-library/react": "npm:^14.0.0"
+    "@testing-library/user-event": "npm:^14.0.0"
+    "@types/react-dom": "npm:*"
+    cross-env: "npm:^7.0.0"
+    history: "npm:^5.0.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.0.2"
+    react-router: "npm:^6.30.1"
+    react-router-dom: "npm:^6.30.1"
+    react-use: "npm:^17.6.0"
+  languageName: unknown
+  linkType: soft
 
 "app@link:../app::locator=backend%40workspace%3Apackages%2Fbackend":
   version: 0.0.0-use.local

@@ -48,3 +48,14 @@ spec:
     - resource:default/dev
     - resource:default/test
     - resource:default/database
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: backstage
+  annotations:
+    github.com/project-slug: backstage/backstage
+spec:
+  type: service
+  lifecycle: production
+  owner: user:guest

@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "echo \"Use 'yarn start' instead\"",
     "start": "backstage-cli repo start",
+    "start:app-migrated": "backstage-cli repo start app-migrated backend",
     "start-backend": "echo \"Use 'yarn start backend' instead\"",
     "build:backend": "yarn workspace @kyverno/backstage-plugin-policy-reporter-backend build",
     "build:all": "backstage-cli repo build --all",
