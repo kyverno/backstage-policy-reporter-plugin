@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "origin/main",
   "updateInternalDependencies": "patch",
-  "ignore": ["app", "backend"]
+  "ignore": ["app", "backend", "app-migrated"]
 }
