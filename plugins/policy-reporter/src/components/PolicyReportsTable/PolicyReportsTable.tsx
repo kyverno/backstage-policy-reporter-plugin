@@ -1,183 +1,183 @@
-import {
-  ResponseErrorPanel,
-  Table,
-  TableColumn,
-} from '@backstage/core-components';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
   Filter,
   ListResult,
-  Pagination,
 } from '@kyverno/backstage-plugin-policy-reporter-common';
-import { Drawer, makeStyles } from '@material-ui/core';
-import Chip from '@material-ui/core/Chip';
+import { Drawer } from '@material-ui/core';
 import { StatusComponent } from '../StatusComponent';
 import { SeverityComponent } from '../SeverityComponent';
-import Launch from '@material-ui/icons/Launch';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
-import { usePaginatedPolicies } from '../../hooks/usePaginatedPolicies';
 import { PolicyReportsDrawerComponent } from '../PolicyReportsDrawerComponent';
+import {
+  CellText,
+  ColumnConfig,
+  Text,
+  useTable,
+  Table,
+  Cell,
+  SearchField,
+} from '@backstage/ui';
+import { useApi } from '@backstage/frontend-plugin-api';
+import { policyReporterApiRef } from '../../api';
 
 interface PolicyReportsTableProps {
   currentEnvironment: Environment;
   filter: Filter;
-  title: string;
   emptyContentText: string;
-  policyDocumentationUrl?: string;
   enableSearch?: boolean;
-  pagination?: Partial<Pagination>;
-  pageSizeOptions?: number[];
 }
 
 export const PolicyReportsTable = ({
-  title,
   emptyContentText,
   currentEnvironment,
   filter,
-  policyDocumentationUrl,
   enableSearch,
-  pagination,
-  pageSizeOptions,
 }: PolicyReportsTableProps) => {
-  const useStyles = makeStyles(theme => ({
-    empty: {
-      padding: theme.spacing(2),
-      display: 'flex',
-      justifyContent: 'center',
-    },
-  }));
+  const policyReporterApi = useApi(policyReporterApiRef);
 
-  const [search, setSearch] = useState<string | undefined>(undefined);
-  const mergedFilter = useMemo(
-    () => ({
-      ...filter,
-      search: search ?? filter.search, // override search if search state is defined
-    }),
-    [filter, search],
-  );
-
-  const [showDrawer, setShowDrawer] = useState<boolean>(false);
   const [drawerContent, setDrawerContent] = useState<ListResult | undefined>(
     undefined,
   );
-  const classes = useStyles();
 
-  const columns: TableColumn<ListResult>[] = [
-    {
-      title: 'name',
-      field: 'name',
-    },
-    {
-      title: 'namespace',
-      field: 'namespace',
-    },
-    {
-      title: 'kind',
-      field: 'kind',
-    },
-    {
-      title: 'policy',
-      field: 'policy',
-      render: (listResult: ListResult) => {
-        // When policyDocumentationUrl is provided create link to the Policy section
-        if (policyDocumentationUrl)
-          return (
-            <Chip
-              label={listResult.policy}
-              component="a"
-              target="_blank"
-              href={`${policyDocumentationUrl}#${listResult.policy}`}
-              clickable
-              icon={<Launch fontSize="small" />}
-            />
-          );
+  const { tableProps, search } = useTable({
+    filter: filter,
+    mode: 'offset',
+    getData: async ({
+      offset,
+      pageSize,
+      filter: fetchFilter,
+      search: searchValue,
+    }) => {
+      // useTable provides:
+      // - offset: absolute record position (0, 20, 40, 60...)
+      // - pageSize: number of records per page (20)
+      //
+      // Policy Reporter API expects:
+      // - page: page number starting from 1 (1, 2, 3, 4...)
+      // - offset: number of results per page (confusingly named - this is actually pageSize)
+      //
+      // Example calculations:
+      // useTable offset=0,  pageSize=20 → page=1 (first 20 records)
+      // useTable offset=20, pageSize=20 → page=2 (records 21-40)
+      // useTable offset=40, pageSize=20 → page=3 (records 41-60)
 
-        return <Chip label={listResult.policy} />;
-      },
+      // Convert useTable's absolute offset to 1-indexed page number
+      // Math.floor(0/20) + 1 = 1, Math.floor(20/20) + 1 = 2, etc.
+      const page = Math.floor(offset / pageSize) + 1;
+
+      const response = await policyReporterApi.getNamespacedResults({
+        query: {
+          environment: encodeURI(currentEnvironment.entityRef),
+          // page: which page to fetch (1-indexed)
+          page: page,
+          // offset: Policy Reporter API's name for results per page
+          offset: pageSize,
+          ...fetchFilter,
+          search: searchValue === '' ? undefined : searchValue,
+        },
+      });
+
+      const result = await response.json();
+
+      return {
+        data: result.items,
+        totalCount: result.count,
+      };
+    },
+  });
+
+  const columns: ColumnConfig<ListResult>[] = [
+    {
+      id: 'name',
+      label: 'Name',
+      isRowHeader: true,
+      cell: item => <CellText title={item.name} />,
     },
     {
-      title: 'rule',
-      field: 'rule',
-      render: (listResult: ListResult) => {
-        return <Chip label={listResult.rule} />;
-      },
+      id: 'namespace',
+      label: 'Namespace',
+      isRowHeader: true,
+      cell: item => <CellText title={item.namespace} />,
     },
     {
-      title: 'status',
-      field: 'status',
-      width: '30',
-      render: (listResult: ListResult) => {
-        return <StatusComponent status={listResult.status} />;
-      },
+      id: 'kind',
+      label: 'Kind',
+      isRowHeader: true,
+      cell: item => <CellText title={item.kind} />,
     },
     {
-      title: 'severity',
-      field: 'severity',
-      width: '30',
-      render: (listResult: ListResult) => {
-        return <SeverityComponent severity={listResult.severity} />;
-      },
+      id: 'policy',
+      label: 'Policy',
+      isRowHeader: true,
+      cell: item => <CellText title={item.policy} />,
+    },
+    {
+      id: 'rule',
+      label: 'Rule',
+      isRowHeader: true,
+      cell: item => <CellText title={item.rule} />,
+    },
+    {
+      id: 'status',
+      label: 'Status',
+      isRowHeader: true,
+      cell: item => (
+        <Cell>
+          <StatusComponent status={item.status} />
+        </Cell>
+      ),
+    },
+    {
+      id: 'severity',
+      label: 'Severity',
+      isRowHeader: true,
+      cell: item => (
+        <Cell>
+          <SeverityComponent severity={item.severity} />
+        </Cell>
+      ),
     },
   ];
-
-  const {
-    policies,
-    policiesError,
-    currentPage,
-    currentOffset,
-    setCurrentPage,
-    setCurrentOffset,
-    initialLoading,
-  } = usePaginatedPolicies(currentEnvironment, mergedFilter, pagination);
-
-  if (policiesError) return <ResponseErrorPanel error={policiesError} />;
-
-  // Return loading table
-  if (initialLoading)
-    return (
-      <Table
-        options={{ paging: false, padding: 'dense' }}
-        data={[]}
-        columns={columns}
-        isLoading
-        title={title}
-      />
-    );
 
   return (
     <>
       <Drawer
         anchor="right"
-        open={showDrawer}
-        onClose={() => setShowDrawer(false)}
+        open={Boolean(drawerContent)}
+        onClose={() => setDrawerContent(undefined)}
       >
         <PolicyReportsDrawerComponent content={drawerContent} />
       </Drawer>
+      {/* <SearchField */}
+      {/*   size="small" */}
+      {/*   aria-label="Search" */}
+      {/*   placeholder="Search..." */}
+      {/*   {...search} */}
+      {/* /> */}
+
+      {enableSearch && (
+        <SearchField
+          aria-label="Search"
+          label="Search"
+          value={search.value}
+          onChange={search.onChange}
+          style={{ width: '350px' }}
+        />
+      )}
       <Table
-        options={{
-          sorting: true,
-          padding: 'dense',
-          search: enableSearch,
-          pageSize: currentOffset,
-          pageSizeOptions: pageSizeOptions,
+        {...search}
+        rowConfig={{
+          onClick: item => setDrawerContent(item),
         }}
-        onRowClick={(
-          event?: React.MouseEvent<Element, MouseEvent>,
-          rowData?: ListResult,
-        ) => {
-          event?.preventDefault();
-          setShowDrawer(true);
-          setDrawerContent(rowData);
-        }}
-        data={policies?.items ?? []}
-        columns={columns}
-        title={title}
-        totalCount={policies?.count}
-        page={currentPage}
-        onRowsPerPageChange={page => setCurrentOffset(page)}
-        onPageChange={page => setCurrentPage(page)}
-        emptyContent={<div className={classes.empty}>{emptyContentText}</div>}
-        onSearchChange={searchText => setSearch(searchText)}
+        emptyState={
+          search.value ? (
+            <Text>No results match "{search.value}"</Text>
+          ) : (
+            <Text>{emptyContentText}</Text>
+          )
+        }
+        columnConfig={columns}
+        {...tableProps}
       />
     </>
   );

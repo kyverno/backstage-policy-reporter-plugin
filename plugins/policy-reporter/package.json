@@ -61,6 +61,7 @@
     "@backstage/frontend-plugin-api": "backstage:^",
     "@backstage/plugin-catalog-react": "backstage:^",
     "@backstage/theme": "backstage:^",
+    "@backstage/ui": "backstage:^",
     "@kyverno/backstage-plugin-policy-reporter-common": "workspace:^",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
