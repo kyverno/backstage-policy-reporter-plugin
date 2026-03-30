@@ -54,7 +54,7 @@ export const PolicyReportsTable = ({
       //
       // Policy Reporter API expects:
       // - page: page number starting from 1 (1, 2, 3, 4...)
-      // - offset: number of results per page (confusingly named - this is actually pageSize)
+      // - offset: number of results per page (this is actually pageSize)
       //
       // Example calculations:
       // useTable offset=0,  pageSize=20 → page=1 (first 20 records)

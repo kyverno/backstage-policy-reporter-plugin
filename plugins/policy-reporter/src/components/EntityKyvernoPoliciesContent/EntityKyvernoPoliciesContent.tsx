@@ -23,7 +23,6 @@ import { KYVERNO_RESOURCE_NAME_ANNOTATION } from '@kyverno/backstage-plugin-poli
 
 type KyvernoPoliciesContentProps = {
   annotationsDocumentationUrl?: string;
-  policyDocumentationUrl?: string;
 };
 
 type PageContentProps = {
@@ -38,7 +37,6 @@ const PageContent = ({ children }: PageContentProps) => (
 
 export const EntityKyvernoPoliciesContent = ({
   annotationsDocumentationUrl,
-  policyDocumentationUrl,
 }: KyvernoPoliciesContentProps) => {
   const { entity } = useEntity();
   const annotations = entity.metadata.annotations;
@@ -96,44 +94,10 @@ export const EntityKyvernoPoliciesContent = ({
               namespaces,
               sources: ['kyverno'],
               kinds,
-              status: ['fail', 'warn', 'error'],
+              status: ['fail'],
               search: resourceName,
             }}
-            title="Failing Policy Results"
-            emptyContentText="No failing policies"
-            policyDocumentationUrl={policyDocumentationUrl}
-            enableSearch={false}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <PolicyReportsTable
-            currentEnvironment={currentEnvironment}
-            filter={{
-              namespaces,
-              sources: ['kyverno'],
-              kinds,
-              status: ['pass'],
-              search: resourceName,
-            }}
-            title="Passing Policy Results"
-            emptyContentText="No passing policies"
-            policyDocumentationUrl={policyDocumentationUrl}
-            enableSearch={false}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <PolicyReportsTable
-            currentEnvironment={currentEnvironment}
-            filter={{
-              namespaces,
-              sources: ['kyverno'],
-              kinds,
-              status: ['skip'],
-              search: resourceName,
-            }}
-            title="Skipped Policy Results"
-            emptyContentText="No skipped policies"
-            policyDocumentationUrl={policyDocumentationUrl}
+            emptyContentText="No policies found"
             enableSearch={false}
           />
         </Grid>

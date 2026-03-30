@@ -23,14 +23,12 @@ import { useNamespaces } from '../../hooks/useNamespaces';
 
 export interface PolicyReportsPageProps {
   title?: string;
-  policyDocumentationUrl?: string;
   subtitle?: string;
 }
 
 export const PolicyReportsPage = ({
   title = 'Policy Reports',
   subtitle = 'View all policy reports from a Kubernetes cluster',
-  policyDocumentationUrl,
 }: PolicyReportsPageProps) => {
   const {
     environments,
@@ -109,10 +107,8 @@ export const PolicyReportsPage = ({
                 severities: severity,
                 namespaces: selectedNamespaces,
               }}
-              title="Policy Results"
               emptyContentText="No policies found"
-              policyDocumentationUrl={policyDocumentationUrl}
-              pagination={{ offset: 25 }}
+              enableSearch
             />
           </Grid>
         </Grid>
