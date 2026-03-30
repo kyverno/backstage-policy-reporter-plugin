@@ -18,7 +18,6 @@ import { SearchField } from '../SearchField';
 
 export interface PolicyReportsPageProps {
   title?: string;
-  policyDocumentationUrl?: string;
   subtitle?: string;
 }
 
