@@ -21,10 +21,12 @@ import { KYVERNO_RESOURCE_NAME_ANNOTATION } from '@kyverno/backstage-plugin-poli
 
 type KyvernoPoliciesContentProps = {
   annotationsDocumentationUrl?: string;
+  policyDocumentationUrl?: string;
 };
 
 export const EntityKyvernoPoliciesContent = ({
   annotationsDocumentationUrl,
+  policyDocumentationUrl,
 }: KyvernoPoliciesContentProps) => {
   const { entity } = useEntity();
   const annotations = entity.metadata.annotations;
