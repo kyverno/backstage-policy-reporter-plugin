@@ -124,7 +124,7 @@ describe('KyvernoPolicyReportsTable', () => {
       </TestApiProvider>,
     );
 
-    expect(extension.getByRole('progressbar')).toBeTruthy();
+    expect(extension.getByText('Loading...')).toBeTruthy();
   });
 
   it('should render ResponseErrorPanel when fetching data fails', async () => {
@@ -199,12 +199,10 @@ describe('KyvernoPolicyReportsTable', () => {
     //
 
     // Assert
-    const cell = extension.getByRole('cell', {
-      name: 'name',
-    });
+    const cell = extension.getByText('Policy1');
     expect(cell).toBeInTheDocument();
 
-    // simulate user clicking on a cell
+    // simulate user clicking on the policy text
     const user = userEvent.setup();
     await user.click(cell);
     await waitFor(() => {

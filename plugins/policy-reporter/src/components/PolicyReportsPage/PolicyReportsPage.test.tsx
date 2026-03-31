@@ -63,6 +63,9 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
 
     // Assert
     expect(extension.getByText('Policy Reports')).toBeTruthy();
-    expect(extension.getByText('Policy Results')).toBeTruthy();
+    expect(extension.getByText('Name')).toBeTruthy();
+    expect(extension.getByText('Namespace')).toBeTruthy();
+    expect(extension.getByText('Kind')).toBeTruthy();
+    expect(extension.getByText('Policy')).toBeTruthy();
   });
 });
