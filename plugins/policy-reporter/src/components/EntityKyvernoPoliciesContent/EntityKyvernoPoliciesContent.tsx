@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Content,
   ContentHeader,
@@ -51,6 +53,21 @@ export const EntityKyvernoPoliciesContent = ({
     currentEnvironment,
   } = useEntityEnvironment(entity, annotationsState);
 
+  const namespaces = getNamespaces(annotations);
+  const kinds = getKinds(annotations);
+  const resourceName = getResourceName(annotations);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Set the default search param to resourceName on mount
+  useEffect(() => {
+    if (resourceName && !searchParams.has('search')) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set('search', resourceName);
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [resourceName, searchParams, setSearchParams]);
+
   // Annotations missing
   if (!annotationsState)
     return (
@@ -73,10 +90,6 @@ export const EntityKyvernoPoliciesContent = ({
       </PageContent>
     );
 
-  const namespaces = getNamespaces(annotations);
-  const kinds = getKinds(annotations);
-  const resourceName = getResourceName(annotations);
-
   return (
     <PageContent>
       <ContentHeader title="Kyverno Policy Reports">
@@ -94,11 +107,8 @@ export const EntityKyvernoPoliciesContent = ({
               namespaces,
               sources: ['kyverno'],
               kinds,
-              status: ['fail'],
-              search: resourceName,
             }}
             emptyContentText="No policies found"
-            enableSearch={false}
           />
         </Grid>
       </Grid>

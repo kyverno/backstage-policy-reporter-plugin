@@ -20,6 +20,7 @@ import { SelectStatus } from '../SelectStatus';
 import { SelectSeverity } from '../SelectSeverity';
 import { SelectNamespace } from '../SelectNamespace';
 import { useNamespaces } from '../../hooks/useNamespaces';
+import { SearchField } from '../SearchField';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -97,6 +98,7 @@ export const PolicyReportsPage = ({
             currentEnvironment={currentEnvironment}
             setCurrentEnvironment={setCurrentEnvironment}
           />
+          <SearchField />
         </ContentHeader>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -108,7 +110,6 @@ export const PolicyReportsPage = ({
                 namespaces: selectedNamespaces,
               }}
               emptyContentText="No policies found"
-              enableSearch
             />
           </Grid>
         </Grid>

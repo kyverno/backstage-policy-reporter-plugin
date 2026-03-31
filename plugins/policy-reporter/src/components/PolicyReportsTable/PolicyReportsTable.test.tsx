@@ -55,14 +55,12 @@ describe('KyvernoPolicyReportsTable', () => {
             entityRef: 'resource:default/dev',
           }}
           filter={{}}
-          title="Policy Results"
           emptyContentText="empty"
         />
         ,
       </TestApiProvider>,
     );
 
-    expect(extension.getAllByText('Policy Results')).toHaveLength(1);
     expect(extension.getAllByText('Policy1')).toHaveLength(1);
     expect(extension.getAllByText('Rule1')).toHaveLength(1);
   });
@@ -87,14 +85,12 @@ describe('KyvernoPolicyReportsTable', () => {
             entityRef: 'resource:default/dev',
           }}
           filter={{}}
-          title="Policy Results"
           emptyContentText="there are no policies"
         />
         ,
       </TestApiProvider>,
     );
 
-    expect(extension.getAllByText('Policy Results')).toHaveLength(1);
     expect(extension.getAllByText('there are no policies')).toHaveLength(1);
   });
 
@@ -122,14 +118,12 @@ describe('KyvernoPolicyReportsTable', () => {
             entityRef: 'resource:default/dev',
           }}
           filter={{}}
-          title="Policy Results"
           emptyContentText="empty"
         />
         ,
       </TestApiProvider>,
     );
 
-    expect(extension.getAllByText('Policy Results')).toHaveLength(1);
     expect(extension.getByRole('progressbar')).toBeTruthy();
   });
 
@@ -152,7 +146,6 @@ describe('KyvernoPolicyReportsTable', () => {
             entityRef: 'resource:default/dev',
           }}
           filter={{}}
-          title="Policy Results"
           emptyContentText="there are no policies"
         />
         ,
@@ -198,7 +191,6 @@ describe('KyvernoPolicyReportsTable', () => {
             entityRef: 'resource:default/dev',
           }}
           filter={{}}
-          title="Policy Results"
           emptyContentText="empty"
         />
         ,

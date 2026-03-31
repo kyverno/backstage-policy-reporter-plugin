@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Filter,
   ListResult,
@@ -15,7 +16,6 @@ import {
   useTable,
   Table,
   Cell,
-  SearchField,
 } from '@backstage/ui';
 import { useApi } from '@backstage/frontend-plugin-api';
 import { policyReporterApiRef } from '../../api';
@@ -24,29 +24,30 @@ interface PolicyReportsTableProps {
   currentEnvironment: Environment;
   filter: Filter;
   emptyContentText: string;
-  enableSearch?: boolean;
 }
 
 export const PolicyReportsTable = ({
   emptyContentText,
   currentEnvironment,
   filter,
-  enableSearch,
 }: PolicyReportsTableProps) => {
   const policyReporterApi = useApi(policyReporterApiRef);
+  const [searchParams] = useSearchParams();
+  const searchValue = searchParams.get('search') ?? '';
 
   const [drawerContent, setDrawerContent] = useState<ListResult | undefined>(
     undefined,
   );
 
-  const { tableProps, search } = useTable({
+  const { tableProps } = useTable({
     filter: filter,
     mode: 'offset',
+    search: searchValue,
     getData: async ({
       offset,
       pageSize,
       filter: fetchFilter,
-      search: searchValue,
+      search: searchParam,
     }) => {
       // useTable provides:
       // - offset: absolute record position (0, 20, 40, 60...)
@@ -73,7 +74,7 @@ export const PolicyReportsTable = ({
           // offset: Policy Reporter API's name for results per page
           offset: pageSize,
           ...fetchFilter,
-          search: searchValue === '' ? undefined : searchValue,
+          search: searchParam === '' ? undefined : searchParam,
         },
       });
 
@@ -148,30 +149,13 @@ export const PolicyReportsTable = ({
       >
         <PolicyReportsDrawerComponent content={drawerContent} />
       </Drawer>
-      {/* <SearchField */}
-      {/*   size="small" */}
-      {/*   aria-label="Search" */}
-      {/*   placeholder="Search..." */}
-      {/*   {...search} */}
-      {/* /> */}
-
-      {enableSearch && (
-        <SearchField
-          aria-label="Search"
-          label="Search"
-          value={search.value}
-          onChange={search.onChange}
-          style={{ width: '350px' }}
-        />
-      )}
       <Table
-        {...search}
         rowConfig={{
           onClick: item => setDrawerContent(item),
         }}
         emptyState={
-          search.value ? (
-            <Text>No results match "{search.value}"</Text>
+          searchValue ? (
+            <Text>No results match "{searchValue}"</Text>
           ) : (
             <Text>{emptyContentText}</Text>
           )
