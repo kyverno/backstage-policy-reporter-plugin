@@ -1,70 +1,57 @@
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import { Select } from '@backstage/ui';
 import { Severity } from '@kyverno/backstage-plugin-policy-reporter-common';
-import { makeStyles } from '@material-ui/core/styles';
-import { Checkbox, ListItemText } from '@material-ui/core';
+import { Key } from 'react';
+import React from 'react';
 
-// This could be moved into the common package if needed in multiple places
-const SEVERITY_VALUES: Severity[] = [
-  'unknown',
-  'low',
-  'medium',
-  'high',
-  'critical',
-  'info',
+const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
+  { value: 'unknown', label: 'Unknown' },
+  { value: 'low', label: 'Low' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'high', label: 'High' },
+  { value: 'critical', label: 'Critical' },
+  { value: 'info', label: 'Info' },
 ];
 
-const useStyles = makeStyles({
-  formControl: {
-    margin: 8,
-    minWidth: 150,
-  },
-});
+const validSeverities = SEVERITY_OPTIONS.map(option => option.value);
 
 export type SelectSeverityProps = {
-  currentSeverity: Severity[];
+  initialSeverity?: Severity[] | Severity;
   setSeverity: (Status: Severity[]) => void;
 };
 
 export const SelectSeverity = ({
-  currentSeverity: currentSeverity,
-  setSeverity: setSeverity,
+  initialSeverity,
+  setSeverity,
 }: SelectSeverityProps) => {
-  const classes = useStyles();
+  const handleChange = (key: Key | Key[] | null) => {
+    if (key === null) {
+      setSeverity([]);
+      return;
+    }
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setSeverity(event.target.value as Severity[]);
+    if (!Array.isArray(key)) {
+      setSeverity(
+        validSeverities.includes(key as Severity) ? [key as Severity] : [],
+      );
+      return;
+    }
+
+    // Input is an array - filter and validate
+    const filteredStatuses = key.filter((item): item is Severity =>
+      validSeverities.includes(item as Severity),
+    );
+    setSeverity(filteredStatuses);
   };
 
   return (
-    <FormControl className={classes.formControl}>
-      <InputLabel id="select-severity-label" shrink>
-        Severity
-      </InputLabel>
-      <Select
-        labelId="select-severity-label"
-        id="select-severity"
-        multiple
-        displayEmpty
-        value={currentSeverity}
-        renderValue={selected => {
-          if ((selected as Severity[]).length === 0) {
-            return 'All';
-          }
-
-          return (selected as Severity[]).join(', ');
-        }}
-        onChange={handleChange}
-      >
-        {SEVERITY_VALUES.map(severity => (
-          <MenuItem key={severity} value={severity}>
-            <Checkbox checked={currentSeverity.includes(severity)} />
-            <ListItemText primary={severity} />
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <Select
+      label="Severity"
+      selectionMode="multiple"
+      options={SEVERITY_OPTIONS}
+      defaultValue={initialSeverity}
+      onChange={handleChange}
+      placeholder="All"
+      style={{ width: 200 }}
+    />
   );
 };

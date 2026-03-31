@@ -1,59 +1,37 @@
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import { Select } from '@backstage/ui';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles({
-  formControl: {
-    margin: 8,
-    minWidth: 150,
-  },
-  hideDropdownArrow: {
-    '& .MuiSelect-icon-196.Mui-disabled': {
-      display: 'none',
-    },
-  },
-});
+import { Key } from 'react';
 
 type SelectEnvironmentProps = {
   environments: Environment[];
-  currentEnvironment: Environment;
+  initialEnvironment: Environment;
   setCurrentEnvironment: (environment: Environment) => void;
 };
 
 export const SelectEnvironment = ({
   environments,
-  currentEnvironment,
+  initialEnvironment,
   setCurrentEnvironment,
 }: SelectEnvironmentProps) => {
-  const classes = useStyles();
+  const options = environments.map(env => ({
+    value: env.entityRef,
+    label: env.name,
+  }));
 
-  const handleChange = (event: any) => {
-    setCurrentEnvironment(environments[Number(event.target.value)]);
+  const handleChange = (key: Key | Key[] | null) => {
+    if (key === null || Array.isArray(key)) return;
+
+    const env = environments.find(e => e.entityRef === key);
+    if (env) setCurrentEnvironment(env);
   };
 
-  // Check if there is more then 1 environment
-  const isSingleEnvironment = environments.length === 1;
-
   return (
-    <FormControl className={classes.formControl}>
-      <InputLabel id="select-environment-label">Environment</InputLabel>
-      <Select
-        labelId="select-environment-label"
-        id="select-environment"
-        value={String(currentEnvironment.id)}
-        onChange={handleChange}
-        disabled={isSingleEnvironment}
-        className={isSingleEnvironment ? classes.hideDropdownArrow : ''}
-      >
-        {environments.map(env => (
-          <MenuItem key={env.name} value={env.id}>
-            {env.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <Select
+      label="Environment"
+      selectionMode="single"
+      options={options}
+      defaultValue={initialEnvironment.entityRef}
+      onChange={handleChange}
+    />
   );
 };

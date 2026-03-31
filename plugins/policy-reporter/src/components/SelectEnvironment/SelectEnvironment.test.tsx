@@ -16,14 +16,14 @@ describe('SelectEnvironment', () => {
     const extension = await renderInTestApp(
       <SelectEnvironment
         environments={environments}
-        currentEnvironment={environments[1]}
+        initialEnvironment={environments[1]}
         setCurrentEnvironment={setCurrentEnvironment}
       />,
     );
 
-    expect(extension.getByText('prod')).toBeTruthy();
+    expect(extension.getAllByText('prod')).toBeTruthy();
   });
-  it('should be disabled if theres only 1 environment', async () => {
+  it('should render correctly with a single environment', async () => {
     const environment: Environment = {
       id: 1,
       entityRef: 'resource:default/dev',
@@ -34,15 +34,13 @@ describe('SelectEnvironment', () => {
     const extension = await renderInTestApp(
       <SelectEnvironment
         environments={[environment]}
-        currentEnvironment={environment}
+        initialEnvironment={environment}
         setCurrentEnvironment={setCurrentEnvironment}
       />,
     );
 
     // Assert
-    expect(extension.getAllByText('Environment')).toHaveLength(1);
-    expect(extension.getByText('dev')).toBeTruthy();
-    // The button should be disabled
-    expect(extension.getByText('dev')).toHaveClass('Mui-disabled');
+    expect(extension.getByText('Environment')).toBeTruthy();
+    expect(extension.getAllByText('dev')).toBeTruthy();
   });
 });

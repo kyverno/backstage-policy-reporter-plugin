@@ -7,9 +7,9 @@ import {
   Page,
   Progress,
 } from '@backstage/core-components';
+import { Box, Button, Grid } from '@material-ui/core';
 import { useEnvironments } from '../../hooks/useEnvironments';
 import { SelectEnvironment } from '../SelectEnvironment';
-import { Button, Grid } from '@material-ui/core';
 import { PolicyReportsTable } from '../PolicyReportsTable';
 import { useState } from 'react';
 import {
@@ -84,24 +84,24 @@ export const PolicyReportsPage = ({
     <Page themeId="tool">
       <Header title={title} subtitle={subtitle} />
       <Content>
-        <ContentHeader>
-          <SelectStatus currentStatus={status} setStatus={setStatus} />
-          <SelectSeverity
-            currentSeverity={severity}
-            setSeverity={setSeverity}
+        <ContentHeader title="">
+          <SelectEnvironment
+            environments={environments}
+            initialEnvironment={currentEnvironment}
+            setCurrentEnvironment={setCurrentEnvironment}
           />
+        </ContentHeader>
+        <Box display="flex" alignItems="flex-end" gridGap={16} mb={2}>
+          <SelectStatus initialStatus="fail" setStatus={setStatus} />
+          <SelectSeverity setSeverity={setSeverity} />
           <SelectNamespace
-            currentNamespaces={selectedNamespaces}
             setNamespaces={setSelectedNamespaces}
             availableNamespaces={availableNamespaces}
           />
-          <SelectEnvironment
-            environments={environments}
-            currentEnvironment={currentEnvironment}
-            setCurrentEnvironment={setCurrentEnvironment}
-          />
-          <SearchField />
-        </ContentHeader>
+          <Box width={300} flexShrink={0}>
+            <SearchField />
+          </Box>
+        </Box>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <PolicyReportsTable

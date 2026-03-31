@@ -100,7 +100,7 @@ export const EntityCustomPoliciesContent = ({
       <ContentHeader title={title}>
         <SelectEnvironment
           environments={environments}
-          currentEnvironment={currentEnvironment}
+          initialEnvironment={currentEnvironment}
           setCurrentEnvironment={setCurrentEnvironment}
         />
       </ContentHeader>

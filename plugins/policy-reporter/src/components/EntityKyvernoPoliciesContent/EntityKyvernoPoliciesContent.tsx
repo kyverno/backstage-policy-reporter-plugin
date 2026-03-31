@@ -97,7 +97,7 @@ export const EntityKyvernoPoliciesContent = ({
       <ContentHeader title="Kyverno Policy Reports">
         <SelectEnvironment
           environments={environments}
-          currentEnvironment={currentEnvironment}
+          initialEnvironment={currentEnvironment}
           setCurrentEnvironment={setCurrentEnvironment}
         />
       </ContentHeader>
