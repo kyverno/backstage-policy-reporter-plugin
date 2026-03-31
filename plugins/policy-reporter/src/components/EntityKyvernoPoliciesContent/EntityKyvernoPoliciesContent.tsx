@@ -1,16 +1,11 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import {
-  Content,
-  ContentHeader,
-  Page,
-  Progress,
-} from '@backstage/core-components';
+import { Content, Progress } from '@backstage/core-components';
 import {
   MissingAnnotationEmptyState,
   useEntity,
 } from '@backstage/plugin-catalog-react';
-import { Grid } from '@material-ui/core';
+import { Container, Grid, HeaderPage } from '@backstage/ui';
 import { PolicyReportsTable } from '../PolicyReportsTable';
 import { SelectEnvironment } from '../SelectEnvironment';
 import {
@@ -27,16 +22,6 @@ type KyvernoPoliciesContentProps = {
   annotationsDocumentationUrl?: string;
   policyDocumentationUrl?: string;
 };
-
-type PageContentProps = {
-  children: React.ReactNode;
-};
-
-const PageContent = ({ children }: PageContentProps) => (
-  <Page themeId="tool">
-    <Content>{children}</Content>
-  </Page>
-);
 
 export const EntityKyvernoPoliciesContent = ({
   annotationsDocumentationUrl,
@@ -73,12 +58,14 @@ export const EntityKyvernoPoliciesContent = ({
   // Annotations missing
   if (!annotationsState)
     return (
-      <PageContent>
-        <MissingAnnotationEmptyState
-          readMoreUrl={annotationsDocumentationUrl}
-          annotation={KYVERNO_RESOURCE_NAME_ANNOTATION}
-        />
-      </PageContent>
+      <Container>
+        <Content>
+          <MissingAnnotationEmptyState
+            readMoreUrl={annotationsDocumentationUrl}
+            annotation={KYVERNO_RESOURCE_NAME_ANNOTATION}
+          />
+        </Content>
+      </Container>
     );
 
   // Fetching environments
@@ -87,22 +74,27 @@ export const EntityKyvernoPoliciesContent = ({
   // Environments missing
   if (environments === undefined || !currentEnvironment)
     return (
-      <PageContent>
-        <MissingEnvironmentsEmptyState entity={entity} />
-      </PageContent>
+      <Container>
+        <Content>
+          <MissingEnvironmentsEmptyState entity={entity} />
+        </Content>
+      </Container>
     );
 
   return (
-    <PageContent>
-      <ContentHeader title="Kyverno Policy Reports">
-        <SelectEnvironment
-          environments={environments}
-          initialEnvironment={currentEnvironment}
-          setCurrentEnvironment={setCurrentEnvironment}
-        />
-      </ContentHeader>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
+    <Container>
+      <HeaderPage
+        title="Kyverno Policy Reports"
+        customActions={
+          <SelectEnvironment
+            environments={environments}
+            initialEnvironment={currentEnvironment}
+            setCurrentEnvironment={setCurrentEnvironment}
+          />
+        }
+      />
+      <Content>
+        <Grid.Root columns="1" gap="4">
           <PolicyReportsTable
             currentEnvironment={currentEnvironment}
             filter={{
@@ -113,8 +105,8 @@ export const EntityKyvernoPoliciesContent = ({
             emptyContentText="No policies found"
             policyDocumentationUrl={policyDocumentationUrl}
           />
-        </Grid>
-      </Grid>
-    </PageContent>
+        </Grid.Root>
+      </Content>
+    </Container>
   );
 };
