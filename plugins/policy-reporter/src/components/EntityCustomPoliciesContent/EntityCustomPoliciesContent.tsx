@@ -112,7 +112,6 @@ export const EntityCustomPoliciesContent = ({
               namespaces,
               sources,
               kinds,
-              status: ['fail', 'warn', 'error'],
             }}
             emptyContentText="No policies"
             policyDocumentationUrl={policyDocumentationUrl}
