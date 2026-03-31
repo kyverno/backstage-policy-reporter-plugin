@@ -1,13 +1,5 @@
-import {
-  Content,
-  ContentHeader,
-  EmptyState,
-  Header,
-  Link,
-  Page,
-  Progress,
-} from '@backstage/core-components';
-import { Box, Button, Grid } from '@material-ui/core';
+import { Content, EmptyState, Progress } from '@backstage/core-components';
+import { Box, Container, Flex, Grid, HeaderPage, ButtonLink } from '@backstage/ui';
 import { useEnvironments } from '../../hooks/useEnvironments';
 import { SelectEnvironment } from '../SelectEnvironment';
 import { PolicyReportsTable } from '../PolicyReportsTable';
@@ -30,7 +22,6 @@ export interface PolicyReportsPageProps {
 
 export const PolicyReportsPage = ({
   title = 'Policy Reports',
-  subtitle = 'View all policy reports from a Kubernetes cluster',
   policyDocumentationUrl,
 }: PolicyReportsPageProps) => {
   const {
@@ -51,8 +42,8 @@ export const PolicyReportsPage = ({
   // Environments missing
   if (environments === undefined || !currentEnvironment)
     return (
-      <Page themeId="tool">
-        <Header title={title} subtitle={subtitle} />
+      <Container>
+        <HeaderPage title={title} />
         <Content>
           <EmptyState
             missing="content"
@@ -66,57 +57,56 @@ export const PolicyReportsPage = ({
             }
             action={
               <>
-                <Button
-                  color="primary"
-                  component={Link}
-                  to="https://github.com/kyverno/backstage-policy-reporter-plugin"
+                <ButtonLink
+                  target="_blank"
+                  href="https://github.com/kyverno/backstage-policy-reporter-plugin"
                 >
                   Read More
-                </Button>
+                </ButtonLink>
               </>
             }
           />
         </Content>
-      </Page>
+      </Container>
     );
 
   return (
-    <Page themeId="tool">
-      <Header title={title} subtitle={subtitle} />
-      <Content>
-        <ContentHeader title="">
+    <Container>
+      <HeaderPage
+        title={title}
+        customActions={
           <SelectEnvironment
             environments={environments}
             initialEnvironment={currentEnvironment}
             setCurrentEnvironment={setCurrentEnvironment}
           />
-        </ContentHeader>
-        <Box display="flex" alignItems="flex-end" gridGap={16} mb={2}>
-          <SelectStatus initialStatus="fail" setStatus={setStatus} />
-          <SelectSeverity setSeverity={setSeverity} />
-          <SelectNamespace
-            setNamespaces={setSelectedNamespaces}
-            availableNamespaces={availableNamespaces}
-          />
-          <Box width={300} flexShrink={0}>
-            <SearchField />
-          </Box>
-        </Box>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <PolicyReportsTable
-              currentEnvironment={currentEnvironment}
-              filter={{
-                status: status,
-                severities: severity,
-                namespaces: selectedNamespaces,
-              }}
-              emptyContentText="No policies found"
-              policyDocumentationUrl={policyDocumentationUrl}
+        }
+      />
+      <Content>
+        <Grid.Root columns="1" gap="4">
+          <Flex align="end" gap="4">
+            <SelectStatus initialStatus="fail" setStatus={setStatus} />
+            <SelectSeverity setSeverity={setSeverity} />
+            <SelectNamespace
+              setNamespaces={setSelectedNamespaces}
+              availableNamespaces={availableNamespaces}
             />
-          </Grid>
-        </Grid>
+            <Box width="300px" style={{ flexShrink: 0 }}>
+              <SearchField />
+            </Box>
+          </Flex>
+          <PolicyReportsTable
+            currentEnvironment={currentEnvironment}
+            filter={{
+              status: status,
+              severities: severity,
+              namespaces: selectedNamespaces,
+            }}
+            emptyContentText="No policies found"
+            policyDocumentationUrl={policyDocumentationUrl}
+          />
+        </Grid.Root>
       </Content>
-    </Page>
+    </Container>
   );
 };
