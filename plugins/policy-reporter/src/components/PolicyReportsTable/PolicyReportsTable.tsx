@@ -166,22 +166,6 @@ export const PolicyReportsTable = ({
       >
         <PolicyReportsDrawerComponent content={drawerContent} />
       </Drawer>
-      {/* <SearchField */}
-      {/*   size="small" */}
-      {/*   aria-label="Search" */}
-      {/*   placeholder="Search..." */}
-      {/*   {...search} */}
-      {/* /> */}
-
-      {enableSearch && (
-        <SearchField
-          aria-label="Search"
-          label="Search"
-          value={search.value}
-          onChange={search.onChange}
-          style={{ width: '350px' }}
-        />
-      )}
       <Table
         rowConfig={{
           onClick: item => setDrawerContent(item),
