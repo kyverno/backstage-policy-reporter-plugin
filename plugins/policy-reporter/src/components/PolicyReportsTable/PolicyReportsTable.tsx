@@ -16,6 +16,7 @@ import {
   useTable,
   Table,
   Cell,
+  Link,
 } from '@backstage/ui';
 import { useApi } from '@backstage/frontend-plugin-api';
 import { policyReporterApiRef } from '../../api';
@@ -24,12 +25,14 @@ interface PolicyReportsTableProps {
   currentEnvironment: Environment;
   filter: Filter;
   emptyContentText: string;
+  policyDocumentationUrl?: string;
 }
 
 export const PolicyReportsTable = ({
   emptyContentText,
   currentEnvironment,
   filter,
+  policyDocumentationUrl,
 }: PolicyReportsTableProps) => {
   const policyReporterApi = useApi(policyReporterApiRef);
   const [searchParams] = useSearchParams();
@@ -110,7 +113,21 @@ export const PolicyReportsTable = ({
       id: 'policy',
       label: 'Policy',
       isRowHeader: true,
-      cell: item => <CellText title={item.policy} />,
+      cell: item => {
+        if (policyDocumentationUrl) {
+          return (
+            <Cell>
+              <Link
+                target="_blank"
+                href={`${policyDocumentationUrl}#${item.policy}`}
+              >
+                {item.policy}
+              </Link>
+            </Cell>
+          );
+        }
+        return <CellText title={item.policy} />;
+      },
     },
     {
       id: 'rule',

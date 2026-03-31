@@ -24,12 +24,14 @@ import { SearchField } from '../SearchField';
 
 export interface PolicyReportsPageProps {
   title?: string;
+  policyDocumentationUrl?: string;
   subtitle?: string;
 }
 
 export const PolicyReportsPage = ({
   title = 'Policy Reports',
   subtitle = 'View all policy reports from a Kubernetes cluster',
+  policyDocumentationUrl,
 }: PolicyReportsPageProps) => {
   const {
     environments,
@@ -110,6 +112,7 @@ export const PolicyReportsPage = ({
                 namespaces: selectedNamespaces,
               }}
               emptyContentText="No policies found"
+              policyDocumentationUrl={policyDocumentationUrl}
             />
           </Grid>
         </Grid>

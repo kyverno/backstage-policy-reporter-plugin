@@ -114,7 +114,8 @@ export const EntityCustomPoliciesContent = ({
               kinds,
               status: ['fail', 'warn', 'error'],
             }}
-            emptyContentText="No failing policies"
+            emptyContentText="No policies"
+            policyDocumentationUrl={policyDocumentationUrl}
           />
         </Grid>
       </Grid>
