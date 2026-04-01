@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useMemo, useState } from 'react';
 import {
   Filter,
   ListResult,
@@ -20,6 +19,7 @@ import {
 } from '@backstage/ui';
 import { useApi } from '@backstage/frontend-plugin-api';
 import { policyReporterApiRef } from '../../api';
+import { useFilterParams } from '../../hooks/useFilterParams';
 
 interface PolicyReportsTableProps {
   currentEnvironment: Environment;
@@ -35,17 +35,26 @@ export const PolicyReportsTable = ({
   policyDocumentationUrl,
 }: PolicyReportsTableProps) => {
   const policyReporterApi = useApi(policyReporterApiRef);
-  const [searchParams] = useSearchParams();
-  const searchValue = searchParams.get('search') ?? '';
+  const { filter: urlFilter } = useFilterParams();
+
+  // Separate search (used by useTable) from the rest of the URL filter fields.
+  // Long term: all Filter properties live in urlFilter, and the `filter` prop can be removed.
+  const { search: urlSearch, ...urlFilterRest } = urlFilter;
+
+  const mergedFilter = useMemo(
+    () => ({ ...filter, ...urlFilterRest }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(filter), JSON.stringify(urlFilterRest)],
+  );
 
   const [drawerContent, setDrawerContent] = useState<ListResult | undefined>(
     undefined,
   );
 
   const { tableProps } = useTable({
-    filter: filter,
+    filter: mergedFilter,
     mode: 'offset',
-    search: searchValue,
+    search: urlSearch ?? '',
     getData: async ({
       offset,
       pageSize,
@@ -171,8 +180,8 @@ export const PolicyReportsTable = ({
           onClick: item => setDrawerContent(item),
         }}
         emptyState={
-          searchValue ? (
-            <Text>No results match "{searchValue}"</Text>
+          urlSearch ? (
+            <Text>No results match "{urlSearch}"</Text>
           ) : (
             <Text>{emptyContentText}</Text>
           )
