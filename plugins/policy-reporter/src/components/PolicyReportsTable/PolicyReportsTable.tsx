@@ -44,7 +44,7 @@ export const PolicyReportsTable = ({
   );
 
   const { tableProps } = useTable({
-    filter: filter,
+    filter: mergedFilter,
     mode: 'offset',
     search: search,
     getData: async ({
