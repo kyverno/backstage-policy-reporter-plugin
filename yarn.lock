@@ -5594,6 +5594,7 @@ __metadata:
     "@backstage/plugin-catalog-react": "backstage:^"
     "@backstage/test-utils": "backstage:^"
     "@backstage/theme": "backstage:^"
+    "@backstage/ui": "backstage:^"
     "@kyverno/backstage-plugin-policy-reporter-common": "workspace:^"
     "@material-ui/core": "npm:^4.12.4"
     "@material-ui/icons": "npm:^4.11.3"
@@ -5605,6 +5606,7 @@ __metadata:
     react-use: "npm:^17.6.0"
   peerDependencies:
     react: ^16.13.1 || ^17.0.0 || ^18.0.0
+    react-router-dom: ^6.0.0
   languageName: unknown
   linkType: soft
 

@@ -55,14 +55,12 @@ describe('KyvernoPolicyReportsTable', () => {
             entityRef: 'resource:default/dev',
           }}
           filter={{}}
-          title="Policy Results"
           emptyContentText="empty"
         />
         ,
       </TestApiProvider>,
     );
 
-    expect(extension.getAllByText('Policy Results')).toHaveLength(1);
     expect(extension.getAllByText('Policy1')).toHaveLength(1);
     expect(extension.getAllByText('Rule1')).toHaveLength(1);
   });
@@ -87,14 +85,12 @@ describe('KyvernoPolicyReportsTable', () => {
             entityRef: 'resource:default/dev',
           }}
           filter={{}}
-          title="Policy Results"
           emptyContentText="there are no policies"
         />
         ,
       </TestApiProvider>,
     );
 
-    expect(extension.getAllByText('Policy Results')).toHaveLength(1);
     expect(extension.getAllByText('there are no policies')).toHaveLength(1);
   });
 
@@ -122,15 +118,13 @@ describe('KyvernoPolicyReportsTable', () => {
             entityRef: 'resource:default/dev',
           }}
           filter={{}}
-          title="Policy Results"
           emptyContentText="empty"
         />
         ,
       </TestApiProvider>,
     );
 
-    expect(extension.getAllByText('Policy Results')).toHaveLength(1);
-    expect(extension.getByRole('progressbar')).toBeTruthy();
+    expect(extension.getByText('Loading...')).toBeTruthy();
   });
 
   it('should render ResponseErrorPanel when fetching data fails', async () => {
@@ -152,7 +146,6 @@ describe('KyvernoPolicyReportsTable', () => {
             entityRef: 'resource:default/dev',
           }}
           filter={{}}
-          title="Policy Results"
           emptyContentText="there are no policies"
         />
         ,
@@ -198,7 +191,6 @@ describe('KyvernoPolicyReportsTable', () => {
             entityRef: 'resource:default/dev',
           }}
           filter={{}}
-          title="Policy Results"
           emptyContentText="empty"
         />
         ,
@@ -207,12 +199,10 @@ describe('KyvernoPolicyReportsTable', () => {
     //
 
     // Assert
-    const cell = extension.getByRole('cell', {
-      name: 'name',
-    });
+    const cell = extension.getByText('Policy1');
     expect(cell).toBeInTheDocument();
 
-    // simulate user clicking on a cell
+    // simulate user clicking on the policy text
     const user = userEvent.setup();
     await user.click(cell);
     await waitFor(() => {

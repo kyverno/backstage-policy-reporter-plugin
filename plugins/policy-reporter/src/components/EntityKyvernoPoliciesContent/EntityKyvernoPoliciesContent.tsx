@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Content,
   ContentHeader,
@@ -53,6 +55,21 @@ export const EntityKyvernoPoliciesContent = ({
     currentEnvironment,
   } = useEntityEnvironment(entity, annotationsState);
 
+  const namespaces = getNamespaces(annotations);
+  const kinds = getKinds(annotations);
+  const resourceName = getResourceName(annotations);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Set the default search param to resourceName on mount
+  useEffect(() => {
+    if (resourceName && !searchParams.has('search')) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set('search', resourceName);
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [resourceName, searchParams, setSearchParams]);
+
   // Annotations missing
   if (!annotationsState)
     return (
@@ -75,10 +92,6 @@ export const EntityKyvernoPoliciesContent = ({
       </PageContent>
     );
 
-  const namespaces = getNamespaces(annotations);
-  const kinds = getKinds(annotations);
-  const resourceName = getResourceName(annotations);
-
   return (
     <PageContent>
       <ContentHeader title="Kyverno Policy Reports">
@@ -96,45 +109,9 @@ export const EntityKyvernoPoliciesContent = ({
               namespaces,
               sources: ['kyverno'],
               kinds,
-              status: ['fail', 'warn', 'error'],
-              search: resourceName,
             }}
-            title="Failing Policy Results"
-            emptyContentText="No failing policies"
+            emptyContentText="No policies found"
             policyDocumentationUrl={policyDocumentationUrl}
-            enableSearch={false}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <PolicyReportsTable
-            currentEnvironment={currentEnvironment}
-            filter={{
-              namespaces,
-              sources: ['kyverno'],
-              kinds,
-              status: ['pass'],
-              search: resourceName,
-            }}
-            title="Passing Policy Results"
-            emptyContentText="No passing policies"
-            policyDocumentationUrl={policyDocumentationUrl}
-            enableSearch={false}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <PolicyReportsTable
-            currentEnvironment={currentEnvironment}
-            filter={{
-              namespaces,
-              sources: ['kyverno'],
-              kinds,
-              status: ['skip'],
-              search: resourceName,
-            }}
-            title="Skipped Policy Results"
-            emptyContentText="No skipped policies"
-            policyDocumentationUrl={policyDocumentationUrl}
-            enableSearch={false}
           />
         </Grid>
       </Grid>

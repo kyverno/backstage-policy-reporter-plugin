@@ -129,8 +129,5 @@ describe('EntityCustomPoliciesContent component', () => {
 
     // Assert
     expect(extension.getByText(title)).toBeTruthy();
-    expect(extension.getByText('Failing Policy Results')).toBeTruthy();
-    expect(extension.getByText('Passing Policy Results')).toBeTruthy();
-    expect(extension.getByText('Skipped Policy Results')).toBeTruthy();
   });
 });

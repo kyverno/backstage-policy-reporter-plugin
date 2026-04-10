@@ -20,6 +20,7 @@ import { SelectStatus } from '../SelectStatus';
 import { SelectSeverity } from '../SelectSeverity';
 import { SelectNamespace } from '../SelectNamespace';
 import { useNamespaces } from '../../hooks/useNamespaces';
+import { SearchField } from '../SearchField';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -99,6 +100,7 @@ export const PolicyReportsPage = ({
             currentEnvironment={currentEnvironment}
             setCurrentEnvironment={setCurrentEnvironment}
           />
+          <SearchField />
         </ContentHeader>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -109,10 +111,8 @@ export const PolicyReportsPage = ({
                 severities: severity,
                 namespaces: selectedNamespaces,
               }}
-              title="Policy Results"
               emptyContentText="No policies found"
               policyDocumentationUrl={policyDocumentationUrl}
-              pagination={{ offset: 25 }}
             />
           </Grid>
         </Grid>
