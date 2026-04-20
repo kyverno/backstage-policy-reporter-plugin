@@ -92,23 +92,15 @@ export const PolicyReportsPage = ({
       <Content>
         <Grid.Root columns="1" gap="4">
           <Flex align="end" gap="4">
-            <SelectStatus initialStatus="fail" setStatus={setStatus} />
-            <SelectSeverity setSeverity={setSeverity} />
-            <SelectNamespace
-              setNamespaces={setSelectedNamespaces}
-              availableNamespaces={availableNamespaces}
-            />
+            <SelectStatus initialStatus={['fail']} />
+            <SelectSeverity />
+            <SelectNamespace availableNamespaces={availableNamespaces} />
             <Box width="300px" style={{ flexShrink: 0 }}>
               <SearchField />
             </Box>
           </Flex>
           <PolicyReportsTable
             currentEnvironment={currentEnvironment}
-            filter={{
-              status: status,
-              severities: severity,
-              namespaces: selectedNamespaces,
-            }}
             emptyContentText="No policies found"
             policyDocumentationUrl={policyDocumentationUrl}
           />

@@ -1,8 +1,5 @@
-import { useMemo, useState } from 'react';
-import {
-  Filter,
-  ListResult,
-} from '@kyverno/backstage-plugin-policy-reporter-common';
+import { useState } from 'react';
+import { ListResult } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Drawer } from '@material-ui/core';
 import { StatusComponent } from '../StatusComponent';
 import { SeverityComponent } from '../SeverityComponent';
@@ -23,7 +20,6 @@ import { useFilterParams } from '../../hooks/useFilterParams';
 
 interface PolicyReportsTableProps {
   currentEnvironment: Environment;
-  filter: Filter;
   emptyContentText: string;
   policyDocumentationUrl?: string;
 }
@@ -31,30 +27,20 @@ interface PolicyReportsTableProps {
 export const PolicyReportsTable = ({
   emptyContentText,
   currentEnvironment,
-  filter,
   policyDocumentationUrl,
 }: PolicyReportsTableProps) => {
   const policyReporterApi = useApi(policyReporterApiRef);
-  const { filter: urlFilter } = useFilterParams();
-
-  // Separate search (used by useTable) from the rest of the URL filter fields.
-  // Long term: all Filter properties live in urlFilter, and the `filter` prop can be removed.
-  const { search: urlSearch, ...urlFilterRest } = urlFilter;
-
-  const mergedFilter = useMemo(
-    () => ({ ...filter, ...urlFilterRest }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(filter), JSON.stringify(urlFilterRest)],
-  );
+  const { filter: urlFilter, loading } = useFilterParams();
+  const { search, ...filter } = urlFilter;
 
   const [drawerContent, setDrawerContent] = useState<ListResult | undefined>(
     undefined,
   );
 
   const { tableProps } = useTable({
-    filter: mergedFilter,
+    filter: filter,
     mode: 'offset',
-    search: urlSearch ?? '',
+    search: search,
     getData: async ({
       offset,
       pageSize,
@@ -176,12 +162,13 @@ export const PolicyReportsTable = ({
         <PolicyReportsDrawerComponent content={drawerContent} />
       </Drawer>
       <Table
+        loading={loading}
         rowConfig={{
           onClick: item => setDrawerContent(item),
         }}
         emptyState={
-          urlSearch ? (
-            <Text>No results match "{urlSearch}"</Text>
+          search ? (
+            <Text>No results match "{search}"</Text>
           ) : (
             <Text>{emptyContentText}</Text>
           )
