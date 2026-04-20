@@ -1,7 +1,6 @@
 import { Select } from '@backstage/ui';
 import { Severity } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Key } from 'react';
-import React from 'react';
 
 const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
   { value: 'unknown', label: 'Unknown' },
