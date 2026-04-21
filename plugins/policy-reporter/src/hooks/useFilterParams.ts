@@ -1,5 +1,5 @@
 import qs from 'qs';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { useEffectOnce } from 'react-use';
@@ -50,7 +50,11 @@ export const useFilterParams = (defaults?: Partial<Filter>) => {
     setLoading(false);
   });
 
-  const filter = (qs.parse(searchParams.toString()).filter ?? {}) as Filter;
+  const searchParamsStr = searchParams.toString();
+  const filter = useMemo(
+    () => (qs.parse(searchParamsStr).filter ?? {}) as Filter,
+    [searchParamsStr],
+  );
 
   const updateFilter = useCallback(
     (filters: Partial<Filter> | ((prevFilters: Filter) => Partial<Filter>)) => {

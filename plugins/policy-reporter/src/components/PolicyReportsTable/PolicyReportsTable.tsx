@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ListResult } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Drawer } from '@material-ui/core';
 import { StatusComponent } from '../StatusComponent';
@@ -31,7 +31,13 @@ export const PolicyReportsTable = ({
 }: PolicyReportsTableProps) => {
   const policyReporterApi = useApi(policyReporterApiRef);
   const { filter: urlFilter, loading } = useFilterParams();
-  const { search, ...filter } = urlFilter;
+  // Memoize to avoid a new object reference on every render (which would cause
+  // useTable to treat it as a changed dependency and re-fetch continuously).
+  const filter = useMemo(() => {
+    const { search: _, ...rest } = urlFilter;
+    return rest;
+  }, [urlFilter]);
+  const search = urlFilter.search;
 
   const [drawerContent, setDrawerContent] = useState<ListResult | undefined>(
     undefined,
