@@ -1,6 +1,7 @@
 import { Select, Skeleton } from '@backstage/ui';
 import { Severity } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Key } from 'react';
+import { useFilterParams } from '../../hooks/useFilterParams';
 
 const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
   { value: 'unknown', label: 'Unknown' },

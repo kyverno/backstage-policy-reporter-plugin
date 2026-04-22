@@ -1,12 +1,10 @@
 import { renderInTestApp } from '@backstage/test-utils';
 import { SelectStatus } from './SelectStatus';
 
-const setCurrentStatus = jest.fn();
-
 describe('SelectStatus', () => {
   it('should render the selected environment', async () => {
     const extension = await renderInTestApp(
-      <SelectStatus initialStatus={['fail']} setStatus={setCurrentStatus} />,
+      <SelectStatus initialStatus={['fail']} />,
     );
     expect(extension.getAllByText('Fail')).toBeTruthy();
     expect(extension.getByText('Status')).toBeTruthy();
@@ -14,10 +12,7 @@ describe('SelectStatus', () => {
 
   it('should render the selected environments', async () => {
     const extension = await renderInTestApp(
-      <SelectStatus
-        initialStatus={['fail', 'summary']}
-        setStatus={setCurrentStatus}
-      />,
+      <SelectStatus initialStatus={['fail', 'summary']} />,
     );
     expect(extension.getAllByText('Fail')).toBeTruthy();
     expect(extension.getAllByText('Summary')).toBeTruthy();
@@ -26,7 +21,7 @@ describe('SelectStatus', () => {
 
   it('should render all when nothing is selected', async () => {
     const extension = await renderInTestApp(
-      <SelectStatus initialStatus={[]} setStatus={setCurrentStatus} />,
+      <SelectStatus initialStatus={[]} />,
     );
     expect(extension.getByText('All')).toBeTruthy();
     expect(extension.getByText('Status')).toBeTruthy();

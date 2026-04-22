@@ -10,11 +10,6 @@ import {
 import { useEnvironments } from '../../hooks/useEnvironments';
 import { SelectEnvironment } from '../SelectEnvironment';
 import { PolicyReportsTable } from '../PolicyReportsTable';
-import { useState } from 'react';
-import {
-  Severity,
-  Status,
-} from '@kyverno/backstage-plugin-policy-reporter-common';
 import { SelectStatus } from '../SelectStatus';
 import { SelectSeverity } from '../SelectSeverity';
 import { SelectNamespace } from '../SelectNamespace';
@@ -38,9 +33,6 @@ export const PolicyReportsPage = ({
     currentEnvironment,
   } = useEnvironments();
 
-  const [status, setStatus] = useState<Status[]>(['fail']);
-  const [severity, setSeverity] = useState<Severity[]>([]);
-  const [selectedNamespaces, setSelectedNamespaces] = useState<string[]>([]);
   const { namespaces: availableNamespaces } = useNamespaces(currentEnvironment);
 
   // Fetching environments
