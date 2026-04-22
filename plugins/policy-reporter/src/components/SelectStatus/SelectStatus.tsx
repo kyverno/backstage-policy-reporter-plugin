@@ -1,70 +1,54 @@
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import { Status } from '@kyverno/backstage-plugin-policy-reporter-common';
-import { makeStyles } from '@material-ui/core/styles';
-import { Checkbox, ListItemText } from '@material-ui/core';
+import { Select } from '@backstage/ui';
+import { Key } from 'react';
 
-// This could be moved into the common package if needed in multiple places
-const STATUS_VALUES: Status[] = [
-  'fail',
-  'skip',
-  'pass',
-  'warn',
-  'error',
-  'summary',
+const STATUS_OPTIONS: { value: Status; label: string }[] = [
+  { value: 'fail', label: 'Fail' },
+  { value: 'skip', label: 'Skip' },
+  { value: 'pass', label: 'Pass' },
+  { value: 'warn', label: 'Warn' },
+  { value: 'error', label: 'Error' },
+  { value: 'summary', label: 'Summary' },
 ];
 
-const useStyles = makeStyles({
-  formControl: {
-    margin: 8,
-    minWidth: 150,
-  },
-});
+const validStatuses = STATUS_OPTIONS.map(option => option.value);
 
 export type SelectStatusProps = {
-  currentStatus: Status[];
+  initialStatus?: Status[] | Status;
   setStatus: (Status: Status[]) => void;
 };
 
 export const SelectStatus = ({
-  currentStatus,
+  initialStatus,
   setStatus,
 }: SelectStatusProps) => {
-  const classes = useStyles();
+  const handleChange = (key: Key | Key[] | null) => {
+    if (key === null) {
+      setStatus([]);
+      return;
+    }
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setStatus(event.target.value as Status[]);
+    if (!Array.isArray(key)) {
+      setStatus(validStatuses.includes(key as Status) ? [key as Status] : []);
+      return;
+    }
+
+    // Input is an array - filter and validate
+    const filteredStatuses = key.filter((item): item is Status =>
+      validStatuses.includes(item as Status),
+    );
+    setStatus(filteredStatuses);
   };
 
   return (
-    <FormControl className={classes.formControl}>
-      <InputLabel id="select-status-label" shrink>
-        Status
-      </InputLabel>
-      <Select
-        labelId="select-status-label"
-        id="select-status"
-        multiple
-        displayEmpty
-        value={currentStatus}
-        renderValue={selected => {
-          if ((selected as Status[]).length === 0) {
-            return 'All';
-          }
-
-          return (selected as Status[]).join(', ');
-        }}
-        onChange={handleChange}
-      >
-        {STATUS_VALUES.map(status => (
-          <MenuItem key={status} value={status}>
-            <Checkbox checked={currentStatus.includes(status)} />
-            <ListItemText primary={status} />
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <Select
+      label="Status"
+      selectionMode="multiple"
+      options={STATUS_OPTIONS}
+      defaultValue={initialStatus}
+      onChange={handleChange}
+      placeholder="All"
+      style={{ width: 200 }}
+    />
   );
 };
