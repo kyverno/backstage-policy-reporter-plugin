@@ -32,7 +32,7 @@ const stringifyWithFilter = (
 ): string =>
   qs.stringify(
     { ...parsed, filter: Object.keys(filter).length ? filter : undefined },
-    { arrayFormat: 'brackets', skipNulls: true },
+    { arrayFormat: 'indices', skipNulls: true },
   );
 
 export const useFilterParams = (defaults?: Partial<Filter>) => {
