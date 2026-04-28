@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useAsync } from 'react-use';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import {
@@ -7,15 +6,14 @@ import {
 } from '@backstage/plugin-catalog-react';
 import { useApi } from '@backstage/core-plugin-api';
 import { Entity } from '@backstage/catalog-model';
+import { useEnvironmentParam } from './useEnvironmentParam';
 
 export const useEntityEnvironment = (
   entity: Entity,
   annotationsState: boolean,
 ) => {
   const catalogApi = useApi(catalogApiRef);
-  const [currentEnvironment, setCurrentEnvironment] = useState<
-    Environment | undefined
-  >(undefined);
+  const { environment, setEnvironment } = useEnvironmentParam();
 
   const { value: environments, loading: environmentsLoading } =
     useAsync(async (): Promise<Environment[] | undefined> => {
@@ -46,15 +44,15 @@ export const useEntityEnvironment = (
         }
       });
 
-      setCurrentEnvironment(environmentList[0]);
+      // Write the first environment to the URL only if not already set.
+      // Runs inside useAsync so it fires exactly once per entity — avoids a
+      // useEffect dependency loop where setting the URL would re-trigger the effect.
+      if (!environment && environmentList.length) {
+        setEnvironment(environmentList[0].entityRef);
+      }
 
       return environmentList;
     }, [entity]);
 
-  return {
-    environments,
-    environmentsLoading,
-    currentEnvironment,
-    setCurrentEnvironment,
-  };
+  return { environments, environmentsLoading, environment };
 };

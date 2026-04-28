@@ -1,19 +1,25 @@
 import { Select, Skeleton } from '@backstage/ui';
 import { Key } from 'react';
 import { useFilterParams } from '../../hooks/useFilterParams';
+import { useEnvironmentParam } from '../../hooks/useEnvironmentParam';
+import { useNamespaces } from '../../hooks/useNamespaces';
 
 export type SelectNamespaceProps = {
   initialNamespaces?: string[];
-  availableNamespaces: string[];
 };
 
 export const SelectNamespace = ({
   initialNamespaces,
-  availableNamespaces,
 }: SelectNamespaceProps) => {
-  const { updateFilter, filter, loading } = useFilterParams({
+  const {
+    updateFilter,
+    filter,
+    loading: filterLoading,
+  } = useFilterParams({
     namespaces: initialNamespaces,
   });
+  const { environment } = useEnvironmentParam();
+  const { namespaces: availableNamespaces } = useNamespaces(environment);
 
   const options = availableNamespaces.map(ns => ({ value: ns, label: ns }));
 
@@ -38,7 +44,7 @@ export const SelectNamespace = ({
     updateFilter({ namespaces: filtered });
   };
 
-  if (loading) return <Skeleton width={200} height={24} />;
+  if (filterLoading) return <Skeleton width={200} height={24} />;
 
   return (
     <Select

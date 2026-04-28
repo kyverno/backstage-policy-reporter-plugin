@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useAsync } from 'react-use';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import {
@@ -6,15 +5,14 @@ import {
   catalogApiRef,
 } from '@backstage/plugin-catalog-react';
 import { useApi } from '@backstage/core-plugin-api';
+import { useEnvironmentParam } from './useEnvironmentParam';
 
 export const useEnvironments = () => {
   const catalogApi = useApi(catalogApiRef);
-  const [currentEnvironment, setCurrentEnvironment] = useState<
-    Environment | undefined
-  >(undefined);
+  const { environment, setEnvironment } = useEnvironmentParam();
 
-  const { value: environments, loading: environmentsLoading } = useAsync(
-    async (): Promise<Environment[] | undefined> => {
+  const { value: environments, loading: environmentsLoading } =
+    useAsync(async (): Promise<Environment[] | undefined> => {
       const entities = await catalogApi.getEntities({
         fields: ['metadata.name', 'metadata.namespace', 'kind'],
         filter: {
@@ -26,24 +24,20 @@ export const useEnvironments = () => {
 
       if (!entities) return undefined;
 
-      const environmentList: Environment[] = entities.items.map(
-        (entity, index) => ({
-          id: index,
-          entityRef: `${entity.kind}:${entity.metadata.namespace}/${entity.metadata.name}`,
-          name: entity.metadata.name,
-        }),
-      );
+      const environmentList = entities.items.map((entity, index) => ({
+        id: index,
+        entityRef: `${entity.kind}:${entity.metadata.namespace}/${entity.metadata.name}`,
+        name: entity.metadata.name,
+      }));
 
-      setCurrentEnvironment(environmentList[0]);
+      // Write the first environment to the URL only if not already set
+      // (e.g. a bookmarked URL already has ?environment=...).
+      if (!environment && environmentList.length) {
+        setEnvironment(environmentList[0].entityRef);
+      }
 
       return environmentList;
-    },
-  );
+    }, []);
 
-  return {
-    environments,
-    environmentsLoading,
-    currentEnvironment,
-    setCurrentEnvironment,
-  };
+  return { environments, environmentsLoading };
 };

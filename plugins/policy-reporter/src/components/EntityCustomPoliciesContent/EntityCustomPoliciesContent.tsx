@@ -43,12 +43,10 @@ export const EntityCustomPoliciesContent = ({
 
   useFilterParams({ namespaces, kinds, sources });
 
-  const {
-    environments,
-    environmentsLoading,
-    setCurrentEnvironment,
-    currentEnvironment,
-  } = useEntityEnvironment(entity, annotationsState);
+  const { environments, environmentsLoading } = useEntityEnvironment(
+    entity,
+    annotationsState,
+  );
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -74,11 +72,11 @@ export const EntityCustomPoliciesContent = ({
       </Container>
     );
 
-  // Fetching environments
+  // Fetching environments or waiting for default to be written to URL
   if (environmentsLoading) return <Progress />;
 
   // Environments missing
-  if (environments === undefined || !currentEnvironment)
+  if (!environments?.length)
     return (
       <Container>
         <Content>
@@ -91,18 +89,11 @@ export const EntityCustomPoliciesContent = ({
     <Container>
       <HeaderPage
         title={title}
-        customActions={
-          <SelectEnvironment
-            environments={environments}
-            initialEnvironment={currentEnvironment}
-            setCurrentEnvironment={setCurrentEnvironment}
-          />
-        }
+        customActions={<SelectEnvironment environments={environments} />}
       />
       <Content>
         <Grid.Root columns="1" gap="4">
           <PolicyReportsTable
-            currentEnvironment={currentEnvironment}
             emptyContentText="No policies"
             policyDocumentationUrl={policyDocumentationUrl}
           />

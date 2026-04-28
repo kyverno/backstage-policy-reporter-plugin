@@ -1,18 +1,15 @@
 import { Select } from '@backstage/ui';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Key } from 'react';
+import { useEnvironmentParam } from '../../hooks/useEnvironmentParam';
 
 type SelectEnvironmentProps = {
   environments: Environment[];
-  initialEnvironment: Environment;
-  setCurrentEnvironment: (environment: Environment) => void;
 };
 
-export const SelectEnvironment = ({
-  environments,
-  initialEnvironment,
-  setCurrentEnvironment,
-}: SelectEnvironmentProps) => {
+export const SelectEnvironment = ({ environments }: SelectEnvironmentProps) => {
+  const { environment, setEnvironment } = useEnvironmentParam();
+
   const options = environments.map(env => ({
     value: env.entityRef,
     label: env.name,
@@ -20,9 +17,7 @@ export const SelectEnvironment = ({
 
   const handleChange = (key: Key | Key[] | null) => {
     if (key === null || Array.isArray(key)) return;
-
-    const env = environments.find(e => e.entityRef === key);
-    if (env) setCurrentEnvironment(env);
+    setEnvironment(key as string);
   };
 
   return (
@@ -30,7 +25,7 @@ export const SelectEnvironment = ({
       label="Environment"
       selectionMode="single"
       options={options}
-      defaultValue={initialEnvironment.entityRef}
+      defaultValue={environment}
       onChange={handleChange}
     />
   );

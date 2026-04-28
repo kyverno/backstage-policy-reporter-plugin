@@ -1,7 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { useApi } from '@backstage/core-plugin-api';
 import { useNamespaces } from './useNamespaces';
-import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 jest.mock('@backstage/core-plugin-api');
 
@@ -18,11 +17,7 @@ describe('useNamespaces', () => {
     jest.resetAllMocks();
   });
 
-  const environment: Environment = {
-    name: 'dev',
-    entityRef: 'resource:default/dev',
-    id: 0,
-  };
+  const entityRef = 'resource:default/dev';
 
   it('should return empty list if no environment provided', async () => {
     const { result } = renderHook(() => useNamespaces(undefined));
@@ -43,7 +38,7 @@ describe('useNamespaces', () => {
       json: jest.fn().mockResolvedValue(['default', 'kube-system']),
     });
 
-    const { result } = renderHook(() => useNamespaces(environment));
+    const { result } = renderHook(() => useNamespaces(entityRef));
 
     expect(result.current.loading).toEqual(true);
 
@@ -54,7 +49,7 @@ describe('useNamespaces', () => {
     });
 
     expect(mockGetNamespaces).toHaveBeenCalledWith({
-      query: { environment: environment.entityRef },
+      query: { environment: entityRef },
     });
   });
 
@@ -62,7 +57,7 @@ describe('useNamespaces', () => {
     const error = new Error('Failed to fetch');
     mockGetNamespaces.mockRejectedValue(error);
 
-    const { result } = renderHook(() => useNamespaces(environment));
+    const { result } = renderHook(() => useNamespaces(entityRef));
 
     expect(result.current.loading).toEqual(true);
 

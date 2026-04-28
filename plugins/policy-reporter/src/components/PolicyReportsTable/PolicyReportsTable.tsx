@@ -3,7 +3,6 @@ import { ListResult } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Drawer } from '@material-ui/core';
 import { StatusComponent } from '../StatusComponent';
 import { SeverityComponent } from '../SeverityComponent';
-import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { PolicyReportsDrawerComponent } from '../PolicyReportsDrawerComponent';
 import {
   CellText,
@@ -17,20 +16,20 @@ import {
 import { useApi } from '@backstage/frontend-plugin-api';
 import { policyReporterApiRef } from '../../api';
 import { useFilterParams } from '../../hooks/useFilterParams';
+import { useEnvironmentParam } from '../../hooks/useEnvironmentParam';
 
 interface PolicyReportsTableProps {
-  currentEnvironment: Environment;
   emptyContentText: string;
   policyDocumentationUrl?: string;
 }
 
 export const PolicyReportsTable = ({
   emptyContentText,
-  currentEnvironment,
   policyDocumentationUrl,
 }: PolicyReportsTableProps) => {
   const policyReporterApi = useApi(policyReporterApiRef);
   const { filter: urlFilter, loading } = useFilterParams();
+  const { environment } = useEnvironmentParam();
   // Memoize to avoid a new object reference on every render (which would cause
   // useTable to treat it as a changed dependency and re-fetch continuously).
   const filter = useMemo(() => {
@@ -53,6 +52,10 @@ export const PolicyReportsTable = ({
       filter: fetchFilter,
       search: searchParam,
     }) => {
+      if (!environment) {
+        return { data: [], totalCount: 0 };
+      }
+
       // useTable provides:
       // - offset: absolute record position (0, 20, 40, 60...)
       // - pageSize: number of records per page (20)
@@ -72,7 +75,7 @@ export const PolicyReportsTable = ({
 
       const response = await policyReporterApi.getNamespacedResults({
         query: {
-          environment: encodeURI(currentEnvironment.entityRef),
+          environment: encodeURI(environment),
           // page: which page to fetch (1-indexed)
           page: page,
           // offset: Policy Reporter API's name for results per page

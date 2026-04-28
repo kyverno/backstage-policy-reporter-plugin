@@ -13,7 +13,6 @@ import { PolicyReportsTable } from '../PolicyReportsTable';
 import { SelectStatus } from '../SelectStatus';
 import { SelectSeverity } from '../SelectSeverity';
 import { SelectNamespace } from '../SelectNamespace';
-import { useNamespaces } from '../../hooks/useNamespaces';
 import { SearchField } from '../SearchField';
 
 export interface PolicyReportsPageProps {
@@ -26,20 +25,13 @@ export const PolicyReportsPage = ({
   title = 'Policy Reports',
   policyDocumentationUrl,
 }: PolicyReportsPageProps) => {
-  const {
-    environments,
-    environmentsLoading,
-    setCurrentEnvironment,
-    currentEnvironment,
-  } = useEnvironments();
+  const { environments, environmentsLoading } = useEnvironments();
 
-  const { namespaces: availableNamespaces } = useNamespaces(currentEnvironment);
-
-  // Fetching environments
+  // Loading environments
   if (environmentsLoading) return <Progress />;
 
   // Environments missing
-  if (environments === undefined || !currentEnvironment)
+  if (!environments?.length)
     return (
       <Container>
         <HeaderPage title={title} />
@@ -73,26 +65,19 @@ export const PolicyReportsPage = ({
     <Container>
       <HeaderPage
         title={title}
-        customActions={
-          <SelectEnvironment
-            environments={environments}
-            initialEnvironment={currentEnvironment}
-            setCurrentEnvironment={setCurrentEnvironment}
-          />
-        }
+        customActions={<SelectEnvironment environments={environments} />}
       />
       <Content>
         <Grid.Root columns="1" gap="4">
           <Flex align="end" gap="4">
             <SelectStatus initialStatus={['fail']} />
             <SelectSeverity />
-            <SelectNamespace availableNamespaces={availableNamespaces} />
+            <SelectNamespace />
             <Box width="300px" style={{ flexShrink: 0 }}>
               <SearchField />
             </Box>
           </Flex>
           <PolicyReportsTable
-            currentEnvironment={currentEnvironment}
             emptyContentText="No policies found"
             policyDocumentationUrl={policyDocumentationUrl}
           />

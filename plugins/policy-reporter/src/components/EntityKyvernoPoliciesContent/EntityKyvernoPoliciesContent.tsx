@@ -34,12 +34,8 @@ export const EntityKyvernoPoliciesContent = ({
   // Boolean variable to validate that entity have required annotations
   const annotationsState = isPolicyReporterAvailable(entity);
 
-  const {
-    environments,
-    environmentsLoading,
-    setCurrentEnvironment,
-    currentEnvironment,
-  } = useEntityEnvironment(entity, annotationsState);
+  const { environments, environmentsLoading, environment } =
+    useEntityEnvironment(entity, annotationsState);
 
   const namespaces = getNamespaces(annotations);
   const kinds = getKinds(annotations);
@@ -71,11 +67,12 @@ export const EntityKyvernoPoliciesContent = ({
       </Container>
     );
 
-  // Fetching environments
-  if (environmentsLoading) return <Progress />;
+  // Fetching environments or waiting for default to be written to URL
+  if (environmentsLoading || (environments?.length && !environment))
+    return <Progress />;
 
   // Environments missing
-  if (environments === undefined || !currentEnvironment)
+  if (!environments?.length)
     return (
       <Container>
         <Content>
@@ -88,18 +85,11 @@ export const EntityKyvernoPoliciesContent = ({
     <Container>
       <HeaderPage
         title="Kyverno Policy Reports"
-        customActions={
-          <SelectEnvironment
-            environments={environments}
-            initialEnvironment={currentEnvironment}
-            setCurrentEnvironment={setCurrentEnvironment}
-          />
-        }
+        customActions={<SelectEnvironment environments={environments} />}
       />
       <Content>
         <Grid.Root columns="1" gap="4">
           <PolicyReportsTable
-            currentEnvironment={currentEnvironment}
             emptyContentText="No policies found"
             policyDocumentationUrl={policyDocumentationUrl}
           />

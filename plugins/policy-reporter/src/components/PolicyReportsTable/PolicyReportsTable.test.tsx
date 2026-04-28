@@ -18,6 +18,16 @@ const mockPolicyReportApiRef = {
   getNamespacedResults: mockGetNamespacedResults,
 };
 
+const renderTable = (props: Partial<Parameters<typeof PolicyReportsTable>[0]> = {}) =>
+  renderInTestApp(
+    <TestApiProvider
+      apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
+    >
+      <PolicyReportsTable emptyContentText="empty" {...props} />
+    </TestApiProvider>,
+    { routeEntries: ['/?environment=resource:default/dev'] },
+  );
+
 describe('KyvernoPolicyReportsTable', () => {
   it('should render table displaying the fetched data', async () => {
     // Arrange
@@ -44,21 +54,7 @@ describe('KyvernoPolicyReportsTable', () => {
     });
 
     // Act
-    const extension = await renderInTestApp(
-      <TestApiProvider
-        apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
-      >
-        <PolicyReportsTable
-          currentEnvironment={{
-            id: 1,
-            name: 'dev',
-            entityRef: 'resource:default/dev',
-          }}
-          emptyContentText="empty"
-        />
-        ,
-      </TestApiProvider>,
-    );
+    const extension = await renderTable();
 
     expect(extension.getAllByText('Policy1')).toHaveLength(1);
     expect(extension.getAllByText('Rule1')).toHaveLength(1);
@@ -73,21 +69,7 @@ describe('KyvernoPolicyReportsTable', () => {
     });
 
     // Act
-    const extension = await renderInTestApp(
-      <TestApiProvider
-        apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
-      >
-        <PolicyReportsTable
-          currentEnvironment={{
-            id: 1,
-            name: 'dev',
-            entityRef: 'resource:default/dev',
-          }}
-          emptyContentText="there are no policies"
-        />
-        ,
-      </TestApiProvider>,
-    );
+    const extension = await renderTable({ emptyContentText: 'there are no policies' });
 
     expect(extension.getAllByText('there are no policies')).toHaveLength(1);
   });
@@ -105,21 +87,7 @@ describe('KyvernoPolicyReportsTable', () => {
     });
 
     // Act
-    const extension = await renderInTestApp(
-      <TestApiProvider
-        apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
-      >
-        <PolicyReportsTable
-          currentEnvironment={{
-            id: 1,
-            name: 'dev',
-            entityRef: 'resource:default/dev',
-          }}
-          emptyContentText="empty"
-        />
-        ,
-      </TestApiProvider>,
-    );
+    const extension = await renderTable();
 
     expect(extension.getByText('Loading...')).toBeTruthy();
   });
@@ -132,21 +100,7 @@ describe('KyvernoPolicyReportsTable', () => {
     );
 
     // Act
-    const extension = await renderInTestApp(
-      <TestApiProvider
-        apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
-      >
-        <PolicyReportsTable
-          currentEnvironment={{
-            id: 1,
-            name: 'dev',
-            entityRef: 'resource:default/dev',
-          }}
-          emptyContentText="there are no policies"
-        />
-        ,
-      </TestApiProvider>,
-    );
+    const extension = await renderTable({ emptyContentText: 'there are no policies' });
 
     expect(extension.getByText('Error: Failed to fetch policies')).toBeTruthy();
   });
@@ -176,22 +130,7 @@ describe('KyvernoPolicyReportsTable', () => {
     });
 
     // Act
-    const extension = await renderInTestApp(
-      <TestApiProvider
-        apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
-      >
-        <PolicyReportsTable
-          currentEnvironment={{
-            id: 1,
-            name: 'dev',
-            entityRef: 'resource:default/dev',
-          }}
-          emptyContentText="empty"
-        />
-        ,
-      </TestApiProvider>,
-    );
-    //
+    const extension = await renderTable();
 
     // Assert
     const cell = extension.getByText('Policy1');
