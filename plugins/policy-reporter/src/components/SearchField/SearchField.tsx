@@ -1,27 +1,23 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { useDebounce } from 'react-use';
-import { SearchField as BackstageSearchField } from '@backstage/ui';
+import { SearchField as BackstageSearchField, Skeleton } from '@backstage/ui';
+import { useFilterParams } from '../../hooks/useFilterParams';
 
 export const SearchField = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [inputValue, setInputValue] = useState(
-    searchParams.get('search') ?? '',
-  );
+  const { filter, updateFilter, loading } = useFilterParams();
+  const [inputValue, setInputValue] = useState(filter.search ?? '');
 
   useDebounce(
     () => {
-      const newParams = new URLSearchParams(searchParams);
-      if (inputValue) {
-        newParams.set('search', inputValue);
-      } else {
-        newParams.delete('search');
-      }
-      setSearchParams(newParams, { replace: true });
+      updateFilter({
+        search: inputValue || undefined,
+      });
     },
     300,
     [inputValue],
   );
+
+  if (loading) return <Skeleton width={350} height={24} />;
 
   return (
     <BackstageSearchField

@@ -54,7 +54,6 @@ describe('KyvernoPolicyReportsTable', () => {
             name: 'dev',
             entityRef: 'resource:default/dev',
           }}
-          filter={{}}
           emptyContentText="empty"
         />
         ,
@@ -84,7 +83,6 @@ describe('KyvernoPolicyReportsTable', () => {
             name: 'dev',
             entityRef: 'resource:default/dev',
           }}
-          filter={{}}
           emptyContentText="there are no policies"
         />
         ,
@@ -117,7 +115,6 @@ describe('KyvernoPolicyReportsTable', () => {
             name: 'dev',
             entityRef: 'resource:default/dev',
           }}
-          filter={{}}
           emptyContentText="empty"
         />
         ,
@@ -145,7 +142,6 @@ describe('KyvernoPolicyReportsTable', () => {
             name: 'dev',
             entityRef: 'resource:default/dev',
           }}
-          filter={{}}
           emptyContentText="there are no policies"
         />
         ,
@@ -190,7 +186,6 @@ describe('KyvernoPolicyReportsTable', () => {
             name: 'dev',
             entityRef: 'resource:default/dev',
           }}
-          filter={{}}
           emptyContentText="empty"
         />
         ,

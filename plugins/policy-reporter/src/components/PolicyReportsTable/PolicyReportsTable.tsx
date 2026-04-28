@@ -1,9 +1,5 @@
-import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import {
-  Filter,
-  ListResult,
-} from '@kyverno/backstage-plugin-policy-reporter-common';
+import { useMemo, useState } from 'react';
+import { ListResult } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Drawer } from '@material-ui/core';
 import { StatusComponent } from '../StatusComponent';
 import { SeverityComponent } from '../SeverityComponent';
@@ -20,10 +16,10 @@ import {
 } from '@backstage/ui';
 import { useApi } from '@backstage/frontend-plugin-api';
 import { policyReporterApiRef } from '../../api';
+import { useFilterParams } from '../../hooks/useFilterParams';
 
 interface PolicyReportsTableProps {
   currentEnvironment: Environment;
-  filter: Filter;
   emptyContentText: string;
   policyDocumentationUrl?: string;
 }
@@ -31,12 +27,17 @@ interface PolicyReportsTableProps {
 export const PolicyReportsTable = ({
   emptyContentText,
   currentEnvironment,
-  filter,
   policyDocumentationUrl,
 }: PolicyReportsTableProps) => {
   const policyReporterApi = useApi(policyReporterApiRef);
-  const [searchParams] = useSearchParams();
-  const searchValue = searchParams.get('search') ?? '';
+  const { filter: urlFilter, loading } = useFilterParams();
+  // Memoize to avoid a new object reference on every render (which would cause
+  // useTable to treat it as a changed dependency and re-fetch continuously).
+  const filter = useMemo(() => {
+    const { search: _, ...rest } = urlFilter;
+    return rest;
+  }, [urlFilter]);
+  const search = urlFilter.search;
 
   const [drawerContent, setDrawerContent] = useState<ListResult | undefined>(
     undefined,
@@ -45,7 +46,7 @@ export const PolicyReportsTable = ({
   const { tableProps } = useTable({
     filter: filter,
     mode: 'offset',
-    search: searchValue,
+    search: search,
     getData: async ({
       offset,
       pageSize,
@@ -167,12 +168,13 @@ export const PolicyReportsTable = ({
         <PolicyReportsDrawerComponent content={drawerContent} />
       </Drawer>
       <Table
+        loading={loading}
         rowConfig={{
           onClick: item => setDrawerContent(item),
         }}
         emptyState={
-          searchValue ? (
-            <Text>No results match "{searchValue}"</Text>
+          search ? (
+            <Text>No results match "{search}"</Text>
           ) : (
             <Text>{emptyContentText}</Text>
           )

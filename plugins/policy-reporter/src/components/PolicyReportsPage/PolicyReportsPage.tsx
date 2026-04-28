@@ -10,11 +10,6 @@ import {
 import { useEnvironments } from '../../hooks/useEnvironments';
 import { SelectEnvironment } from '../SelectEnvironment';
 import { PolicyReportsTable } from '../PolicyReportsTable';
-import { useState } from 'react';
-import {
-  Severity,
-  Status,
-} from '@kyverno/backstage-plugin-policy-reporter-common';
 import { SelectStatus } from '../SelectStatus';
 import { SelectSeverity } from '../SelectSeverity';
 import { SelectNamespace } from '../SelectNamespace';
@@ -38,9 +33,6 @@ export const PolicyReportsPage = ({
     currentEnvironment,
   } = useEnvironments();
 
-  const [status, setStatus] = useState<Status[]>(['fail']);
-  const [severity, setSeverity] = useState<Severity[]>([]);
-  const [selectedNamespaces, setSelectedNamespaces] = useState<string[]>([]);
   const { namespaces: availableNamespaces } = useNamespaces(currentEnvironment);
 
   // Fetching environments
@@ -92,23 +84,15 @@ export const PolicyReportsPage = ({
       <Content>
         <Grid.Root columns="1" gap="4">
           <Flex align="end" gap="4">
-            <SelectStatus initialStatus="fail" setStatus={setStatus} />
-            <SelectSeverity setSeverity={setSeverity} />
-            <SelectNamespace
-              setNamespaces={setSelectedNamespaces}
-              availableNamespaces={availableNamespaces}
-            />
+            <SelectStatus initialStatus={['fail']} />
+            <SelectSeverity />
+            <SelectNamespace availableNamespaces={availableNamespaces} />
             <Box width="300px" style={{ flexShrink: 0 }}>
               <SearchField />
             </Box>
           </Flex>
           <PolicyReportsTable
             currentEnvironment={currentEnvironment}
-            filter={{
-              status: status,
-              severities: severity,
-              namespaces: selectedNamespaces,
-            }}
             emptyContentText="No policies found"
             policyDocumentationUrl={policyDocumentationUrl}
           />

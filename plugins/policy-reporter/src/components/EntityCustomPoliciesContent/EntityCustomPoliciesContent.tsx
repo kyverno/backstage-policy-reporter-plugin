@@ -16,6 +16,7 @@ import {
 } from '../../utils/annotations';
 import { MissingEnvironmentsEmptyState } from '../MissingEnvironmentsEmptyState';
 import { useEntityEnvironment } from '../../hooks/useEntityEnvironment';
+import { useFilterParams } from '../../hooks/useFilterParams';
 import { KYVERNO_RESOURCE_NAME_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 type EntityCustomPoliciesContentProps = {
@@ -39,6 +40,8 @@ export const EntityCustomPoliciesContent = ({
   const resourceName = getResourceName(annotations);
 
   const annotationsState = isPolicyReporterAvailable(entity);
+
+  useFilterParams({ namespaces, kinds, sources });
 
   const {
     environments,
@@ -100,11 +103,6 @@ export const EntityCustomPoliciesContent = ({
         <Grid.Root columns="1" gap="4">
           <PolicyReportsTable
             currentEnvironment={currentEnvironment}
-            filter={{
-              namespaces,
-              sources,
-              kinds,
-            }}
             emptyContentText="No policies"
             policyDocumentationUrl={policyDocumentationUrl}
           />

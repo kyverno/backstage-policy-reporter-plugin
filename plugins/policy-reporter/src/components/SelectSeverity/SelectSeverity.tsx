@@ -1,6 +1,7 @@
-import { Select } from '@backstage/ui';
+import { Select, Skeleton } from '@backstage/ui';
 import { Severity } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Key } from 'react';
+import { useFilterParams } from '../../hooks/useFilterParams';
 
 const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
   { value: 'unknown', label: 'Unknown' },
@@ -14,24 +15,26 @@ const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
 const validSeverities = SEVERITY_OPTIONS.map(option => option.value);
 
 export type SelectSeverityProps = {
-  initialSeverity?: Severity[] | Severity;
-  setSeverity: (Status: Severity[]) => void;
+  initialSeverity?: Severity[];
 };
 
-export const SelectSeverity = ({
-  initialSeverity,
-  setSeverity,
-}: SelectSeverityProps) => {
+export const SelectSeverity = ({ initialSeverity }: SelectSeverityProps) => {
+  const { updateFilter, filter, loading } = useFilterParams({
+    severities: initialSeverity,
+  });
+
   const handleChange = (key: Key | Key[] | null) => {
     if (key === null) {
-      setSeverity([]);
+      updateFilter({ severities: [] });
       return;
     }
 
     if (!Array.isArray(key)) {
-      setSeverity(
-        validSeverities.includes(key as Severity) ? [key as Severity] : [],
-      );
+      updateFilter({
+        severities: validSeverities.includes(key as Severity)
+          ? [key as Severity]
+          : [],
+      });
       return;
     }
 
@@ -39,15 +42,18 @@ export const SelectSeverity = ({
     const filteredStatuses = key.filter((item): item is Severity =>
       validSeverities.includes(item as Severity),
     );
-    setSeverity(filteredStatuses);
+
+    updateFilter({ severities: filteredStatuses });
   };
+
+  if (loading) return <Skeleton width={200} height={24} />;
 
   return (
     <Select
       label="Severity"
       selectionMode="multiple"
       options={SEVERITY_OPTIONS}
-      defaultValue={initialSeverity}
+      defaultValue={filter.severities}
       onChange={handleChange}
       placeholder="All"
       style={{ width: 200 }}

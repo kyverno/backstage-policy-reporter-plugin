@@ -1,7 +1,6 @@
 import { renderInTestApp } from '@backstage/test-utils';
 import { SelectNamespace } from './SelectNamespace';
 
-const setNamespaces = jest.fn();
 const availableNamespaces = ['default', 'kube-system'];
 
 describe('SelectNamespace', () => {
@@ -9,7 +8,6 @@ describe('SelectNamespace', () => {
     const extension = await renderInTestApp(
       <SelectNamespace
         initialNamespaces={['default']}
-        setNamespaces={setNamespaces}
         availableNamespaces={availableNamespaces}
       />,
     );
@@ -21,7 +19,6 @@ describe('SelectNamespace', () => {
     const extension = await renderInTestApp(
       <SelectNamespace
         initialNamespaces={['default', 'kube-system']}
-        setNamespaces={setNamespaces}
         availableNamespaces={availableNamespaces}
       />,
     );
@@ -32,10 +29,7 @@ describe('SelectNamespace', () => {
 
   it('should render all when nothing is selected', async () => {
     const extension = await renderInTestApp(
-      <SelectNamespace
-        setNamespaces={setNamespaces}
-        availableNamespaces={availableNamespaces}
-      />,
+      <SelectNamespace availableNamespaces={availableNamespaces} />,
     );
     expect(extension.getByText('All')).toBeTruthy();
     expect(extension.getByText('Namespace')).toBeTruthy();
