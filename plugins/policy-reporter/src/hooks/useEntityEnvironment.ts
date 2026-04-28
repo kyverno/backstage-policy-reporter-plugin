@@ -54,5 +54,5 @@ export const useEntityEnvironment = (
       return environmentList;
     }, [entity]);
 
-  return { environments, environmentsLoading, environment };
+  return { environments, environmentsLoading };
 };

@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { Content, Progress } from '@backstage/core-components';
 import {
   MissingAnnotationEmptyState,
@@ -35,29 +33,19 @@ export const EntityCustomPoliciesContent = ({
   const { entity } = useEntity();
   const annotations = entity.metadata.annotations;
 
-  const namespaces = getNamespaces(annotations);
-  const kinds = getKinds(annotations);
-  const resourceName = getResourceName(annotations);
-
   const annotationsState = isPolicyReporterAvailable(entity);
-
-  useFilterParams({ namespaces, kinds, sources });
 
   const { environments, environmentsLoading } = useEntityEnvironment(
     entity,
     annotationsState,
   );
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  // Set the default search param to resourceName on mount
-  useEffect(() => {
-    if (resourceName && !searchParams.has('search')) {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set('search', resourceName);
-      setSearchParams(newParams, { replace: true });
-    }
-  }, [resourceName, searchParams, setSearchParams]);
+  useFilterParams({
+    namespaces: getNamespaces(annotations),
+    kinds: getKinds(annotations),
+    sources: sources,
+    search: getResourceName(annotations),
+  });
 
   // Annotations missing
   if (!annotationsState)

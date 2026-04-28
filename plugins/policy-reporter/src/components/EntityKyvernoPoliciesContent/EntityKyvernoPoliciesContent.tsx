@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { Content, Progress } from '@backstage/core-components';
 import {
   MissingAnnotationEmptyState,
@@ -34,25 +32,17 @@ export const EntityKyvernoPoliciesContent = ({
   // Boolean variable to validate that entity have required annotations
   const annotationsState = isPolicyReporterAvailable(entity);
 
-  const { environments, environmentsLoading, environment } =
-    useEntityEnvironment(entity, annotationsState);
+  const { environments, environmentsLoading } = useEntityEnvironment(
+    entity,
+    annotationsState,
+  );
 
-  const namespaces = getNamespaces(annotations);
-  const kinds = getKinds(annotations);
-  const resourceName = getResourceName(annotations);
-
-  useFilterParams({ namespaces, kinds, sources: ['kyverno'] });
-
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  // Set the default search param to resourceName on mount
-  useEffect(() => {
-    if (resourceName && !searchParams.has('search')) {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set('search', resourceName);
-      setSearchParams(newParams, { replace: true });
-    }
-  }, [resourceName, searchParams, setSearchParams]);
+  useFilterParams({
+    namespaces: getNamespaces(annotations),
+    kinds: getKinds(annotations),
+    sources: ['kyverno'],
+    search: getResourceName(annotations),
+  });
 
   // Annotations missing
   if (!annotationsState)
@@ -68,8 +58,7 @@ export const EntityKyvernoPoliciesContent = ({
     );
 
   // Fetching environments or waiting for default to be written to URL
-  if (environmentsLoading || (environments?.length && !environment))
-    return <Progress />;
+  if (environmentsLoading) return <Progress />;
 
   // Environments missing
   if (!environments?.length)
