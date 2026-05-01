@@ -16,7 +16,6 @@ import {
 import { useApi } from '@backstage/frontend-plugin-api';
 import { policyReporterApiRef } from '../../api';
 import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
-import { useEnvironmentParam } from '../../hooks/useEnvironmentParam';
 
 interface PolicyReportsTableProps {
   emptyContentText: string;
@@ -28,8 +27,7 @@ export const PolicyReportsTable = ({
   policyDocumentationUrl,
 }: PolicyReportsTableProps) => {
   const policyReporterApi = useApi(policyReporterApiRef);
-  const { filter: contextFilter } = usePolicyReportsFilters();
-  const { environment } = useEnvironmentParam();
+  const { filter: contextFilter, environment } = usePolicyReportsFilters();
 
   // Split search from the rest so useTable can handle them separately.
   // contextFilter is stable (only changes when the filter actually changes),
@@ -54,10 +52,6 @@ export const PolicyReportsTable = ({
       filter: fetchFilter,
       search: searchParam,
     }) => {
-      if (!environment) {
-        return { data: [], totalCount: 0 };
-      }
-
       // useTable provides:
       // - offset: absolute record position (0, 20, 40, 60...)
       // - pageSize: number of records per page (20)

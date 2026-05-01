@@ -74,6 +74,7 @@ export const EntityCustomPoliciesContent = ({
         sources: sources,
         search: getResourceName(annotations),
       }}
+      defaultEnvironment={environments[0].entityRef}
     >
       <Container>
         <HeaderPage

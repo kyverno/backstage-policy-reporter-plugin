@@ -70,6 +70,7 @@ export const EntityKyvernoPoliciesContent = ({
         sources: ['kyverno'],
         search: getResourceName(annotations),
       }}
+      defaultEnvironment={environments[0].entityRef}
     >
       <Container>
         <HeaderPage

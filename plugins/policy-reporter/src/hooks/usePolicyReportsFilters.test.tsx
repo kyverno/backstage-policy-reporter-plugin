@@ -1,5 +1,12 @@
-import { renderHook, act } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { renderHook, act, render, screen, fireEvent } from '@testing-library/react';
+import {
+  MemoryRouter,
+  Route,
+  Routes,
+  createMemoryRouter,
+  RouterProvider,
+  useNavigate,
+} from 'react-router-dom';
 import React from 'react';
 import {
   PolicyReportsFiltersProvider,
@@ -159,6 +166,98 @@ describe('usePolicyReportsFilters', () => {
       });
 
       expect(result.current.filter).toBe(filterBefore);
+    });
+  });
+
+  describe('navigation', () => {
+    const FilterDisplay = () => {
+      const { filter } = usePolicyReportsFilters();
+      return <div data-testid="filter">{JSON.stringify(filter)}</div>;
+    };
+
+    const NavigateButton = ({ to }: { to: string }) => {
+      const navigate = useNavigate();
+      return <button onClick={() => navigate(to)}>navigate</button>;
+    };
+
+    it('restores defaults when navigating to a bare route (no params)', async () => {
+      const router = createMemoryRouter(
+        [
+          {
+            path: '*',
+            element: (
+              <PolicyReportsFiltersProvider defaults={{ status: ['fail'] } as any}>
+                <FilterDisplay />
+                <NavigateButton to="/" />
+              </PolicyReportsFiltersProvider>
+            ),
+          },
+        ],
+        { initialEntries: ['/?filter[status][0]=pass'] },
+      );
+
+      render(<RouterProvider router={router} />);
+      expect(screen.getByTestId('filter').textContent).toContain('pass');
+
+      await act(async () => {
+        fireEvent.click(screen.getByText('navigate'));
+      });
+
+      expect(screen.getByTestId('filter').textContent).toContain('fail');
+      expect(screen.getByTestId('filter').textContent).not.toContain('pass');
+    });
+
+    it('resets to empty when navigating to a bare route with no defaults', async () => {
+      const router = createMemoryRouter(
+        [
+          {
+            path: '*',
+            element: (
+              <PolicyReportsFiltersProvider>
+                <FilterDisplay />
+                <NavigateButton to="/" />
+              </PolicyReportsFiltersProvider>
+            ),
+          },
+        ],
+        { initialEntries: ['/?filter[status][0]=pass'] },
+      );
+
+      render(<RouterProvider router={router} />);
+      expect(screen.getByTestId('filter').textContent).toContain('pass');
+
+      await act(async () => {
+        fireEvent.click(screen.getByText('navigate'));
+      });
+
+      expect(screen.getByTestId('filter').textContent).toEqual('{}');
+    });
+
+    it('preserves unrelated query params when writing defaults to a bare route', async () => {
+      const router = createMemoryRouter(
+        [
+          {
+            path: '*',
+            element: (
+              <PolicyReportsFiltersProvider defaults={{ status: ['fail'] } as any}>
+                <FilterDisplay />
+                <NavigateButton to="/?tab=violations" />
+              </PolicyReportsFiltersProvider>
+            ),
+          },
+        ],
+        { initialEntries: ['/'] },
+      );
+
+      render(<RouterProvider router={router} />);
+
+      await act(async () => {
+        fireEvent.click(screen.getByText('navigate'));
+      });
+
+      expect(screen.getByTestId('filter').textContent).toContain('fail');
+      expect(router.state.location.search).toContain('tab=violations');
+      expect(router.state.location.search).toContain('filter');
     });
   });
 });

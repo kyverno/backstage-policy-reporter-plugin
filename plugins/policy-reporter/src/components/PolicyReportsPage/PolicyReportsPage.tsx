@@ -63,7 +63,10 @@ export const PolicyReportsPage = ({
     );
 
   return (
-    <PolicyReportsFiltersProvider defaults={{ status: ['fail'] }}>
+    <PolicyReportsFiltersProvider
+      defaults={{ status: ['fail'] }}
+      defaultEnvironment={environments[0].entityRef}
+    >
       <Container>
         <HeaderPage
           title={title}

@@ -1,12 +1,10 @@
 import { Select } from '@backstage/ui';
 import { Key } from 'react';
 import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
-import { useEnvironmentParam } from '../../hooks/useEnvironmentParam';
 import { useNamespaces } from '../../hooks/useNamespaces';
 
 export const SelectNamespace = () => {
-  const { filter, updateFilter } = usePolicyReportsFilters();
-  const { environment } = useEnvironmentParam();
+  const { filter, updateFilter, environment } = usePolicyReportsFilters();
   const { namespaces: availableNamespaces } = useNamespaces(environment);
 
   const options = availableNamespaces.map(ns => ({ value: ns, label: ns }));
