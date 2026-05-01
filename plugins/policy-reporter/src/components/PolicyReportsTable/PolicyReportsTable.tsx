@@ -15,7 +15,7 @@ import {
 } from '@backstage/ui';
 import { useApi } from '@backstage/frontend-plugin-api';
 import { policyReporterApiRef } from '../../api';
-import { useFilterParams } from '../../hooks/useFilterParams';
+import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
 import { useEnvironmentParam } from '../../hooks/useEnvironmentParam';
 
 interface PolicyReportsTableProps {
@@ -28,15 +28,17 @@ export const PolicyReportsTable = ({
   policyDocumentationUrl,
 }: PolicyReportsTableProps) => {
   const policyReporterApi = useApi(policyReporterApiRef);
-  const { filter: urlFilter, loading } = useFilterParams();
+  const { filter: contextFilter } = usePolicyReportsFilters();
   const { environment } = useEnvironmentParam();
-  // Memoize to avoid a new object reference on every render (which would cause
-  // useTable to treat it as a changed dependency and re-fetch continuously).
+
+  // Split search from the rest so useTable can handle them separately.
+  // contextFilter is stable (only changes when the filter actually changes),
+  // so this memo correctly avoids spurious re-fetches.
   const filter = useMemo(() => {
-    const { search: _, ...rest } = urlFilter;
+    const { search: _, ...rest } = contextFilter;
     return rest;
-  }, [urlFilter]);
-  const search = urlFilter.search;
+  }, [contextFilter]);
+  const search = contextFilter.search;
 
   const [drawerContent, setDrawerContent] = useState<ListResult | undefined>(
     undefined,
@@ -63,22 +65,12 @@ export const PolicyReportsTable = ({
       // Policy Reporter API expects:
       // - page: page number starting from 1 (1, 2, 3, 4...)
       // - offset: number of results per page (this is actually pageSize)
-      //
-      // Example calculations:
-      // useTable offset=0,  pageSize=20 → page=1 (first 20 records)
-      // useTable offset=20, pageSize=20 → page=2 (records 21-40)
-      // useTable offset=40, pageSize=20 → page=3 (records 41-60)
-
-      // Convert useTable's absolute offset to 1-indexed page number
-      // Math.floor(0/20) + 1 = 1, Math.floor(20/20) + 1 = 2, etc.
       const page = Math.floor(offset / pageSize) + 1;
 
       const response = await policyReporterApi.getNamespacedResults({
         query: {
           environment: encodeURI(environment),
-          // page: which page to fetch (1-indexed)
           page: page,
-          // offset: Policy Reporter API's name for results per page
           offset: pageSize,
           ...fetchFilter,
           search: searchParam === '' ? undefined : searchParam,
@@ -171,7 +163,6 @@ export const PolicyReportsTable = ({
         <PolicyReportsDrawerComponent content={drawerContent} />
       </Drawer>
       <Table
-        loading={loading}
         rowConfig={{
           onClick: item => setDrawerContent(item),
         }}
@@ -188,3 +179,4 @@ export const PolicyReportsTable = ({
     </>
   );
 };
+

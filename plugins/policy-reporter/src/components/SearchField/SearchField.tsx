@@ -1,23 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebounce } from 'react-use';
-import { SearchField as BackstageSearchField, Skeleton } from '@backstage/ui';
-import { useFilterParams } from '../../hooks/useFilterParams';
+import { SearchField as BackstageSearchField } from '@backstage/ui';
+import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
 
 export const SearchField = () => {
-  const { filter, updateFilter, loading } = useFilterParams();
+  const { filter, updateFilter } = usePolicyReportsFilters();
   const [inputValue, setInputValue] = useState(filter.search ?? '');
+
+  // Sync input value when filter.search changes externally (back/forward nav).
+  useEffect(() => {
+    setInputValue(filter.search ?? '');
+  }, [filter.search]);
 
   useDebounce(
     () => {
-      updateFilter({
-        search: inputValue || undefined,
-      });
+      updateFilter({ search: inputValue || undefined });
     },
     300,
     [inputValue],
   );
-
-  if (loading) return <Skeleton width={350} height={24} />;
 
   return (
     <BackstageSearchField

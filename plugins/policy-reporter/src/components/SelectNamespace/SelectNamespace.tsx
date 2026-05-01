@@ -1,23 +1,11 @@
-import { Select, Skeleton } from '@backstage/ui';
+import { Select } from '@backstage/ui';
 import { Key } from 'react';
-import { useFilterParams } from '../../hooks/useFilterParams';
+import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
 import { useEnvironmentParam } from '../../hooks/useEnvironmentParam';
 import { useNamespaces } from '../../hooks/useNamespaces';
 
-export type SelectNamespaceProps = {
-  initialNamespaces?: string[];
-};
-
-export const SelectNamespace = ({
-  initialNamespaces,
-}: SelectNamespaceProps) => {
-  const {
-    updateFilter,
-    filter,
-    loading: filterLoading,
-  } = useFilterParams({
-    namespaces: initialNamespaces,
-  });
+export const SelectNamespace = () => {
+  const { filter, updateFilter } = usePolicyReportsFilters();
   const { environment } = useEnvironmentParam();
   const { namespaces: availableNamespaces } = useNamespaces(environment);
 
@@ -44,14 +32,12 @@ export const SelectNamespace = ({
     updateFilter({ namespaces: filtered });
   };
 
-  if (filterLoading) return <Skeleton width={200} height={24} />;
-
   return (
     <Select
       label="Namespace"
       selectionMode="multiple"
       options={options}
-      defaultValue={filter.namespaces}
+      value={filter.namespaces ?? []}
       onChange={handleChange}
       placeholder="All"
       style={{ width: 200 }}

@@ -14,6 +14,7 @@ import { SelectStatus } from '../SelectStatus';
 import { SelectSeverity } from '../SelectSeverity';
 import { SelectNamespace } from '../SelectNamespace';
 import { SearchField } from '../SearchField';
+import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -62,27 +63,29 @@ export const PolicyReportsPage = ({
     );
 
   return (
-    <Container>
-      <HeaderPage
-        title={title}
-        customActions={<SelectEnvironment environments={environments} />}
-      />
-      <Content>
-        <Grid.Root columns="1" gap="4">
-          <Flex align="end" gap="4">
-            <SelectStatus initialStatus={['fail']} />
-            <SelectSeverity />
-            <SelectNamespace />
-            <Box width="300px" style={{ flexShrink: 0 }}>
-              <SearchField />
-            </Box>
-          </Flex>
-          <PolicyReportsTable
-            emptyContentText="No policies found"
-            policyDocumentationUrl={policyDocumentationUrl}
-          />
-        </Grid.Root>
-      </Content>
-    </Container>
+    <PolicyReportsFiltersProvider defaults={{ status: ['fail'] }}>
+      <Container>
+        <HeaderPage
+          title={title}
+          customActions={<SelectEnvironment environments={environments} />}
+        />
+        <Content>
+          <Grid.Root columns="1" gap="4">
+            <Flex align="end" gap="4">
+              <SelectStatus />
+              <SelectSeverity />
+              <SelectNamespace />
+              <Box width="300px" style={{ flexShrink: 0 }}>
+                <SearchField />
+              </Box>
+            </Flex>
+            <PolicyReportsTable
+              emptyContentText="No policies found"
+              policyDocumentationUrl={policyDocumentationUrl}
+            />
+          </Grid.Root>
+        </Content>
+      </Container>
+    </PolicyReportsFiltersProvider>
   );
 };

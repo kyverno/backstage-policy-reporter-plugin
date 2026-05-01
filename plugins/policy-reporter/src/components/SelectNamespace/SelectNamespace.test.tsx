@@ -1,6 +1,7 @@
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
 import { SelectNamespace } from './SelectNamespace';
 import { policyReporterApiRef } from '../../api';
+import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 
 const mockGetNamespaces = jest.fn().mockResolvedValue({
   json: jest.fn().mockResolvedValue(['default', 'kube-system']),
@@ -10,12 +11,14 @@ const mockPolicyReportApiRef = {
   getNamespaces: mockGetNamespaces,
 };
 
-const renderWithEnv = (props: Parameters<typeof SelectNamespace>[0] = {}) =>
+const renderWithEnv = (defaults: Record<string, unknown> = {}) =>
   renderInTestApp(
     <TestApiProvider
       apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
     >
-      <SelectNamespace {...props} />
+      <PolicyReportsFiltersProvider defaults={defaults}>
+        <SelectNamespace />
+      </PolicyReportsFiltersProvider>
     </TestApiProvider>,
     { routeEntries: ['/?environment=resource:default/dev'] },
   );
@@ -25,22 +28,22 @@ describe('SelectNamespace', () => {
     jest.clearAllMocks();
   });
 
-  it('should render the selected namespace', async () => {
-    const extension = await renderWithEnv({ initialNamespaces: ['default'] });
+  it('should render the selected namespace from provider defaults', async () => {
+    const extension = await renderWithEnv({ namespaces: ['default'] });
     expect(extension.getAllByText('default')).toBeTruthy();
     expect(extension.getByText('Namespace')).toBeTruthy();
   });
 
-  it('should render the selected namespaces', async () => {
+  it('should render multiple selected namespaces from provider defaults', async () => {
     const extension = await renderWithEnv({
-      initialNamespaces: ['default', 'kube-system'],
+      namespaces: ['default', 'kube-system'],
     });
     expect(extension.getAllByText('default')).toBeTruthy();
     expect(extension.getAllByText('kube-system')).toBeTruthy();
     expect(extension.getByText('Namespace')).toBeTruthy();
   });
 
-  it('should render all when nothing is selected', async () => {
+  it('should render all when no defaults are set', async () => {
     const extension = await renderWithEnv();
     expect(extension.getByText('All')).toBeTruthy();
     expect(extension.getByText('Namespace')).toBeTruthy();

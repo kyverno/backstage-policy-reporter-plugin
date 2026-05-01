@@ -1,7 +1,7 @@
-import { Select, Skeleton } from '@backstage/ui';
+import { Select } from '@backstage/ui';
 import { Severity } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Key } from 'react';
-import { useFilterParams } from '../../hooks/useFilterParams';
+import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
 
 const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
   { value: 'unknown', label: 'Unknown' },
@@ -14,14 +14,8 @@ const SEVERITY_OPTIONS: { value: Severity; label: string }[] = [
 
 const validSeverities = SEVERITY_OPTIONS.map(option => option.value);
 
-export type SelectSeverityProps = {
-  initialSeverity?: Severity[];
-};
-
-export const SelectSeverity = ({ initialSeverity }: SelectSeverityProps) => {
-  const { updateFilter, filter, loading } = useFilterParams({
-    severities: initialSeverity,
-  });
+export const SelectSeverity = () => {
+  const { filter, updateFilter } = usePolicyReportsFilters();
 
   const handleChange = (key: Key | Key[] | null) => {
     if (key === null) {
@@ -38,22 +32,18 @@ export const SelectSeverity = ({ initialSeverity }: SelectSeverityProps) => {
       return;
     }
 
-    // Input is an array - filter and validate
-    const filteredStatuses = key.filter((item): item is Severity =>
+    const filteredSeverities = key.filter((item): item is Severity =>
       validSeverities.includes(item as Severity),
     );
-
-    updateFilter({ severities: filteredStatuses });
+    updateFilter({ severities: filteredSeverities });
   };
-
-  if (loading) return <Skeleton width={200} height={24} />;
 
   return (
     <Select
       label="Severity"
       selectionMode="multiple"
       options={SEVERITY_OPTIONS}
-      defaultValue={filter.severities}
+      value={filter.severities ?? []}
       onChange={handleChange}
       placeholder="All"
       style={{ width: 200 }}

@@ -14,7 +14,7 @@ import {
 } from '../../utils/annotations';
 import { MissingEnvironmentsEmptyState } from '../MissingEnvironmentsEmptyState';
 import { useEntityEnvironment } from '../../hooks/useEntityEnvironment';
-import { useFilterParams } from '../../hooks/useFilterParams';
+import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 import { KYVERNO_RESOURCE_NAME_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 type EntityCustomPoliciesContentProps = {
@@ -39,13 +39,6 @@ export const EntityCustomPoliciesContent = ({
     entity,
     annotationsState,
   );
-
-  useFilterParams({
-    namespaces: getNamespaces(annotations),
-    kinds: getKinds(annotations),
-    sources: sources,
-    search: getResourceName(annotations),
-  });
 
   // Annotations missing
   if (!annotationsState)
@@ -74,19 +67,28 @@ export const EntityCustomPoliciesContent = ({
     );
 
   return (
-    <Container>
-      <HeaderPage
-        title={title}
-        customActions={<SelectEnvironment environments={environments} />}
-      />
-      <Content>
-        <Grid.Root columns="1" gap="4">
-          <PolicyReportsTable
-            emptyContentText="No policies"
-            policyDocumentationUrl={policyDocumentationUrl}
-          />
-        </Grid.Root>
-      </Content>
-    </Container>
+    <PolicyReportsFiltersProvider
+      defaults={{
+        namespaces: getNamespaces(annotations),
+        kinds: getKinds(annotations),
+        sources: sources,
+        search: getResourceName(annotations),
+      }}
+    >
+      <Container>
+        <HeaderPage
+          title={title}
+          customActions={<SelectEnvironment environments={environments} />}
+        />
+        <Content>
+          <Grid.Root columns="1" gap="4">
+            <PolicyReportsTable
+              emptyContentText="No policies"
+              policyDocumentationUrl={policyDocumentationUrl}
+            />
+          </Grid.Root>
+        </Content>
+      </Container>
+    </PolicyReportsFiltersProvider>
   );
 };

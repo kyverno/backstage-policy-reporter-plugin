@@ -14,7 +14,7 @@ import {
 } from '../../utils/annotations';
 import { MissingEnvironmentsEmptyState } from '../MissingEnvironmentsEmptyState';
 import { useEntityEnvironment } from '../../hooks/useEntityEnvironment';
-import { useFilterParams } from '../../hooks/useFilterParams';
+import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 import { KYVERNO_RESOURCE_NAME_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 type KyvernoPoliciesContentProps = {
@@ -29,20 +29,12 @@ export const EntityKyvernoPoliciesContent = ({
   const { entity } = useEntity();
   const annotations = entity.metadata.annotations;
 
-  // Boolean variable to validate that entity have required annotations
   const annotationsState = isPolicyReporterAvailable(entity);
 
   const { environments, environmentsLoading } = useEntityEnvironment(
     entity,
     annotationsState,
   );
-
-  useFilterParams({
-    namespaces: getNamespaces(annotations),
-    kinds: getKinds(annotations),
-    sources: ['kyverno'],
-    search: getResourceName(annotations),
-  });
 
   // Annotations missing
   if (!annotationsState)
@@ -71,19 +63,28 @@ export const EntityKyvernoPoliciesContent = ({
     );
 
   return (
-    <Container>
-      <HeaderPage
-        title="Kyverno Policy Reports"
-        customActions={<SelectEnvironment environments={environments} />}
-      />
-      <Content>
-        <Grid.Root columns="1" gap="4">
-          <PolicyReportsTable
-            emptyContentText="No policies found"
-            policyDocumentationUrl={policyDocumentationUrl}
-          />
-        </Grid.Root>
-      </Content>
-    </Container>
+    <PolicyReportsFiltersProvider
+      defaults={{
+        namespaces: getNamespaces(annotations),
+        kinds: getKinds(annotations),
+        sources: ['kyverno'],
+        search: getResourceName(annotations),
+      }}
+    >
+      <Container>
+        <HeaderPage
+          title="Kyverno Policy Reports"
+          customActions={<SelectEnvironment environments={environments} />}
+        />
+        <Content>
+          <Grid.Root columns="1" gap="4">
+            <PolicyReportsTable
+              emptyContentText="No policies found"
+              policyDocumentationUrl={policyDocumentationUrl}
+            />
+          </Grid.Root>
+        </Content>
+      </Container>
+    </PolicyReportsFiltersProvider>
   );
 };

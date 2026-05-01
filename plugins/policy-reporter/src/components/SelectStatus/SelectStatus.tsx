@@ -1,7 +1,7 @@
 import { Status } from '@kyverno/backstage-plugin-policy-reporter-common';
-import { Select, Skeleton } from '@backstage/ui';
+import { Select } from '@backstage/ui';
 import { Key } from 'react';
-import { useFilterParams } from '../../hooks/useFilterParams';
+import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
 
 const STATUS_OPTIONS: { value: Status; label: string }[] = [
   { value: 'fail', label: 'Fail' },
@@ -14,14 +14,8 @@ const STATUS_OPTIONS: { value: Status; label: string }[] = [
 
 const validStatuses = STATUS_OPTIONS.map(option => option.value);
 
-export type SelectStatusProps = {
-  initialStatus?: Status[];
-};
-
-export const SelectStatus = ({ initialStatus }: SelectStatusProps) => {
-  const { updateFilter, filter, loading } = useFilterParams({
-    status: initialStatus,
-  });
+export const SelectStatus = () => {
+  const { filter, updateFilter } = usePolicyReportsFilters();
 
   const handleChange = (key: Key | Key[] | null) => {
     if (key === null) {
@@ -36,21 +30,18 @@ export const SelectStatus = ({ initialStatus }: SelectStatusProps) => {
       return;
     }
 
-    // Input is an array - filter and validate
     const filteredStatuses = key.filter((item): item is Status =>
       validStatuses.includes(item as Status),
     );
     updateFilter({ status: filteredStatuses });
   };
 
-  if (loading) return <Skeleton width={200} height={35} />;
-
   return (
     <Select
       label="Status"
       selectionMode="multiple"
       options={STATUS_OPTIONS}
-      defaultValue={filter.status}
+      value={filter.status ?? []}
       onChange={handleChange}
       placeholder="All"
       style={{ width: 200 }}

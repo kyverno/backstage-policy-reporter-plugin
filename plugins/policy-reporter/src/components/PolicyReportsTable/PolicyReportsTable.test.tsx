@@ -3,6 +3,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
 import { PolicyReportsTable } from './PolicyReportsTable';
 import { policyReporterApiRef } from '../../api';
+import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 
 const mockGetNamespacedResults = jest.fn().mockResolvedValue({
   json: jest.fn().mockResolvedValue({
@@ -23,7 +24,9 @@ const renderTable = (props: Partial<Parameters<typeof PolicyReportsTable>[0]> = 
     <TestApiProvider
       apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
     >
-      <PolicyReportsTable emptyContentText="empty" {...props} />
+      <PolicyReportsFiltersProvider>
+        <PolicyReportsTable emptyContentText="empty" {...props} />
+      </PolicyReportsFiltersProvider>
     </TestApiProvider>,
     { routeEntries: ['/?environment=resource:default/dev'] },
   );
