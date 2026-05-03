@@ -71,29 +71,20 @@ export const PolicyReportsFiltersProvider = ({
     [searchParams],
   );
 
-  // Always ensure ?environment= is present in the URL. If navigation removes
-  // This will also add default fitlers at the same time
-  useEffect(() => {
-    if (!environment) {
-      setSearchParams(
-        qs.stringify(
-          { filter: defaults, environment: defaultEnvironment },
-          { arrayFormat: 'indices', skipNulls: true },
-        ),
-        { replace: true },
-      );
-    }
-  }, [defaultEnvironment, environment, setSearchParams, defaults]);
-
-  const updateFilter = useCallback(
-    (update: Partial<Filter>) => {
+  const updateParams = useCallback(
+    (
+      update:
+        | Record<string, unknown>
+        | ((prev: Record<string, unknown>) => Record<string, unknown>),
+    ) => {
       setSearchParams(
         prev => {
           const parsed = qs.parse(prev.toString());
-          return qs.stringify(
-            { ...parsed, filter: { ...(parsed.filter as object), ...update } },
-            { arrayFormat: 'indices', skipNulls: true },
-          );
+          const next = typeof update === 'function' ? update(parsed) : update;
+          return qs.stringify(next, {
+            arrayFormat: 'indices',
+            skipNulls: true,
+          });
         },
         { replace: true },
       );
@@ -101,20 +92,29 @@ export const PolicyReportsFiltersProvider = ({
     [setSearchParams],
   );
 
+  // Always ensure ?environment= is present in the URL. If navigation removes
+  // it, restore it along with the defaults.
+  useEffect(() => {
+    if (!environment) {
+      updateParams({ filter: defaults, environment: defaultEnvironment });
+    }
+  }, [defaultEnvironment, environment, updateParams, defaults]);
+
+  const updateFilter = useCallback(
+    (update: Partial<Filter>) => {
+      updateParams(prev => ({
+        ...prev,
+        filter: { ...(prev.filter as object), ...update },
+      }));
+    },
+    [updateParams],
+  );
+
   const setEnvironment = useCallback(
     (entityRef: string) => {
-      setSearchParams(
-        prev => {
-          const parsed = qs.parse(prev.toString());
-          return qs.stringify(
-            { ...parsed, environment: entityRef },
-            { arrayFormat: 'indices', skipNulls: true },
-          );
-        },
-        { replace: true },
-      );
+      updateParams(prev => ({ ...prev, environment: entityRef }));
     },
-    [setSearchParams],
+    [updateParams],
   );
 
   const value = useMemo(
