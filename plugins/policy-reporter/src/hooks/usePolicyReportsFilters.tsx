@@ -23,17 +23,12 @@ const PolicyReportsFiltersContext = createContext<
 
 export type PolicyReportsFiltersProviderProps = PropsWithChildren<{
   /**
-   * Default filter values written to the URL once on mount, only when no
-   * filter params are already present. After mount, user filter choices
-   * (including clearing all filters) are always respected as-is.
+   * Default filter values written to the URL
    */
   defaults?: Partial<Filter>;
   /**
-   * The entityRef of the environment to use when no ?environment= param is
-   * present in the URL. Unlike filter defaults, this is enforced continuously:
-   * if navigation removes the environment param, it is restored automatically.
-   * Page components pass environments[0].entityRef here and only render the
-   * provider after the environments list has loaded and is non-empty.
+   * The entityRef of the environment to use
+   * when no ?environment= param is present in the URL.
    */
   defaultEnvironment: string;
 }>;
@@ -41,18 +36,6 @@ export type PolicyReportsFiltersProviderProps = PropsWithChildren<{
 /**
  * Provides shared filter state and selected environment for all policy report
  * filter components.
- *
- * - Filter state is initialised synchronously from the URL; if no filter
- *   params are present, defaults are used as the initial value.
- * - Filter defaults are written to the URL once on mount (useEffectOnce) only
- *   when no filter params are already present. After that, user choices
- *   (including clearing all filters) are respected — defaults are never
- *   re-applied on navigation.
- * - External URL changes (back/forward, nav links) sync filter state from the
- *   URL as-is, with no defaults fallback.
- * - Environment is initialised synchronously from the URL or defaultEnvironment.
- *   A dedicated effect continuously ensures ?environment= is present in the
- *   URL — if navigation removes it, defaultEnvironment is restored.
  */
 export const PolicyReportsFiltersProvider = ({
   children,
@@ -92,8 +75,6 @@ export const PolicyReportsFiltersProvider = ({
     [setSearchParams],
   );
 
-  // Always ensure ?environment= is present in the URL. If navigation removes
-  // it, restore it along with the defaults.
   useEffect(() => {
     if (!environment) {
       updateParams({ filter: defaults, environment: defaultEnvironment });
