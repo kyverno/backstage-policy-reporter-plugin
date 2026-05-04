@@ -13,7 +13,7 @@ import type { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
 export type PolicyReportsFiltersContextValue = {
   filter: Filter;
   updateFilter: (update: Partial<Filter>) => void;
-  environment: string | undefined;
+  environment: string;
   setEnvironment: (entityRef: string) => void;
 };
 
@@ -49,9 +49,18 @@ export const PolicyReportsFiltersProvider = ({
     [searchParams],
   );
 
-  const filter = useMemo(() => (parsed.filter ?? {}) as Filter, [parsed]);
+  const { filter, urlEnvironment } = useMemo(
+    () => ({
+      filter: (parsed.filter ?? {}) as Filter,
+      urlEnvironment: parsed.environment?.toString(),
+    }),
+    [parsed],
+  );
 
-  const environment = useMemo(() => parsed.environment?.toString(), [parsed]);
+  const environment = useMemo(
+    () => urlEnvironment ?? defaultEnvironment,
+    [urlEnvironment, defaultEnvironment],
+  );
 
   const updateParams = useCallback(
     (
@@ -78,13 +87,16 @@ export const PolicyReportsFiltersProvider = ({
   // TODO: Currently being triggered each time URL change due to updateParams being unstable
   // https://github.com/remix-run/react-router/issues/9991
   useLayoutEffect(() => {
-    if (!environment) {
+    if (!urlEnvironment) {
       updateParams({
         filter: defaults,
         environment: defaultEnvironment,
       });
     }
-  }, [defaultEnvironment, environment, updateParams, defaults]);
+    // setSearchParams isn't stable, hence disabling the exhaustive-deps check
+    // for more info please visit https://github.com/remix-run/react-router/issues/9991
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultEnvironment, urlEnvironment, defaults]);
 
   const updateFilter = useCallback(
     (update: Partial<Filter>) => {
