@@ -39,7 +39,7 @@ export type PolicyReportsFiltersProviderProps = PropsWithChildren<{
  */
 export const PolicyReportsFiltersProvider = ({
   children,
-  defaultFilters: defaults,
+  defaultFilters,
   defaultEnvironment,
 }: PolicyReportsFiltersProviderProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -49,12 +49,17 @@ export const PolicyReportsFiltersProvider = ({
     [searchParams],
   );
 
-  const { filter, urlEnvironment } = useMemo(
-    () => ({
-      filter: (parsed.filter ?? {}) as Filter,
-      urlEnvironment: parsed.environment?.toString(),
-    }),
+  const urlEnvironment = useMemo(
+    () => parsed.environment?.toString(),
     [parsed],
+  );
+
+  // Use defaultFilters until the URL has been initialised (urlEnvironment set).
+  // After that, always read from the URL so an explicit empty filter is valid.
+  const filter = useMemo(
+    () =>
+      urlEnvironment ? ((parsed.filter ?? {}) as Filter) : defaultFilters ?? {},
+    [parsed, urlEnvironment, defaultFilters],
   );
 
   const environment = useMemo(
@@ -89,14 +94,14 @@ export const PolicyReportsFiltersProvider = ({
   useLayoutEffect(() => {
     if (!urlEnvironment) {
       updateParams({
-        filter: defaults,
+        filter: defaultFilters,
         environment: defaultEnvironment,
       });
     }
     // setSearchParams isn't stable, hence disabling the exhaustive-deps check
     // for more info please visit https://github.com/remix-run/react-router/issues/9991
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultEnvironment, urlEnvironment, defaults]);
+  }, [defaultEnvironment, urlEnvironment, defaultFilters]);
 
   const updateFilter = useCallback(
     (update: Partial<Filter>) => {
