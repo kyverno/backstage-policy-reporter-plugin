@@ -15,6 +15,7 @@ import { SelectSeverity } from '../SelectSeverity';
 import { SelectNamespace } from '../SelectNamespace';
 import { SearchField } from '../SearchField';
 import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
+import { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -27,6 +28,10 @@ export const PolicyReportsPage = ({
   policyDocumentationUrl,
 }: PolicyReportsPageProps) => {
   const { environments, environmentsLoading } = useEnvironments();
+
+  const defaultFilter: Filter = {
+    status: ['fail'],
+  };
 
   // Loading environments
   if (environmentsLoading) return <Progress />;
@@ -64,7 +69,7 @@ export const PolicyReportsPage = ({
 
   return (
     <PolicyReportsFiltersProvider
-      defaults={{ status: ['fail'] }}
+      defaultFilters={defaultFilter}
       defaultEnvironment={environments[0].entityRef}
     >
       <Container>

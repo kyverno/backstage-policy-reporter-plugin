@@ -4,7 +4,7 @@ import {
   PropsWithChildren,
   useCallback,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useMemo,
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -25,7 +25,7 @@ export type PolicyReportsFiltersProviderProps = PropsWithChildren<{
   /**
    * Default filter values written to the URL
    */
-  defaults?: Partial<Filter>;
+  defaultFilters?: Partial<Filter>;
   /**
    * The entityRef of the environment to use
    * when no ?environment= param is present in the URL.
@@ -39,20 +39,19 @@ export type PolicyReportsFiltersProviderProps = PropsWithChildren<{
  */
 export const PolicyReportsFiltersProvider = ({
   children,
-  defaults,
+  defaultFilters: defaults,
   defaultEnvironment,
 }: PolicyReportsFiltersProviderProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const filter = useMemo(
-    () => (qs.parse(searchParams.toString()).filter ?? {}) as Filter,
+  const parsed = useMemo(
+    () => qs.parse(searchParams.toString()),
     [searchParams],
   );
 
-  const environment = useMemo(
-    () => qs.parse(searchParams.toString()).environment?.toString(),
-    [searchParams],
-  );
+  const filter = useMemo(() => (parsed.filter ?? {}) as Filter, [parsed]);
+
+  const environment = useMemo(() => parsed.environment?.toString(), [parsed]);
 
   const updateParams = useCallback(
     (
@@ -62,8 +61,9 @@ export const PolicyReportsFiltersProvider = ({
     ) => {
       setSearchParams(
         prev => {
-          const parsed = qs.parse(prev.toString());
-          const next = typeof update === 'function' ? update(parsed) : update;
+          const prevParsed = qs.parse(prev.toString());
+          const next =
+            typeof update === 'function' ? update(prevParsed) : update;
           return qs.stringify(next, {
             arrayFormat: 'indices',
             skipNulls: true,
@@ -75,9 +75,14 @@ export const PolicyReportsFiltersProvider = ({
     [setSearchParams],
   );
 
-  useEffect(() => {
+  // TODO: Currently being triggered each time URL change due to updateParams being unstable
+  // https://github.com/remix-run/react-router/issues/9991
+  useLayoutEffect(() => {
     if (!environment) {
-      updateParams({ filter: defaults, environment: defaultEnvironment });
+      updateParams({
+        filter: defaults,
+        environment: defaultEnvironment,
+      });
     }
   }, [defaultEnvironment, environment, updateParams, defaults]);
 
