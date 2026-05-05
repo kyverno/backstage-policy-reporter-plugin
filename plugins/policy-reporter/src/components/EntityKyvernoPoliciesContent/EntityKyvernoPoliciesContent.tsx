@@ -49,7 +49,7 @@ export const EntityKyvernoPoliciesContent = ({
       </Container>
     );
 
-  // Fetching environments or waiting for default to be written to URL
+  // Fetching environments
   if (environmentsLoading) return <Progress />;
 
   // Environments missing
@@ -64,7 +64,7 @@ export const EntityKyvernoPoliciesContent = ({
 
   return (
     <PolicyReportsFiltersProvider
-      defaults={{
+      defaultFilters={{
         namespaces: getNamespaces(annotations),
         kinds: getKinds(annotations),
         sources: ['kyverno'],

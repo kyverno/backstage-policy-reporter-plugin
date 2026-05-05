@@ -53,7 +53,7 @@ export const EntityCustomPoliciesContent = ({
       </Container>
     );
 
-  // Fetching environments or waiting for default to be written to URL
+  // Fetching environments
   if (environmentsLoading) return <Progress />;
 
   // Environments missing
@@ -68,7 +68,7 @@ export const EntityCustomPoliciesContent = ({
 
   return (
     <PolicyReportsFiltersProvider
-      defaults={{
+      defaultFilters={{
         namespaces: getNamespaces(annotations),
         kinds: getKinds(annotations),
         sources: sources,

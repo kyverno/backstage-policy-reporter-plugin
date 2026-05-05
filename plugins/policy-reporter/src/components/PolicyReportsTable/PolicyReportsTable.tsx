@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ListResult } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Drawer } from '@material-ui/core';
 import { StatusComponent } from '../StatusComponent';
@@ -27,23 +27,15 @@ export const PolicyReportsTable = ({
   policyDocumentationUrl,
 }: PolicyReportsTableProps) => {
   const policyReporterApi = useApi(policyReporterApiRef);
-  const { filter: contextFilter, environment } = usePolicyReportsFilters();
-
-  // Split search from the rest so useTable can handle them separately.
-  // contextFilter is stable (only changes when the filter actually changes),
-  // so this memo correctly avoids spurious re-fetches.
-  const filter = useMemo(() => {
-    const { search: _, ...rest } = contextFilter;
-    return rest;
-  }, [contextFilter]);
-  const search = contextFilter.search;
+  const { filter, environment } = usePolicyReportsFilters();
+  const search = filter.search;
 
   const [drawerContent, setDrawerContent] = useState<ListResult | undefined>(
     undefined,
   );
 
   const { tableProps } = useTable({
-    filter: filter,
+    filter,
     mode: 'offset',
     search: search,
     getData: async ({
@@ -173,4 +165,3 @@ export const PolicyReportsTable = ({
     </>
   );
 };
-
