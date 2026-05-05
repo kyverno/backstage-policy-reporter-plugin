@@ -1,1 +1,1 @@
-export { SelectSeverity, type SelectSeverityProps } from './SelectSeverity';
+export { SelectSeverity } from './SelectSeverity';

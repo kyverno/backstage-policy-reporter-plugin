@@ -19,12 +19,17 @@ const mockPolicyReportApiRef = {
   getNamespacedResults: mockGetNamespacedResults,
 };
 
-const renderTable = (props: Partial<Parameters<typeof PolicyReportsTable>[0]> = {}) =>
+const renderTable = (
+  props: Partial<Parameters<typeof PolicyReportsTable>[0]> = {},
+) =>
   renderInTestApp(
     <TestApiProvider
       apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
     >
-      <PolicyReportsFiltersProvider>
+      <PolicyReportsFiltersProvider
+        defaultFilters={{}}
+        defaultEnvironment="resource:default/dev"
+      >
         <PolicyReportsTable emptyContentText="empty" {...props} />
       </PolicyReportsFiltersProvider>
     </TestApiProvider>,
@@ -72,7 +77,9 @@ describe('KyvernoPolicyReportsTable', () => {
     });
 
     // Act
-    const extension = await renderTable({ emptyContentText: 'there are no policies' });
+    const extension = await renderTable({
+      emptyContentText: 'there are no policies',
+    });
 
     expect(extension.getAllByText('there are no policies')).toHaveLength(1);
   });
@@ -103,7 +110,9 @@ describe('KyvernoPolicyReportsTable', () => {
     );
 
     // Act
-    const extension = await renderTable({ emptyContentText: 'there are no policies' });
+    const extension = await renderTable({
+      emptyContentText: 'there are no policies',
+    });
 
     expect(extension.getByText('Error: Failed to fetch policies')).toBeTruthy();
   });
