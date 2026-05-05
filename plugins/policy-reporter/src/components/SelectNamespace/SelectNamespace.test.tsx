@@ -11,16 +11,18 @@ const mockPolicyReportApiRef = {
   getNamespaces: mockGetNamespaces,
 };
 
-const renderWithEnv = (defaults: Record<string, unknown> = {}) =>
+const renderWithEnv = (defaultFilters: Record<string, unknown> = {}) =>
   renderInTestApp(
     <TestApiProvider
       apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
     >
-      <PolicyReportsFiltersProvider defaults={defaults}>
+      <PolicyReportsFiltersProvider
+        defaultEnvironment="resource:default/dev"
+        defaultFilters={defaultFilters}
+      >
         <SelectNamespace />
       </PolicyReportsFiltersProvider>
     </TestApiProvider>,
-    { routeEntries: ['/?environment=resource:default/dev'] },
   );
 
 describe('SelectNamespace', () => {

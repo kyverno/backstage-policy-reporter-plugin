@@ -1,6 +1,7 @@
 import { renderInTestApp } from '@backstage/test-utils';
 import { SelectEnvironment } from './SelectEnvironment';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
+import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 
 const environments: Environment[] = [
   { id: 1, entityRef: 'resource:default/dev', name: 'dev' },
@@ -9,10 +10,11 @@ const environments: Environment[] = [
 ];
 
 describe('SelectEnvironment', () => {
-  it('should render the current environment from the URL param', async () => {
+  it('should render the current environment from the provider default', async () => {
     const extension = await renderInTestApp(
-      <SelectEnvironment environments={environments} />,
-      { routeEntries: ['/?environment=resource:default/prod'] },
+      <PolicyReportsFiltersProvider defaultEnvironment="resource:default/prod">
+        <SelectEnvironment environments={environments} />
+      </PolicyReportsFiltersProvider>,
     );
 
     expect(extension.getAllByText('prod')).toBeTruthy();
@@ -26,12 +28,12 @@ describe('SelectEnvironment', () => {
     };
 
     const extension = await renderInTestApp(
-      <SelectEnvironment environments={[environment]} />,
-      { routeEntries: ['/?environment=resource:default/dev'] },
+      <PolicyReportsFiltersProvider defaultEnvironment="resource:default/dev">
+        <SelectEnvironment environments={[environment]} />
+      </PolicyReportsFiltersProvider>,
     );
 
     expect(extension.getByText('Environment')).toBeTruthy();
     expect(extension.getAllByText('dev')).toBeTruthy();
   });
 });
-

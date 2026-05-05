@@ -5,7 +5,10 @@ import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilter
 describe('SelectStatus', () => {
   it('should render the selected status from provider defaults', async () => {
     const extension = await renderInTestApp(
-      <PolicyReportsFiltersProvider defaults={{ status: ['fail'] }}>
+      <PolicyReportsFiltersProvider
+        defaultEnvironment="resource:default/dev"
+        defaultFilters={{ status: ['fail'] }}
+      >
         <SelectStatus />
       </PolicyReportsFiltersProvider>,
     );
@@ -15,7 +18,10 @@ describe('SelectStatus', () => {
 
   it('should render multiple selected statuses from provider defaults', async () => {
     const extension = await renderInTestApp(
-      <PolicyReportsFiltersProvider defaults={{ status: ['fail', 'summary'] }}>
+      <PolicyReportsFiltersProvider
+        defaultEnvironment="resource:default/dev"
+        defaultFilters={{ status: ['fail', 'summary'] }}
+      >
         <SelectStatus />
       </PolicyReportsFiltersProvider>,
     );
@@ -26,7 +32,7 @@ describe('SelectStatus', () => {
 
   it('should render all when no defaults are set', async () => {
     const extension = await renderInTestApp(
-      <PolicyReportsFiltersProvider>
+      <PolicyReportsFiltersProvider defaultEnvironment="resource:default/dev">
         <SelectStatus />
       </PolicyReportsFiltersProvider>,
     );

@@ -89,8 +89,6 @@ export const PolicyReportsFiltersProvider = ({
     [setSearchParams],
   );
 
-  // TODO: Currently being triggered each time URL change due to updateParams being unstable
-  // https://github.com/remix-run/react-router/issues/9991
   useLayoutEffect(() => {
     if (!urlEnvironment) {
       updateParams({
