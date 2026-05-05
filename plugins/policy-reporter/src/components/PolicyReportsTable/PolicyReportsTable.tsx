@@ -51,6 +51,14 @@ export const PolicyReportsTable = ({
       // Policy Reporter API expects:
       // - page: page number starting from 1 (1, 2, 3, 4...)
       // - offset: number of results per page (this is actually pageSize)
+      //
+      // Example calculations:
+      // useTable offset=0,  pageSize=20 → page=1 (first 20 records)
+      // useTable offset=20, pageSize=20 → page=2 (records 21-40)
+      // useTable offset=40, pageSize=20 → page=3 (records 41-60)
+
+      // Convert useTable's absolute offset to 1-indexed page number
+      // Math.floor(0/20) + 1 = 1, Math.floor(20/20) + 1 = 2, etc.
       const page = Math.floor(offset / pageSize) + 1;
 
       const response = await policyReporterApi.getNamespacedResults({
