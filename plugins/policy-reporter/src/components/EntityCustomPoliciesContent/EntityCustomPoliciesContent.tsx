@@ -1,11 +1,9 @@
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { Content, Progress } from '@backstage/core-components';
 import {
   MissingAnnotationEmptyState,
   useEntity,
 } from '@backstage/plugin-catalog-react';
-import { Container, Grid, HeaderPage } from '@backstage/ui';
+import { Container, Flex, Grid, HeaderPage } from '@backstage/ui';
 import { PolicyReportsTable } from '../PolicyReportsTable';
 import { SelectEnvironment } from '../SelectEnvironment';
 import {
@@ -16,8 +14,10 @@ import {
 } from '../../utils/annotations';
 import { MissingEnvironmentsEmptyState } from '../MissingEnvironmentsEmptyState';
 import { useEntityEnvironment } from '../../hooks/useEntityEnvironment';
-import { useFilterParams } from '../../hooks/useFilterParams';
+import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 import { KYVERNO_RESOURCE_NAME_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
+import { SelectStatus } from '../SelectStatus';
+import { SelectSeverity } from '../SelectSeverity';
 
 type EntityCustomPoliciesContentProps = {
   annotationsDocumentationUrl?: string;
@@ -35,31 +35,12 @@ export const EntityCustomPoliciesContent = ({
   const { entity } = useEntity();
   const annotations = entity.metadata.annotations;
 
-  const namespaces = getNamespaces(annotations);
-  const kinds = getKinds(annotations);
-  const resourceName = getResourceName(annotations);
-
   const annotationsState = isPolicyReporterAvailable(entity);
 
-  useFilterParams({ namespaces, kinds, sources });
-
-  const {
-    environments,
-    environmentsLoading,
-    setCurrentEnvironment,
-    currentEnvironment,
-  } = useEntityEnvironment(entity, annotationsState);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  // Set the default search param to resourceName on mount
-  useEffect(() => {
-    if (resourceName && !searchParams.has('search')) {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set('search', resourceName);
-      setSearchParams(newParams, { replace: true });
-    }
-  }, [resourceName, searchParams, setSearchParams]);
+  const { environments, environmentsLoading } = useEntityEnvironment(
+    entity,
+    annotationsState,
+  );
 
   // Annotations missing
   if (!annotationsState)
@@ -78,7 +59,7 @@ export const EntityCustomPoliciesContent = ({
   if (environmentsLoading) return <Progress />;
 
   // Environments missing
-  if (environments === undefined || !currentEnvironment)
+  if (!environments?.length)
     return (
       <Container>
         <Content>
@@ -88,26 +69,33 @@ export const EntityCustomPoliciesContent = ({
     );
 
   return (
-    <Container>
-      <HeaderPage
-        title={title}
-        customActions={
-          <SelectEnvironment
-            environments={environments}
-            initialEnvironment={currentEnvironment}
-            setCurrentEnvironment={setCurrentEnvironment}
-          />
-        }
-      />
-      <Content>
-        <Grid.Root columns="1" gap="4">
-          <PolicyReportsTable
-            currentEnvironment={currentEnvironment}
-            emptyContentText="No policies"
-            policyDocumentationUrl={policyDocumentationUrl}
-          />
-        </Grid.Root>
-      </Content>
-    </Container>
+    <PolicyReportsFiltersProvider
+      defaultFilters={{
+        namespaces: getNamespaces(annotations),
+        kinds: getKinds(annotations),
+        sources: sources,
+        search: getResourceName(annotations),
+      }}
+      defaultEnvironment={environments[0].entityRef}
+    >
+      <Container>
+        <HeaderPage
+          title={title}
+          customActions={<SelectEnvironment environments={environments} />}
+        />
+        <Content>
+          <Grid.Root columns="1" gap="4">
+            <Flex align="end" gap="4">
+              <SelectStatus />
+              <SelectSeverity />
+            </Flex>
+            <PolicyReportsTable
+              emptyContentText="No policies"
+              policyDocumentationUrl={policyDocumentationUrl}
+            />
+          </Grid.Root>
+        </Content>
+      </Container>
+    </PolicyReportsFiltersProvider>
   );
 };

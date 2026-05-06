@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useAsync } from 'react-use';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import {
@@ -13,9 +12,6 @@ export const useEntityEnvironment = (
   annotationsState: boolean,
 ) => {
   const catalogApi = useApi(catalogApiRef);
-  const [currentEnvironment, setCurrentEnvironment] = useState<
-    Environment | undefined
-  >(undefined);
 
   const { value: environments, loading: environmentsLoading } =
     useAsync(async (): Promise<Environment[] | undefined> => {
@@ -46,15 +42,8 @@ export const useEntityEnvironment = (
         }
       });
 
-      setCurrentEnvironment(environmentList[0]);
-
       return environmentList;
     }, [entity]);
 
-  return {
-    environments,
-    environmentsLoading,
-    currentEnvironment,
-    setCurrentEnvironment,
-  };
+  return { environments, environmentsLoading };
 };

@@ -1,9 +1,8 @@
 import { useAsync } from 'react-use';
 import { useApi } from '@backstage/core-plugin-api';
 import { policyReporterApiRef } from '../api';
-import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 
-export const useNamespaces = (currentEnvironment?: Environment) => {
+export const useNamespaces = (entityRef?: string) => {
   const api = useApi(policyReporterApiRef);
 
   const {
@@ -11,15 +10,15 @@ export const useNamespaces = (currentEnvironment?: Environment) => {
     loading,
     error,
   } = useAsync(async () => {
-    if (!currentEnvironment) {
+    if (!entityRef) {
       return [];
     }
 
     const response = await api.getNamespaces({
-      query: { environment: currentEnvironment.entityRef },
+      query: { environment: entityRef },
     });
     return response.json();
-  }, [api, currentEnvironment]);
+  }, [api, entityRef]);
 
   return {
     namespaces: namespaces ?? [],

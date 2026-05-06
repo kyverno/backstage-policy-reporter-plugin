@@ -1,8 +1,7 @@
 import { renderInTestApp } from '@backstage/test-utils';
 import { SelectEnvironment } from './SelectEnvironment';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
-
-const setCurrentEnvironment = jest.fn();
+import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 
 const environments: Environment[] = [
   { id: 1, entityRef: 'resource:default/dev', name: 'dev' },
@@ -11,18 +10,16 @@ const environments: Environment[] = [
 ];
 
 describe('SelectEnvironment', () => {
-  it('should render the current environment if something is selected', async () => {
-    // Act
+  it('should render the current environment from the provider default', async () => {
     const extension = await renderInTestApp(
-      <SelectEnvironment
-        environments={environments}
-        initialEnvironment={environments[1]}
-        setCurrentEnvironment={setCurrentEnvironment}
-      />,
+      <PolicyReportsFiltersProvider defaultEnvironment="resource:default/prod">
+        <SelectEnvironment environments={environments} />
+      </PolicyReportsFiltersProvider>,
     );
 
     expect(extension.getAllByText('prod')).toBeTruthy();
   });
+
   it('should render correctly with a single environment', async () => {
     const environment: Environment = {
       id: 1,
@@ -30,16 +27,12 @@ describe('SelectEnvironment', () => {
       name: 'dev',
     };
 
-    // Act
     const extension = await renderInTestApp(
-      <SelectEnvironment
-        environments={[environment]}
-        initialEnvironment={environment}
-        setCurrentEnvironment={setCurrentEnvironment}
-      />,
+      <PolicyReportsFiltersProvider defaultEnvironment="resource:default/dev">
+        <SelectEnvironment environments={[environment]} />
+      </PolicyReportsFiltersProvider>,
     );
 
-    // Assert
     expect(extension.getByText('Environment')).toBeTruthy();
     expect(extension.getAllByText('dev')).toBeTruthy();
   });

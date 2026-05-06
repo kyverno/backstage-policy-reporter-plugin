@@ -13,8 +13,9 @@ import { PolicyReportsTable } from '../PolicyReportsTable';
 import { SelectStatus } from '../SelectStatus';
 import { SelectSeverity } from '../SelectSeverity';
 import { SelectNamespace } from '../SelectNamespace';
-import { useNamespaces } from '../../hooks/useNamespaces';
 import { SearchField } from '../SearchField';
+import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
+import { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -26,20 +27,17 @@ export const PolicyReportsPage = ({
   title = 'Policy Reports',
   policyDocumentationUrl,
 }: PolicyReportsPageProps) => {
-  const {
-    environments,
-    environmentsLoading,
-    setCurrentEnvironment,
-    currentEnvironment,
-  } = useEnvironments();
+  const { environments, environmentsLoading } = useEnvironments();
 
-  const { namespaces: availableNamespaces } = useNamespaces(currentEnvironment);
+  const defaultFilter: Filter = {
+    status: ['fail'],
+  };
 
-  // Fetching environments
+  // Loading environments
   if (environmentsLoading) return <Progress />;
 
   // Environments missing
-  if (environments === undefined || !currentEnvironment)
+  if (!environments?.length)
     return (
       <Container>
         <HeaderPage title={title} />
@@ -70,34 +68,32 @@ export const PolicyReportsPage = ({
     );
 
   return (
-    <Container>
-      <HeaderPage
-        title={title}
-        customActions={
-          <SelectEnvironment
-            environments={environments}
-            initialEnvironment={currentEnvironment}
-            setCurrentEnvironment={setCurrentEnvironment}
-          />
-        }
-      />
-      <Content>
-        <Grid.Root columns="1" gap="4">
-          <Flex align="end" gap="4">
-            <SelectStatus initialStatus={['fail']} />
-            <SelectSeverity />
-            <SelectNamespace availableNamespaces={availableNamespaces} />
-            <Box width="300px" style={{ flexShrink: 0 }}>
-              <SearchField />
-            </Box>
-          </Flex>
-          <PolicyReportsTable
-            currentEnvironment={currentEnvironment}
-            emptyContentText="No policies found"
-            policyDocumentationUrl={policyDocumentationUrl}
-          />
-        </Grid.Root>
-      </Content>
-    </Container>
+    <PolicyReportsFiltersProvider
+      defaultFilters={defaultFilter}
+      defaultEnvironment={environments[0].entityRef}
+    >
+      <Container>
+        <HeaderPage
+          title={title}
+          customActions={<SelectEnvironment environments={environments} />}
+        />
+        <Content>
+          <Grid.Root columns="1" gap="4">
+            <Flex align="end" gap="4">
+              <SelectStatus />
+              <SelectSeverity />
+              <SelectNamespace />
+              <Box width="300px" style={{ flexShrink: 0 }}>
+                <SearchField />
+              </Box>
+            </Flex>
+            <PolicyReportsTable
+              emptyContentText="No policies found"
+              policyDocumentationUrl={policyDocumentationUrl}
+            />
+          </Grid.Root>
+        </Content>
+      </Container>
+    </PolicyReportsFiltersProvider>
   );
 };
