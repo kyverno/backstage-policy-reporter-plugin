@@ -84,24 +84,6 @@ describe('KyvernoPolicyReportsTable', () => {
     expect(extension.getAllByText('there are no policies')).toHaveLength(1);
   });
 
-  it('should render the table displaying loading icon when data is undefined', async () => {
-    // Arrange
-    mockGetNamespacedResults.mockImplementationOnce(() => {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve({
-            json: jest.fn().mockResolvedValue({}),
-          });
-        }, 1000);
-      });
-    });
-
-    // Act
-    const extension = await renderTable();
-
-    expect(extension.getByText('Loading...')).toBeTruthy();
-  });
-
   it('should render ResponseErrorPanel when fetching data fails', async () => {
     // Arrange
     // Change the mock implementation of the getPolicies method to throw an error

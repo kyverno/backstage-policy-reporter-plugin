@@ -1,12 +1,5 @@
 import { Content, EmptyState, Progress } from '@backstage/core-components';
-import {
-  Box,
-  Container,
-  Flex,
-  Grid,
-  HeaderPage,
-  ButtonLink,
-} from '@backstage/ui';
+import { Box, Container, Flex, Grid, Header, ButtonLink } from '@backstage/ui';
 import { useEnvironments } from '../../hooks/useEnvironments';
 import { SelectEnvironment } from '../SelectEnvironment';
 import { PolicyReportsTable } from '../PolicyReportsTable';
@@ -40,7 +33,7 @@ export const PolicyReportsPage = ({
   if (!environments?.length)
     return (
       <Container>
-        <HeaderPage title={title} />
+        <Header title={title} />
         <Content>
           <EmptyState
             missing="content"
@@ -73,7 +66,7 @@ export const PolicyReportsPage = ({
       defaultEnvironment={environments[0].entityRef}
     >
       <Container>
-        <HeaderPage
+        <Header
           title={title}
           customActions={<SelectEnvironment environments={environments} />}
         />
