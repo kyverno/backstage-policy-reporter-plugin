@@ -4,7 +4,6 @@ import {
   createRouteRef,
   discoveryApiRef,
   fetchApiRef,
-  NavItemBlueprint,
   PageBlueprint,
   SubPageBlueprint,
 } from '@backstage/frontend-plugin-api';
@@ -37,6 +36,7 @@ const policyReporterPage = PageBlueprint.make({
     path: '/policy-reporter',
     routeRef: rootRouteRef,
     title: 'Policy Reporter',
+    icon: <PolicyIcon />,
   },
 });
 
@@ -73,15 +73,6 @@ const policyReporterEntityContent = EntityContentBlueprint.make({
 });
 
 /** @alpha */
-export const policyReporterNavItem = NavItemBlueprint.make({
-  params: {
-    title: 'Policy Reporter',
-    icon: () => <PolicyIcon />,
-    routeRef: rootRouteRef,
-  },
-});
-
-/** @alpha */
 export default createFrontendPlugin({
   pluginId: 'policy-reporter',
   title: 'Policy Reporter',
@@ -94,6 +85,5 @@ export default createFrontendPlugin({
     policyReporterEntityContent,
     policyReporterPage,
     policyReporterNamespacedPoliciesPage,
-    policyReporterNavItem,
   ],
 });

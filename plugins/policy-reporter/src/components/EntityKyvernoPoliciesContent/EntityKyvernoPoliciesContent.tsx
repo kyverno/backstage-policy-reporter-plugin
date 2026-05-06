@@ -3,7 +3,7 @@ import {
   MissingAnnotationEmptyState,
   useEntity,
 } from '@backstage/plugin-catalog-react';
-import { Container, Flex, Grid, HeaderPage } from '@backstage/ui';
+import { Container, Flex, Grid, Header } from '@backstage/ui';
 import { PolicyReportsTable } from '../PolicyReportsTable';
 import { SelectEnvironment } from '../SelectEnvironment';
 import {
@@ -75,7 +75,7 @@ export const EntityKyvernoPoliciesContent = ({
       defaultEnvironment={environments[0].entityRef}
     >
       <Container>
-        <HeaderPage
+        <Header
           title="Kyverno Policy Reports"
           customActions={<SelectEnvironment environments={environments} />}
         />

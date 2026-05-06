@@ -1,4 +1,4 @@
-import { Tag, TagGroup } from '@backstage/ui';
+import { Badge } from '@backstage/ui';
 import { Severity } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 type SeverityComponentProps = {
@@ -16,9 +16,5 @@ const severityStyles: Record<string, React.CSSProperties> = {
 
 export const SeverityComponent = ({ severity }: SeverityComponentProps) => {
   if (!severity) return null;
-  return (
-    <TagGroup>
-      <Tag style={severityStyles[severity]}>{severity}</Tag>
-    </TagGroup>
-  );
+  return <Badge style={severityStyles[severity]}>{severity}</Badge>;
 };
