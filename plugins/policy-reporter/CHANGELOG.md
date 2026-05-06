@@ -1,5 +1,30 @@
 # @kyverno/backstage-plugin-policy-reporter
 
+## 2.8.0
+
+### Minor Changes
+
+- d9f5bd3: Filter state (search, namespace, severity, and status) is now managed via URL query params, making filter selections shareable and persistent across page refreshes.
+- ba911d8: Entity content pages (`EntityKyvernoPoliciesContent`, `EntityCustomPoliciesContent`) now show filters for status and severity, consistent with the `PolicyReportsPage`.
+- d058bc7: Migrated several components to the new Backstage UI (BUI) components, replacing legacy MUI-based implementations:
+
+  - `PolicyReportsPage`, `EntityKyvernoPoliciesContent`, and `EntityCustomPoliciesContent` now use BUI `Grid`, `Container`, and `HeaderPage` for layout.
+  - Filter selectors (`SelectEnvironment`, `SelectNamespace`, `SelectSeverity`, `SelectStatus`) now use the BUI `Select` component.
+  - Severity badges now use the BUI `Tag` and `TagGroup` components instead of MUI chips.
+
+- be6bff2: Entity content pages (`EntityKyvernoPoliciesContent`, `EntityCustomPoliciesContent`) now display a single unified table instead of separate tables for failing/passing/skipped policies, aligning with the `PolicyReportsPage`.
+
+  Search state is now managed via URL query params, making search results shareable and persistent across page refreshes.
+
+  Migrated table component to the new Backstage UI (BUI) components.
+
+- e0e8462: Backstage verion bump to v1.50.4
+
+### Patch Changes
+
+- Updated dependencies [e0e8462]
+  - @kyverno/backstage-plugin-policy-reporter-common@2.4.0
+
 ## 2.7.0
 
 ### Minor Changes
