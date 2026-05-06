@@ -1,6 +1,6 @@
 # backstage-kyverno
 
-![screenshot](docs/assets/screenshot.PNG)
+![screenshot](docs/assets/policy-reports-page.png)
 
 <!--toc:start-->
 
