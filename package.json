@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@backstage/cli": "backstage:^",
+    "@backstage/cli-defaults": "backstage:^",
     "@backstage/e2e-test-utils": "backstage:^",
     "@backstage/repo-tools": "backstage:^",
     "@playwright/test": "^1.32.3",

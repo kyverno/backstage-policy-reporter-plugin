@@ -9,7 +9,7 @@ The `EntityKyvernoPoliciesContent` component displays kyverno policies for an en
 
 ### Screenshot
 
-![EntityKyvernoPoliciesContent](./assets/screenshot.PNG)
+![EntityKyvernoPoliciesContent](./assets/entity-content-page.png)
 
 ### Setup Steps
 
@@ -51,7 +51,7 @@ New source-specific components are being developed based on user needs.
 
 ### Screenshot
 
-![EntityCustomPoliciesContent](./assets/screenshot.PNG)
+![EntityCustomPoliciesContent](./assets/entity-content-page.png)
 
 ### Setup Steps
 
@@ -89,11 +89,9 @@ const serviceEntityPage = (
 
 The `PolicyReportsPage` component displays all policy reports for a given environment. This component shows reports from all sources and is intended to be placed on the Backstage sidebar.
 
-> **Note:** This component is a work in progress. See https://github.com/kyverno/backstage-policy-reporter-plugin/issues/29 for current state of the component
-
 ### Screenshot
 
-![EntityCustomPoliciesContent](./assets/policy-reports-page.PNG)
+![EntityCustomPoliciesContent](./assets/policy-reports-page.png)
 
 ### Setup Steps
 
