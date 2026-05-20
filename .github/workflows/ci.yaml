@@ -17,12 +17,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: yarn install
         uses: backstage/actions/yarn-install@2cd6978b476cbdc39fec48346f8b6ca13199dd6a # v0.7.8
         with:
-          cache-prefix: ${{ runner.os }}-v20
+          cache-prefix: ${{ runner.os }}-v22
 
       - name: Run test and build
         run: |
