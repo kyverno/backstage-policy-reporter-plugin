@@ -31,26 +31,28 @@ const Filters = ({ children, title = 'Filters' }: FiltersProps) => {
 
   if (isSmallScreen) {
     return (
-      <DialogTrigger isOpen={open} onOpenChange={setOpen}>
-        <ButtonIcon
-          variant="secondary"
-          aria-label={title}
-          icon={<RiFilter3Fill />}
-        />
-        <Dialog>
-          <DialogHeader>{title}</DialogHeader>
-          <DialogBody>
-            <Flex direction="column" gap="4">
-              {children}
-            </Flex>
-          </DialogBody>
-        </Dialog>
-      </DialogTrigger>
+      <Grid.Item colSpan="12">
+        <DialogTrigger isOpen={open} onOpenChange={setOpen}>
+          <ButtonIcon
+            variant="secondary"
+            aria-label={title}
+            icon={<RiFilter3Fill />}
+          />
+          <Dialog>
+            <DialogHeader>{title}</DialogHeader>
+            <DialogBody>
+              <Flex direction="column" gap="4">
+                {children}
+              </Flex>
+            </DialogBody>
+          </Dialog>
+        </DialogTrigger>
+      </Grid.Item>
     );
   }
 
   return (
-    <Grid.Item colSpan={{ initial: '12', md: '3', lg: '2' }}>
+    <Grid.Item colSpan={{ initial: '12', lg: '2' }}>
       <Flex direction="column" gap="4">
         <Text weight="bold">{title}</Text>
         {children}
@@ -67,9 +69,7 @@ interface ContentProps {
 /** Main content area that fills remaining grid space */
 const Content = ({ children }: ContentProps) => {
   return (
-    <Grid.Item colSpan={{ initial: '12', md: '9', lg: '10' }}>
-      {children}
-    </Grid.Item>
+    <Grid.Item colSpan={{ initial: '12', lg: '10' }}>{children}</Grid.Item>
   );
 };
 
