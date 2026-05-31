@@ -8,8 +8,9 @@ import {
   Flex,
   Grid,
   Text,
-  useBreakpoint,
 } from '@backstage/ui';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { Theme } from '@material-ui/core/styles';
 import { RiFilter3Fill } from '@remixicon/react';
 
 /** Props for the Filters sub-component */
@@ -21,8 +22,11 @@ interface FiltersProps {
 
 /** Renders filter children as a sidebar on large screens, or inside a Dialog on smaller screens */
 const Filters = ({ children, title = 'Filters' }: FiltersProps) => {
-  const { down } = useBreakpoint();
-  const isSmallScreen = down('md');
+  // TODO: Migrate to BUI useBreakpoint once the performance warning is resolved
+  const isSmallScreen = useMediaQuery(
+    (theme: Theme) => theme.breakpoints.down('md'),
+    { noSsr: true },
+  );
   const [open, setOpen] = useState(false);
 
   if (isSmallScreen) {
