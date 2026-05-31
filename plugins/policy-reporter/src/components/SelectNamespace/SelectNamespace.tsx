@@ -38,7 +38,6 @@ export const SelectNamespace = () => {
       value={filter.namespaces ?? []}
       onChange={handleChange}
       placeholder="All"
-      style={{ width: 200 }}
     />
   );
 };

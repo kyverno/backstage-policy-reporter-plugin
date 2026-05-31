@@ -46,7 +46,6 @@ export const SelectSeverity = () => {
       value={filter.severities ?? []}
       onChange={handleChange}
       placeholder="All"
-      style={{ width: 200 }}
     />
   );
 };

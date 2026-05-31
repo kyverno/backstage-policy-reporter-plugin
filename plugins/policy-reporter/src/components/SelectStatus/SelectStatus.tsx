@@ -44,7 +44,6 @@ export const SelectStatus = () => {
       value={filter.status ?? []}
       onChange={handleChange}
       placeholder="All"
-      style={{ width: 200 }}
     />
   );
 };
