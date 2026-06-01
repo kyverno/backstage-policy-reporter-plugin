@@ -3,7 +3,7 @@ import {
   MissingAnnotationEmptyState,
   useEntity,
 } from '@backstage/plugin-catalog-react';
-import { Container, Flex, Grid, Header } from '@backstage/ui';
+import { Container, Header } from '@backstage/ui';
 import { PolicyReportsTable } from '../PolicyReportsTable';
 import { SelectEnvironment } from '../SelectEnvironment';
 import {
@@ -18,6 +18,7 @@ import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilter
 import { KYVERNO_RESOURCE_NAME_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { SelectSeverity } from '../SelectSeverity';
 import { SelectStatus } from '../SelectStatus';
+import { FilterLayout } from '../FilterLayout';
 
 type KyvernoPoliciesContentProps = {
   annotationsDocumentationUrl?: string;
@@ -80,16 +81,18 @@ export const EntityKyvernoPoliciesContent = ({
           customActions={<SelectEnvironment environments={environments} />}
         />
         <Content>
-          <Grid.Root columns="1" gap="4">
-            <Flex align="end" gap="4">
+          <FilterLayout>
+            <FilterLayout.Filters>
               <SelectStatus />
               <SelectSeverity />
-            </Flex>
-            <PolicyReportsTable
-              emptyContentText="No policies found"
-              policyDocumentationUrl={policyDocumentationUrl}
-            />
-          </Grid.Root>
+            </FilterLayout.Filters>
+            <FilterLayout.Content>
+              <PolicyReportsTable
+                emptyContentText="No policies found"
+                policyDocumentationUrl={policyDocumentationUrl}
+              />
+            </FilterLayout.Content>
+          </FilterLayout>
         </Content>
       </Container>
     </PolicyReportsFiltersProvider>

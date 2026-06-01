@@ -1,5 +1,5 @@
 import { Content, EmptyState, Progress } from '@backstage/core-components';
-import { Box, Container, Flex, Grid, Header, ButtonLink } from '@backstage/ui';
+import { Container, Flex, Header, ButtonLink } from '@backstage/ui';
 import { useEnvironments } from '../../hooks/useEnvironments';
 import { SelectEnvironment } from '../SelectEnvironment';
 import { PolicyReportsTable } from '../PolicyReportsTable';
@@ -9,6 +9,7 @@ import { SelectNamespace } from '../SelectNamespace';
 import { SearchField } from '../SearchField';
 import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 import { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
+import { FilterLayout } from '../FilterLayout';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -71,20 +72,22 @@ export const PolicyReportsPage = ({
           customActions={<SelectEnvironment environments={environments} />}
         />
         <Content>
-          <Grid.Root columns="1" gap="4">
-            <Flex align="end" gap="4">
+          <FilterLayout>
+            <FilterLayout.Filters>
               <SelectStatus />
               <SelectSeverity />
               <SelectNamespace />
-              <Box width="300px" style={{ flexShrink: 0 }}>
+            </FilterLayout.Filters>
+            <FilterLayout.Content>
+              <Flex direction="column" gap="4">
                 <SearchField />
-              </Box>
-            </Flex>
-            <PolicyReportsTable
-              emptyContentText="No policies found"
-              policyDocumentationUrl={policyDocumentationUrl}
-            />
-          </Grid.Root>
+                <PolicyReportsTable
+                  emptyContentText="No policies found"
+                  policyDocumentationUrl={policyDocumentationUrl}
+                />
+              </Flex>
+            </FilterLayout.Content>
+          </FilterLayout>
         </Content>
       </Container>
     </PolicyReportsFiltersProvider>
