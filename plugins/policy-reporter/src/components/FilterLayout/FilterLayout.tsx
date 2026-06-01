@@ -54,7 +54,7 @@ const Filters = ({ children, title = 'Filters' }: FiltersProps) => {
   return (
     <Grid.Item colSpan={{ initial: '12', lg: '2' }}>
       <Flex direction="column" gap="4">
-        <Text weight="bold">{title}</Text>
+        <Text variant="title-x-small">{title}</Text>
         {children}
       </Flex>
     </Grid.Item>
