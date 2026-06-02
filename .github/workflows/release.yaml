@@ -37,9 +37,6 @@ jobs:
       - name: Build all packages
         run: yarn build:all
 
-      # - name: Setup yarn auth
-      #   run: yarn config set -H 'npmAuthToken' "${{secrets.NPM_TOKEN}}"
-
       - name: Publish
         id: changesets
         uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b
@@ -47,6 +44,4 @@ jobs:
           version: node .github/changeset-version.cjs
           publish: yarn publish
         env:
-          # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
