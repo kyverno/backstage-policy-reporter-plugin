@@ -12,6 +12,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       contents: write
       pull-requests: write
     steps:
@@ -21,13 +22,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
-          node-version: '20'
+          node-version: '22'
           registry-url: 'https://registry.npmjs.org' # Needed for auth
+          package-manager-cache: false
 
       - name: yarn install
         uses: backstage/actions/yarn-install@2cd6978b476cbdc39fec48346f8b6ca13199dd6a # v0.7.8
         with:
-          cache-prefix: ${{ runner.os }}-v20
+          cache-prefix: ${{ runner.os }}-v22
 
       - name: Compile TypeScript
         run: yarn tsc
@@ -35,8 +37,8 @@ jobs:
       - name: Build all packages
         run: yarn build:all
 
-      - name: Setup yarn auth
-        run: yarn config set -H 'npmAuthToken' "${{secrets.NPM_TOKEN}}"
+      # - name: Setup yarn auth
+      #   run: yarn config set -H 'npmAuthToken' "${{secrets.NPM_TOKEN}}"
 
       - name: Publish
         id: changesets
@@ -45,6 +47,6 @@ jobs:
           version: node .github/changeset-version.cjs
           publish: yarn publish
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
