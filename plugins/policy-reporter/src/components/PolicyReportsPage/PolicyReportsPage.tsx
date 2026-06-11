@@ -20,6 +20,7 @@ export interface PolicyReportsPageProps {
 export const PolicyReportsPage = ({
   title = 'Policy Reports',
   policyDocumentationUrl,
+  subtitle,
 }: PolicyReportsPageProps) => {
   const { environments, environmentsLoading } = useEnvironments();
 
@@ -69,6 +70,7 @@ export const PolicyReportsPage = ({
       <Container>
         <Header
           title={title}
+          description={subtitle}
           customActions={<SelectEnvironment environments={environments} />}
         />
         <Content>
