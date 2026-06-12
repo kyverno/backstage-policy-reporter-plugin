@@ -1,5 +1,11 @@
 # @kyverno/backstage-plugin-policy-reporter-common
 
+## 2.5.0
+
+### Minor Changes
+
+- 880eecc: Backstage version bump to v1.51.1
+
 ## 2.4.0
 
 ### Minor Changes
