@@ -6,6 +6,7 @@ import {
   useContext,
   useLayoutEffect,
   useMemo,
+  useRef,
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
@@ -67,13 +68,18 @@ export const PolicyReportsFiltersProvider = ({
     [urlEnvironment, defaultEnvironment],
   );
 
+  // setSearchParams is not stable (https://github.com/remix-run/react-router/issues/9991),
+  // so we hold it in a ref to keep updateParams/updateFilter stable across renders.
+  const setSearchParamsRef = useRef(setSearchParams);
+  setSearchParamsRef.current = setSearchParams;
+
   const updateParams = useCallback(
     (
       update:
         | Record<string, unknown>
         | ((prev: Record<string, unknown>) => Record<string, unknown>),
     ) => {
-      setSearchParams(
+      setSearchParamsRef.current(
         prev => {
           const prevParsed = qs.parse(prev.toString());
           const next =
@@ -86,7 +92,7 @@ export const PolicyReportsFiltersProvider = ({
         { replace: true },
       );
     },
-    [setSearchParams],
+    [],
   );
 
   useLayoutEffect(() => {
@@ -96,10 +102,7 @@ export const PolicyReportsFiltersProvider = ({
         environment: defaultEnvironment,
       });
     }
-    // setSearchParams isn't stable, hence disabling the exhaustive-deps check
-    // for more info please visit https://github.com/remix-run/react-router/issues/9991
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultEnvironment, urlEnvironment, defaultFilters]);
+  }, [defaultEnvironment, urlEnvironment, defaultFilters, updateParams]);
 
   const updateFilter = useCallback(
     (update: Partial<Filter>) => {
