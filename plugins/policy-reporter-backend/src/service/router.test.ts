@@ -44,6 +44,7 @@ describe('createRouter', () => {
   // assertions type-check cleanly under the repo-root tsconfig.
   let receivedSecret: string | null | undefined;
   let receivedNsSecret: string | null | undefined;
+  let receivedContentType: string | null | undefined;
 
   const server = setupServer(
     // Setup the mock response for Connector alter offset
@@ -51,6 +52,7 @@ describe('createRouter', () => {
       'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/results',
       (req, res, ctx) => {
         receivedSecret = req.headers.get('X-Partybus-Upstream-Secret');
+        receivedContentType = req.headers.get('Content-Type');
         return res(
           ctx.status(200),
           ctx.json({
@@ -205,6 +207,38 @@ describe('createRouter', () => {
       expect(response.status).toBe(200);
       // the Headers API returns null for an absent header
       expect(receivedSecret).toBeNull();
+
+      receivedNsSecret = undefined;
+      const nsResponse = await request(app).get(
+        `/v1/namespaces?environment=resource%3Adefault%2Fprod`,
+      );
+      expect(nsResponse.status).toBe(200);
+      expect(receivedNsSecret).toBeNull();
+    });
+
+    it('does not let a configured header override Content-Type', async () => {
+      const router = await createRouter({
+        logger: mockServices.logger.mock(),
+        config: mockServices.rootConfig({
+          data: {
+            policyReporter: {
+              requestHeaders: { 'Content-Type': 'text/plain' },
+            },
+          },
+        }),
+        authService: mockServices.auth(),
+        catalogService: catalogServiceMock({
+          entities: mockEntities,
+        }) as CatalogService,
+      });
+      const appOverridingContentType = express().use(router);
+
+      receivedContentType = undefined;
+      const response = await request(appOverridingContentType).get(
+        `/namespaced-resources/results?environment=resource%3Adefault%2Fprod`,
+      );
+      expect(response.status).toBe(200);
+      expect(receivedContentType).toBe('application/json');
     });
   });
 });

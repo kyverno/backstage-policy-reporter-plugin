@@ -33,5 +33,5 @@ If the Policy Reporter Core API sits behind a gateway/proxy that requires header
 ```yaml
 policyReporter:
   requestHeaders:
-    X-Partybus-Upstream-Secret: ${POLICY_REPORTER_UPSTREAM_SECRET}
+    Authorization: Bearer ${POLICY_REPORTER_API_TOKEN}
 ```

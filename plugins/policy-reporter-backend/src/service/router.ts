@@ -81,8 +81,8 @@ export async function createRouter(
       `${ensureTrailingSlash(kyvernoEndpoint)}${uri}`,
       {
         headers: {
-          'Content-Type': 'application/json',
           ...extraHeaders,
+          'Content-Type': 'application/json',
         },
         method: 'GET',
       },
@@ -131,8 +131,8 @@ export async function createRouter(
       `${ensureTrailingSlash(kyvernoEndpoint)}${uri}`,
       {
         headers: {
-          'Content-Type': 'application/json',
           ...extraHeaders,
+          'Content-Type': 'application/json',
         },
         method: 'GET',
       },
