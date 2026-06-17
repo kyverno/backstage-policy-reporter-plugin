@@ -18,10 +18,32 @@ export interface RouterOptions {
 const ensureTrailingSlash = (url: string) =>
   url.endsWith('/') ? url : `${url}/`;
 
+/**
+ * Optional HTTP headers to add to every outbound Policy Reporter API request,
+ * read from `policyReporter.requestHeaders` (a string→string map) in app-config.
+ * Lets the backend authenticate through a gateway/proxy without browser/direct
+ * exposure. Values support Backstage config substitution, so secrets stay in
+ * env/secret refs. Returns an empty object when unset (no behaviour change).
+ */
+function readRequestHeaders(config: RootConfigService): Record<string, string> {
+  const raw = config.getOptional('policyReporter.requestHeaders');
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+    return {};
+  }
+  const headers: Record<string, string> = {};
+  for (const [name, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof value === 'string') {
+      headers[name] = value;
+    }
+  }
+  return headers;
+}
+
 export async function createRouter(
   options: RouterOptions,
 ): Promise<express.Router> {
   const { logger, config, catalogService, authService } = options;
+  const extraHeaders = readRequestHeaders(config);
 
   const router = await createOpenApiRouter();
   router.use(express.json());
@@ -58,6 +80,7 @@ export async function createRouter(
       {
         headers: {
           'Content-Type': 'application/json',
+          ...extraHeaders,
         },
         method: 'GET',
       },
@@ -107,6 +130,7 @@ export async function createRouter(
       {
         headers: {
           'Content-Type': 'application/json',
+          ...extraHeaders,
         },
         method: 'GET',
       },

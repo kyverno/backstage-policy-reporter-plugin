@@ -40,12 +40,14 @@ const mockEntities: Entity[] = [
 
 describe('createRouter', () => {
   let app: express.Express;
+  let receivedHeaders: Headers | undefined;
 
   const server = setupServer(
     // Setup the mock response for Connector alter offset
     rest.get(
       'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/results',
-      (_req, res, ctx) => {
+      (req, res, ctx) => {
+        receivedHeaders = req.headers;
         return res(
           ctx.status(200),
           ctx.json({
@@ -149,6 +151,46 @@ describe('createRouter', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(['default', 'kube-system']);
+    });
+  });
+
+  describe('requestHeaders config', () => {
+    let appWithHeaders: express.Express;
+
+    beforeAll(async () => {
+      const router = await createRouter({
+        logger: mockServices.logger.mock(),
+        config: mockServices.rootConfig({
+          data: {
+            policyReporter: {
+              requestHeaders: { 'X-Partybus-Upstream-Secret': 'topsecret' },
+            },
+          },
+        }),
+        authService: mockServices.auth(),
+        catalogService: catalogServiceMock({
+          entities: mockEntities,
+        }) as CatalogService,
+      });
+      appWithHeaders = express().use(router);
+    });
+
+    it('injects configured headers into the outbound Policy Reporter request', async () => {
+      receivedHeaders = undefined;
+      const response = await request(appWithHeaders).get(
+        `/namespaced-resources/results?environment=resource%3Adefault%2Fprod`,
+      );
+      expect(response.status).toBe(200);
+      expect(receivedHeaders?.get('x-partybus-upstream-secret')).toBe('topsecret');
+    });
+
+    it('still works (no injected header) when config is absent', async () => {
+      receivedHeaders = undefined;
+      const response = await request(app).get(
+        `/namespaced-resources/results?environment=resource%3Adefault%2Fprod`,
+      );
+      expect(response.status).toBe(200);
+      expect(receivedHeaders?.get('x-partybus-upstream-secret')).toBeNull();
     });
   });
 });
