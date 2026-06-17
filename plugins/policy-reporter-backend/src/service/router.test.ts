@@ -41,6 +41,7 @@ const mockEntities: Entity[] = [
 describe('createRouter', () => {
   let app: express.Express;
   let receivedHeaders: Headers | undefined;
+  let receivedNsHeaders: Headers | undefined;
 
   const server = setupServer(
     // Setup the mock response for Connector alter offset
@@ -59,7 +60,8 @@ describe('createRouter', () => {
     ),
     rest.get(
       'http://kyverno.io/policy-reporter/api/v1/namespaces',
-      (_req, res, ctx) => {
+      (req, res, ctx) => {
+        receivedNsHeaders = req.headers;
         return res(ctx.status(200), ctx.json(['default', 'kube-system']));
       },
     ),
@@ -181,7 +183,20 @@ describe('createRouter', () => {
         `/namespaced-resources/results?environment=resource%3Adefault%2Fprod`,
       );
       expect(response.status).toBe(200);
+      // the Headers API normalises header names to lowercase
       expect(receivedHeaders?.get('x-partybus-upstream-secret')).toBe('topsecret');
+    });
+
+    it('injects configured headers into the outbound namespaces request', async () => {
+      receivedNsHeaders = undefined;
+      const response = await request(appWithHeaders).get(
+        `/v1/namespaces?environment=resource%3Adefault%2Fprod`,
+      );
+      expect(response.status).toBe(200);
+      // the Headers API normalises header names to lowercase
+      expect(receivedNsHeaders?.get('x-partybus-upstream-secret')).toBe(
+        'topsecret',
+      );
     });
 
     it('still works (no injected header) when config is absent', async () => {
@@ -190,6 +205,7 @@ describe('createRouter', () => {
         `/namespaced-resources/results?environment=resource%3Adefault%2Fprod`,
       );
       expect(response.status).toBe(200);
+      // the Headers API normalises header names to lowercase
       expect(receivedHeaders?.get('x-partybus-upstream-secret')).toBeNull();
     });
   });

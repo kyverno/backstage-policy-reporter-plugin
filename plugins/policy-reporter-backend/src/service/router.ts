@@ -24,6 +24,8 @@ const ensureTrailingSlash = (url: string) =>
  * Lets the backend authenticate through a gateway/proxy without browser/direct
  * exposure. Values support Backstage config substitution, so secrets stay in
  * env/secret refs. Returns an empty object when unset (no behaviour change).
+ * Only string values are used; non-string values are ignored (the config
+ * schema types this as a string map).
  */
 function readRequestHeaders(config: RootConfigService): Record<string, string> {
   const raw = config.getOptional('policyReporter.requestHeaders');
