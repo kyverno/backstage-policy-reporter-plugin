@@ -40,15 +40,17 @@ const mockEntities: Entity[] = [
 
 describe('createRouter', () => {
   let app: express.Express;
-  let receivedHeaders: Headers | undefined;
-  let receivedNsHeaders: Headers | undefined;
+  // Capture the extracted header VALUE (not the Headers object) so the
+  // assertions type-check cleanly under the repo-root tsconfig.
+  let receivedSecret: string | null | undefined;
+  let receivedNsSecret: string | null | undefined;
 
   const server = setupServer(
     // Setup the mock response for Connector alter offset
     rest.get(
       'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/results',
       (req, res, ctx) => {
-        receivedHeaders = req.headers;
+        receivedSecret = req.headers.get('X-Partybus-Upstream-Secret');
         return res(
           ctx.status(200),
           ctx.json({
@@ -61,7 +63,7 @@ describe('createRouter', () => {
     rest.get(
       'http://kyverno.io/policy-reporter/api/v1/namespaces',
       (req, res, ctx) => {
-        receivedNsHeaders = req.headers;
+        receivedNsSecret = req.headers.get('X-Partybus-Upstream-Secret');
         return res(ctx.status(200), ctx.json(['default', 'kube-system']));
       },
     ),
@@ -178,35 +180,31 @@ describe('createRouter', () => {
     });
 
     it('injects configured headers into the outbound Policy Reporter request', async () => {
-      receivedHeaders = undefined;
+      receivedSecret = undefined;
       const response = await request(appWithHeaders).get(
         `/namespaced-resources/results?environment=resource%3Adefault%2Fprod`,
       );
       expect(response.status).toBe(200);
-      // the Headers API normalises header names to lowercase
-      expect(receivedHeaders?.get('x-partybus-upstream-secret')).toBe('topsecret');
+      expect(receivedSecret).toBe('topsecret');
     });
 
     it('injects configured headers into the outbound namespaces request', async () => {
-      receivedNsHeaders = undefined;
+      receivedNsSecret = undefined;
       const response = await request(appWithHeaders).get(
         `/v1/namespaces?environment=resource%3Adefault%2Fprod`,
       );
       expect(response.status).toBe(200);
-      // the Headers API normalises header names to lowercase
-      expect(receivedNsHeaders?.get('x-partybus-upstream-secret')).toBe(
-        'topsecret',
-      );
+      expect(receivedNsSecret).toBe('topsecret');
     });
 
     it('still works (no injected header) when config is absent', async () => {
-      receivedHeaders = undefined;
+      receivedSecret = undefined;
       const response = await request(app).get(
         `/namespaced-resources/results?environment=resource%3Adefault%2Fprod`,
       );
       expect(response.status).toBe(200);
-      // the Headers API normalises header names to lowercase
-      expect(receivedHeaders?.get('x-partybus-upstream-secret')).toBeNull();
+      // the Headers API returns null for an absent header
+      expect(receivedSecret).toBeNull();
     });
   });
 });
