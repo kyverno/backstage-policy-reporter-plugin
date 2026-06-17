@@ -25,3 +25,13 @@ const backend = createBackend();
 backend.start();
 
 ```
+
+## Authenticating to the Policy Reporter API (optional)
+
+If the Policy Reporter Core API sits behind a gateway/proxy that requires headers, set `policyReporter.requestHeaders` in app-config. Every outbound request to the Policy Reporter API gets these headers; values support config substitution so secrets stay in env/secret refs:
+
+```yaml
+policyReporter:
+  requestHeaders:
+    X-Partybus-Upstream-Secret: ${POLICY_REPORTER_UPSTREAM_SECRET}
+```

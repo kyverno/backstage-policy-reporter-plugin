@@ -18,6 +18,7 @@
       "@kyverno/backstage-plugin-policy-reporter-common"
     ]
   },
+  "configSchema": "config.d.ts",
   "publishConfig": {
     "access": "public",
     "main": "dist/index.cjs.js",
