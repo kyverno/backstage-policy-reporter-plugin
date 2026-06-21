@@ -44,9 +44,20 @@ export type GetNamespaces = {
   };
   response: Array<string> | RequestError | RequestError;
 };
+/**
+ * @public
+ */
+export type GetSources = {
+  query: {
+    environment: string;
+  };
+  response: Array<string> | RequestError | RequestError;
+};
 
 export type EndpointMap = {
   '#get|/namespaced-resources/results': GetNamespacedResults;
 
   '#get|/v1/namespaces': GetNamespaces;
+
+  '#get|/v1/namespaced-resources/sources': GetSources;
 };
