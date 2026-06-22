@@ -1,13 +1,39 @@
-import { Select } from '@backstage/ui';
-import { Key, useEffect, useRef } from 'react';
+import { IdentifiedOption, Select, useAsyncList } from '@backstage/ui';
+import { Key, useEffect, useMemo, useRef } from 'react';
 import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
-import { useNamespaces } from '../../hooks/useNamespaces';
+import { useApi } from '@backstage/frontend-plugin-api';
+import { policyReporterApiRef } from '../../api';
 
 export const SelectNamespace = () => {
   const { filter, updateFilter, environment } = usePolicyReportsFilters();
-  const { namespaces } = useNamespaces(environment);
+  const api = useApi(policyReporterApiRef);
 
-  const options = namespaces.map(ns => ({ value: ns, label: ns }));
+  const namespaceOptions = useAsyncList<IdentifiedOption>({
+    async load({}) {
+      if (!environment) return { items: [] };
+      const response = await api.getNamespaces({ query: { environment } });
+
+      const result = await response.json();
+
+      return {
+        items: result.map(ns => ({ id: ns, label: ns })),
+      };
+    },
+  });
+
+  const namespaces = useMemo(
+    () => new Set(namespaceOptions.items.map(ns => ns.label)),
+    [namespaceOptions.items],
+  );
+
+  // useRef to avoid dependency on the useAsyncList result
+  const namespacesRef = useRef(namespaceOptions);
+  namespacesRef.current = namespaceOptions;
+
+  // Fetch namespaces again after changes to the environment
+  useEffect(() => {
+    namespacesRef.current.reload();
+  }, [environment]);
 
   const selectedNamespaces = filter.namespaces ?? [];
 
@@ -17,13 +43,12 @@ export const SelectNamespace = () => {
   selectedNamespacesRef.current = selectedNamespaces;
 
   useEffect(() => {
-    const validNamespaces = new Set(namespaces);
     const selected = selectedNamespacesRef.current;
 
-    if (selected.every(ns => validNamespaces.has(ns))) return;
+    if (selected.every(ns => namespaces.has(ns))) return;
 
     updateFilter({
-      namespaces: selected.filter(ns => validNamespaces.has(ns)),
+      namespaces: selected.filter(ns => namespaces.has(ns)),
     });
   }, [namespaces, updateFilter]);
 
@@ -35,13 +60,13 @@ export const SelectNamespace = () => {
 
     if (!Array.isArray(key)) {
       updateFilter({
-        namespaces: namespaces.includes(key as string) ? [key as string] : [],
+        namespaces: namespaces.has(key as string) ? [key as string] : [],
       });
       return;
     }
 
     const filtered = key.filter((item): item is string =>
-      namespaces.includes(item as string),
+      namespaces.has(item as string),
     );
     updateFilter({ namespaces: filtered });
   };
@@ -50,7 +75,7 @@ export const SelectNamespace = () => {
     <Select
       label="Namespace"
       selectionMode="multiple"
-      options={options}
+      options={namespaceOptions}
       value={selectedNamespaces}
       onChange={handleChange}
       placeholder="All"
