@@ -1,1 +1,1 @@
-export { SelectSource as SelectNamespace } from './SelectSource';
+export { SelectSource } from './SelectSource';

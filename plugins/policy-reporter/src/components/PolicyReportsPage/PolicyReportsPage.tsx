@@ -10,7 +10,7 @@ import { SearchField } from '../SearchField';
 import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 import { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { FilterLayout } from '../FilterLayout';
-import { SelectSource } from '../SelectSource/SelectSource';
+import { SelectSource } from '../SelectSource';
 
 export interface PolicyReportsPageProps {
   title?: string;
