@@ -64,7 +64,13 @@ describe('createRouter', () => {
     rest.get(
       'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/sources',
       (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(['kyverno', 'trivy']));
+        return res(ctx.status(200), ctx.json(['default', 'kube-system']));
+      },
+    ),
+    rest.get(
+      'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/kinds',
+      (_req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(['Deployment', 'Pod']));
       },
     ),
   );
@@ -158,10 +164,10 @@ describe('createRouter', () => {
     });
   });
 
-  describe('sources', () => {
+  describe('kinds', () => {
     it('Should return 400 if entity is missing kyverno.io/endpoint annotation', async () => {
       const response = await request(app).get(
-        `/v1/namespaced-resources/sources?environment=resource%3Adefault%2Fdev`,
+        `/v1/namespaced-resources/kinds?environment=resource%3Adefault%2Fdev`,
       );
 
       expect(response.status).toBe(400);
@@ -172,7 +178,7 @@ describe('createRouter', () => {
 
     it('Should return 400 if entity is invalid', async () => {
       const response = await request(app).get(
-        `/v1/namespaced-resources/sources?environment=resource%3Adefault%2Finvalid`,
+        `/v1/namespaced-resources/kinds?environment=resource%3Adefault%2Finvalid`,
       );
 
       expect(response.status).toBe(400);
@@ -183,11 +189,11 @@ describe('createRouter', () => {
 
     it('Should return 200 and valid response when entity is valid', async () => {
       const response = await request(app).get(
-        `/v1/namespaced-resources/sources?environment=resource%3Adefault%2Fprod`,
+        `/v1/namespaced-resources/kinds?environment=resource%3Adefault%2Fprod`,
       );
 
       expect(response.status).toBe(200);
-      expect(response.body).toStrictEqual(['kyverno', 'trivy']);
+      expect(response.body).toStrictEqual(['Deployment', 'Pod']);
     });
   });
 });

@@ -221,11 +221,12 @@ export const spec = {
         },
       },
     },
-    '/v1/namespaced-resources/sources': {
+    '/v1/namespaced-resources/kinds': {
       get: {
-        summary: 'Get sources',
-        description: 'List of all Sources with namespace scoped results',
-        operationId: 'getSources',
+        summary: 'Get kinds',
+        description:
+          'List of all Kubernetes resource kinds with namespace scoped results',
+        operationId: 'getKinds',
         parameters: [
           {
             name: 'environment',
@@ -237,10 +238,36 @@ export const spec = {
               example: 'default/component/my-service',
             },
           },
+          {
+            name: 'sources',
+            in: 'query',
+            description: 'Filter by a list of sources',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+            style: 'form',
+            explode: true,
+          },
+          {
+            name: 'namespaces',
+            in: 'query',
+            description: 'Filter by a list of namespaces',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+            style: 'form',
+            explode: true,
+          },
         ],
         responses: {
           '200': {
-            description: 'List of sources',
+            description: 'List of kinds',
             content: {
               'application/json': {
                 schema: {

@@ -122,8 +122,7 @@ export async function createRouter(
     return response.status(200).json(result);
   });
 
-  router.get('/v1/namespaced-resources/sources', async (request, response) => {
-    // Get entityRef from query.
+  router.get('/v1/namespaced-resources/kinds', async (request, response) => {
     const entityRef = decodeURIComponent(request.query.environment);
 
     const credentials = await authService.getOwnServiceCredentials();
@@ -144,8 +143,14 @@ export async function createRouter(
         .json({ error: `Entity missing 'kyverno.io/endpoint' annotation` });
     }
 
+    const uriTemplate = `v1/namespaced-resources/kinds{?sources*,namespaces*}`;
+
+    const uri = parser.parse(uriTemplate).expand({
+      ...request.query,
+    });
+
     const policyResponse = await fetch(
-      `${ensureTrailingSlash(kyvernoEndpoint)}v1/namespaced-resources/sources`,
+      `${ensureTrailingSlash(kyvernoEndpoint)}${uri}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +161,7 @@ export async function createRouter(
 
     if (!policyResponse.ok) {
       return response.status(500).json({
-        error: `Failed to fetch sources: ${policyResponse.statusText}`,
+        error: `Failed to fetch kinds: ${policyResponse.statusText}`,
       });
     }
 
