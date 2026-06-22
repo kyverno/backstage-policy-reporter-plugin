@@ -64,7 +64,7 @@ describe('createRouter', () => {
     rest.get(
       'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/sources',
       (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(['default', 'kube-system']));
+        return res(ctx.status(200), ctx.json(['kyverno', 'trivy']));
       },
     ),
   );
