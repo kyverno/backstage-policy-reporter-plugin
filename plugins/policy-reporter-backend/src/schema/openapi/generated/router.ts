@@ -221,6 +221,61 @@ export const spec = {
         },
       },
     },
+    '/v1/namespaced-resources/sources': {
+      get: {
+        summary: 'Get sources',
+        description: 'List of all Sources with namespace scoped results',
+        operationId: 'getSources',
+        parameters: [
+          {
+            name: 'environment',
+            in: 'query',
+            required: true,
+            description: 'The environment entity reference (URL encoded)',
+            schema: {
+              type: 'string',
+              example: 'default/component/my-service',
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'List of sources',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description:
+              'Bad request - invalid entityRef or missing annotation',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '500': {
+            description: 'Internal server error',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     '/v1/namespaced-resources/kinds': {
       get: {
         summary: 'Get kinds',
