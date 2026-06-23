@@ -122,6 +122,48 @@ export async function createRouter(
     return response.status(200).json(result);
   });
 
+  router.get('/v1/namespaced-resources/sources', async (request, response) => {
+    // Get entityRef from query.
+    const entityRef = decodeURIComponent(request.query.environment);
+
+    const credentials = await authService.getOwnServiceCredentials();
+    const entity = await catalogService.getEntityByRef(entityRef, {
+      credentials,
+    });
+
+    if (!entity) {
+      return response.status(400).json({ error: 'Invalid entityRef' });
+    }
+
+    const kyvernoEndpoint =
+      entity?.metadata.annotations?.[KYVERNO_ENDPOINT_ANNOTATION];
+
+    if (!kyvernoEndpoint) {
+      return response
+        .status(400)
+        .json({ error: `Entity missing 'kyverno.io/endpoint' annotation` });
+    }
+
+    const policyResponse = await fetch(
+      `${ensureTrailingSlash(kyvernoEndpoint)}v1/namespaced-resources/sources`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'GET',
+      },
+    );
+
+    if (!policyResponse.ok) {
+      return response.status(500).json({
+        error: `Failed to fetch sources: ${policyResponse.statusText}`,
+      });
+    }
+
+    const result = await policyResponse.json();
+    return response.status(200).json(result);
+  });
+
   const middleware = MiddlewareFactory.create({ logger, config });
 
   router.use(middleware.error());

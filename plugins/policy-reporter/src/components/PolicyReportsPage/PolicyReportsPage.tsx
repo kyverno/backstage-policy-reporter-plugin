@@ -10,6 +10,7 @@ import { SearchField } from '../SearchField';
 import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 import { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { FilterLayout } from '../FilterLayout';
+import { SelectSource } from '../SelectSource';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -79,6 +80,7 @@ export const PolicyReportsPage = ({
               <SelectStatus />
               <SelectSeverity />
               <SelectNamespace />
+              <SelectSource />
             </FilterLayout.Filters>
             <FilterLayout.Content>
               <Flex direction="column" gap="4">
