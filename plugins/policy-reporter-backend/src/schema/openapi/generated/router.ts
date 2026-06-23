@@ -276,6 +276,88 @@ export const spec = {
         },
       },
     },
+    '/v1/namespaced-resources/kinds': {
+      get: {
+        summary: 'Get kinds',
+        description:
+          'List of all Kubernetes resource kinds with namespace scoped results',
+        operationId: 'getKinds',
+        parameters: [
+          {
+            name: 'environment',
+            in: 'query',
+            required: true,
+            description: 'The environment entity reference (URL encoded)',
+            schema: {
+              type: 'string',
+              example: 'default/component/my-service',
+            },
+          },
+          {
+            name: 'sources',
+            in: 'query',
+            description: 'Filter by a list of sources',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+            style: 'form',
+            explode: true,
+          },
+          {
+            name: 'namespaces',
+            in: 'query',
+            description: 'Filter by a list of namespaces',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+            style: 'form',
+            explode: true,
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'List of kinds',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description:
+              'Bad request - invalid entityRef or missing annotation',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '500': {
+            description: 'Internal server error',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     '/v1/namespaces': {
       get: {
         summary: 'Get namespaces',

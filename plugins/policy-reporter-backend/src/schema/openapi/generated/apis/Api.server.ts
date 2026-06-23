@@ -13,6 +13,17 @@ import { Status } from '../models/Status.model';
 /**
  * @public
  */
+export type GetKinds = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+    namespaces?: Array<string>;
+  };
+  response: Array<string> | RequestError | RequestError;
+};
+/**
+ * @public
+ */
 export type GetNamespacedResults = {
   query: {
     environment: string;
@@ -55,6 +66,8 @@ export type GetSources = {
 };
 
 export type EndpointMap = {
+  '#get|/v1/namespaced-resources/kinds': GetKinds;
+
   '#get|/namespaced-resources/results': GetNamespacedResults;
 
   '#get|/v1/namespaces': GetNamespaces;
