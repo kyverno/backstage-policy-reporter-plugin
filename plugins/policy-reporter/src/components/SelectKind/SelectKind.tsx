@@ -21,10 +21,13 @@ export const SelectKind = () => {
     },
   });
 
-  const kinds = useMemo(
-    () => new Set(kindOptions.items.map(k => k.label)),
-    [kindOptions.items],
-  );
+  const kinds = useMemo(() => {
+    if (kindOptions.isLoading || kindOptions.items.length === 0) {
+      return undefined;
+    }
+
+    return new Set(kindOptions.items.map(k => k.label));
+  }, [kindOptions.isLoading, kindOptions.items]);
 
   const kindRef = useRef(kindOptions);
   kindRef.current = kindOptions;
@@ -39,6 +42,8 @@ export const SelectKind = () => {
   selectedKindsRef.current = selectedKinds;
 
   useEffect(() => {
+    if (!kinds) return;
+
     const selected = selectedKindsRef.current;
 
     if (selected.every(kind => kinds.has(kind))) return;
@@ -53,6 +58,8 @@ export const SelectKind = () => {
       updateFilter({ kinds: [] });
       return;
     }
+
+    if (!kinds) return;
 
     if (!Array.isArray(key)) {
       updateFilter({
