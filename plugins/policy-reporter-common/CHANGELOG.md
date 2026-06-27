@@ -1,5 +1,15 @@
 # @kyverno/backstage-plugin-policy-reporter-common
 
+## 2.5.0
+
+### Minor Changes
+
+- 256fb9a: Added source filtering to the PolicyReportsPage. Users can now filter the list of policy reports by selecting one or more sources from the selected cluster.
+- d598ade: Added category filtering to the PolicyReportsPage. Users can now filter the list of policy reports by selecting one or more categories from the selected cluster.
+- a664d0c: Added kind filtering to the PolicyReportsPage. Users can now filter the list of policy reports by selecting one or more kinds from the selected cluster.
+- 880eecc: Backstage version bump to v1.51.1
+- 44c5238: Backstage version bump to v1.52.0
+
 ## 2.4.0
 
 ### Minor Changes
