@@ -12,6 +12,7 @@ import { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { FilterLayout } from '../FilterLayout';
 import { SelectSource } from '../SelectSource';
 import { SelectKind } from '../SelectKind';
+import { SelectCategory } from '../SelectCategory';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -83,6 +84,7 @@ export const PolicyReportsPage = ({
               <SelectNamespace />
               <SelectSource />
               <SelectKind />
+              <SelectCategory />
             </FilterLayout.Filters>
             <FilterLayout.Content>
               <Flex direction="column" gap="4">

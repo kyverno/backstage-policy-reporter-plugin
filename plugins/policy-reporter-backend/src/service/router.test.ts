@@ -73,6 +73,19 @@ describe('createRouter', () => {
         return res(ctx.status(200), ctx.json(['Deployment', 'Pod']));
       },
     ),
+
+    rest.get(
+      'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/categories',
+      (_req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.json([
+            'Pod Security Standards (Default)',
+            'Pod Security Standards (Restricted)',
+          ]),
+        );
+      },
+    ),
   );
 
   beforeAll(async () => {
@@ -227,6 +240,43 @@ describe('createRouter', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(['Deployment', 'Pod']);
+    });
+  });
+
+  describe('categories', () => {
+    it('Should return 400 if entity is missing kyverno.io/endpoint annotation', async () => {
+      const response = await request(app).get(
+        `/v1/namespaced-resources/categories?environment=resource%3Adefault%2Fdev`,
+      );
+
+      expect(response.status).toBe(400);
+      expect(response.body).toStrictEqual({
+        error: `Entity missing 'kyverno.io/endpoint' annotation`,
+      });
+    });
+
+    it('Should return 400 if entity is invalid', async () => {
+      const response = await request(app).get(
+        `/v1/namespaced-resources/categories?environment=resource%3Adefault%2Finvalid`,
+      );
+
+      expect(response.status).toBe(400);
+      expect(response.body).toStrictEqual({
+        error: `Invalid entityRef`,
+      });
+    });
+
+    it('Should return 200 and valid response when entity is valid', async () => {
+      const response = await request(app).get(
+        `/v1/namespaced-resources/categories?environment=resource%3Adefault%2Fprod`,
+      );
+
+      expect(response.status).toBe(200);
+
+      expect(response.body).toStrictEqual([
+        'Pod Security Standards (Default)',
+        'Pod Security Standards (Restricted)',
+      ]);
     });
   });
 });

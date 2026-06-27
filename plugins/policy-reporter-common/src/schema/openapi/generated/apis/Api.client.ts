@@ -34,6 +34,16 @@ export interface RequestOptions {
 /**
  * @public
  */
+export type GetCategories = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+    namespaces?: Array<string>;
+  };
+};
+/**
+ * @public
+ */
 export type GetKinds = {
   query: {
     environment: string;
@@ -95,6 +105,35 @@ export class DefaultApiClient {
   }) {
     this.discoveryApi = options.discoveryApi;
     this.fetchApi = options.fetchApi || { fetch: crossFetch };
+  }
+
+  /**
+   * List of all Categories with namespace scoped results
+   * Get categories
+   * @param environment - The environment entity reference (URL encoded)
+   * @param sources - Filter by a list of sources
+   * @param namespaces - Filter by a list of namespaces
+   */
+  public async getCategories(
+    // @ts-ignore
+    request: GetCategories,
+    options?: RequestOptions,
+  ): Promise<TypedResponse<Array<string>>> {
+    const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
+
+    const uriTemplate = `/v1/namespaced-resources/categories{?environment,sources*,namespaces*}`;
+
+    const uri = parser.parse(uriTemplate).expand({
+      ...request.query,
+    });
+
+    return await this.fetchApi.fetch(`${baseUrl}${uri}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.token && { Authorization: `Bearer ${options?.token}` }),
+      },
+      method: 'GET',
+    });
   }
 
   /**

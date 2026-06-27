@@ -232,6 +232,59 @@ paths:
               schema:
                 $ref: '#/components/schemas/RequestError'
 
+  /v1/namespaced-resources/categories:
+    get:
+      summary: Get categories
+      description: List of all Categories with namespace scoped results
+      operationId: getCategories
+      parameters:
+        - name: environment
+          in: query
+          required: true
+          description: The environment entity reference (URL encoded)
+          schema:
+            type: string
+            example: 'default/component/my-service'
+        - name: sources
+          in: query
+          description: Filter by a list of sources
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: namespaces
+          in: query
+          description: Filter by a list of namespaces
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+      responses:
+        '200':
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: Bad request - invalid entityRef or missing annotation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+
   /v1/namespaces:
     get:
       summary: Get namespaces
