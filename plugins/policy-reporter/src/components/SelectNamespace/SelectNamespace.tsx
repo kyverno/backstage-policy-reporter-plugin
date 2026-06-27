@@ -21,10 +21,13 @@ export const SelectNamespace = () => {
     },
   });
 
-  const namespaces = useMemo(
-    () => new Set(namespaceOptions.items.map(ns => ns.label)),
-    [namespaceOptions.items],
-  );
+  const namespaces = useMemo(() => {
+    if (namespaceOptions.isLoading || namespaceOptions.items.length === 0) {
+      return undefined;
+    }
+
+    return new Set(namespaceOptions.items.map(ns => ns.label));
+  }, [namespaceOptions.isLoading, namespaceOptions.items]);
 
   // useRef to avoid dependency on the useAsyncList result
   const namespacesRef = useRef(namespaceOptions);
@@ -43,6 +46,8 @@ export const SelectNamespace = () => {
   selectedNamespacesRef.current = selectedNamespaces;
 
   useEffect(() => {
+    if (!namespaces) return;
+
     const selected = selectedNamespacesRef.current;
 
     if (selected.every(ns => namespaces.has(ns))) return;
@@ -57,6 +62,8 @@ export const SelectNamespace = () => {
       updateFilter({ namespaces: [] });
       return;
     }
+
+    if (!namespaces) return;
 
     if (!Array.isArray(key)) {
       updateFilter({
