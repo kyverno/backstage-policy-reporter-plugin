@@ -21,10 +21,12 @@ export const SelectSource = () => {
     },
   });
 
-  const sources = useMemo(
-    () => new Set(sourceOptions.items.map(s => s.label)),
-    [sourceOptions.items],
-  );
+  const sources = useMemo(() => {
+    if (sourceOptions.isLoading || sourceOptions.items.length === 0) {
+      return undefined;
+    }
+    return new Set(sourceOptions.items.map(s => s.label));
+  }, [sourceOptions.items, sourceOptions.isLoading]);
 
   // useRef to avoid dependency on the useAsyncList result
   const sourceRef = useRef(sourceOptions);
@@ -43,6 +45,7 @@ export const SelectSource = () => {
   selectedSourcesRef.current = selectedSources;
 
   useEffect(() => {
+    if (!sources) return;
     const selected = selectedSourcesRef.current;
 
     if (selected.every(source => sources.has(source))) return;
@@ -53,6 +56,8 @@ export const SelectSource = () => {
   }, [sources, updateFilter]);
 
   const handleChange = (key: Key | Key[] | null) => {
+    if (!sources) return;
+
     if (key === null) {
       updateFilter({ sources: [] });
       return;
