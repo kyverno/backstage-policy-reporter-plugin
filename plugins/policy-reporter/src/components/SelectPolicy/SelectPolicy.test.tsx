@@ -10,7 +10,7 @@ const mockGetPolicies = jest.fn().mockResolvedValue({
 });
 
 const mockPolicyReportApiRef = {
-  mockGetPolicies: mockGetPolicies,
+  getPolicies: mockGetPolicies,
 };
 
 const renderWithEnv = (defaultFilters: Record<string, unknown> = {}) =>
