@@ -1,0 +1,212 @@
+import { AuthService, LoggerService } from '@backstage/backend-plugin-api';
+import * as parser from 'uri-template';
+import { ResultList } from '../schema/openapi/generated/models';
+import { CatalogService } from '@backstage/plugin-catalog-node';
+import {
+  ForwardedError,
+  InputError,
+  NotFoundError,
+  ServiceUnavailableError,
+} from '@backstage/errors';
+import { KYVERNO_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
+
+function ensureTrailingSlash(url: string): string {
+  return url.endsWith('/') ? url : `${url}/`;
+}
+
+type QueryParams = Record<string, unknown>;
+
+export class PolicyReporterServiceError extends Error {
+  constructor(
+    message: string,
+    readonly cause?: unknown,
+    readonly status?: number,
+  ) {
+    super(message);
+    this.name = 'PolicyReporterServiceError';
+  }
+}
+
+export interface PolicyReporterApi {
+  getNamespacedResourceResults(options: {
+    entityRef: string;
+    query: QueryParams;
+  }): Promise<ResultList>;
+
+  getNamespaces(options: {
+    entityRef: string;
+    query: QueryParams;
+  }): Promise<string[]>;
+
+  getSources(options: { entityRef: string }): Promise<string[]>;
+
+  getKinds(options: {
+    entityRef: string;
+    query: QueryParams;
+  }): Promise<string[]>;
+
+  getCategories(options: {
+    entityRef: string;
+    query: QueryParams;
+  }): Promise<string[]>;
+
+  getPolicies(options: {
+    entityRef: string;
+    query: QueryParams;
+  }): Promise<string[]>;
+}
+
+export class PolicyReporterService implements PolicyReporterApi {
+  constructor(
+    private readonly deps: {
+      logger: LoggerService;
+      catalogService: CatalogService;
+      authService: AuthService;
+    },
+  ) {}
+
+  async getNamespacedResourceResults(options: {
+    entityRef: string;
+    query: QueryParams;
+  }): Promise<ResultList> {
+    const baseUrl = await this.getBaseUrl(options.entityRef);
+
+    return this.request<ResultList>({
+      baseUrl,
+      uriTemplate:
+        'v1/namespaced-resources/results{?sources*,namespaces*,kinds*,resources*,categories*,policies*,status*,severities*,search,labels*,page,offset,direction}',
+      query: options.query,
+      operation: 'fetch namespaced resource results',
+    });
+  }
+
+  async getNamespaces(options: {
+    entityRef: string;
+    query: QueryParams;
+  }): Promise<string[]> {
+    const baseUrl = await this.getBaseUrl(options.entityRef);
+
+    return this.request<string[]>({
+      baseUrl,
+      uriTemplate: 'v1/namespaces{?sources*,categories*,policies*}',
+      query: options.query,
+      operation: 'fetch namespaces',
+    });
+  }
+
+  async getSources(options: { entityRef: string }): Promise<string[]> {
+    const baseUrl = await this.getBaseUrl(options.entityRef);
+
+    return this.request<string[]>({
+      baseUrl,
+      uriTemplate: 'v1/namespaced-resources/sources',
+      query: {},
+      operation: 'fetch sources',
+    });
+  }
+
+  async getKinds(options: {
+    entityRef: string;
+    query: QueryParams;
+  }): Promise<string[]> {
+    const baseUrl = await this.getBaseUrl(options.entityRef);
+
+    return this.request<string[]>({
+      baseUrl,
+      uriTemplate: 'v1/namespaced-resources/kinds{?sources*,namespaces*}',
+      query: options.query,
+      operation: 'fetch kinds',
+    });
+  }
+
+  async getCategories(options: {
+    entityRef: string;
+    query: QueryParams;
+  }): Promise<string[]> {
+    const baseUrl = await this.getBaseUrl(options.entityRef);
+
+    return this.request<string[]>({
+      baseUrl,
+      uriTemplate: 'v1/namespaced-resources/categories{?sources*,namespaces*}',
+      query: options.query,
+      operation: 'fetch categories',
+    });
+  }
+
+  async getPolicies(options: {
+    entityRef: string;
+    query: QueryParams;
+  }): Promise<string[]> {
+    const baseUrl = await this.getBaseUrl(options.entityRef);
+
+    return this.request<string[]>({
+      baseUrl,
+      uriTemplate:
+        'v1/namespaced-resources/policies{?sources*,namespaces*,categories*}',
+      query: options.query,
+      operation: 'fetch policies',
+    });
+  }
+
+  private async request<T>(options: {
+    baseUrl: string;
+    uriTemplate: string;
+    query: QueryParams;
+    operation: string;
+  }): Promise<T> {
+    const uri = parser.parse(options.uriTemplate).expand(options.query);
+    const url = `${ensureTrailingSlash(options.baseUrl)}${uri}`;
+
+    let response: Response;
+
+    try {
+      response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    } catch (error) {
+      this.deps.logger.error(`Failed to ${options.operation} from ${url}`);
+      throw new ServiceUnavailableError(
+        `Failed to ${options.operation}`,
+        error,
+      );
+    }
+
+    if (!response.ok) {
+      this.deps.logger.warn(
+        `Policy Reporter returned ${response.status} ${response.statusText} for ${url}`,
+      );
+
+      throw new ForwardedError(
+        `Failed to ${options.operation}: ${response.status} ${response.statusText}`,
+        new Error(response.statusText),
+      );
+    }
+
+    return (await response.json()) as T;
+  }
+
+  private async getBaseUrl(entityRef: string): Promise<string> {
+    const credentials = await this.deps.authService.getOwnServiceCredentials();
+
+    const entity = await this.deps.catalogService.getEntityByRef(entityRef, {
+      credentials,
+    });
+
+    if (!entity) {
+      throw new NotFoundError();
+    }
+
+    const baseUrl = entity.metadata.annotations?.[KYVERNO_ENDPOINT_ANNOTATION];
+
+    if (!baseUrl) {
+      throw new InputError(
+        `Entity missing '${KYVERNO_ENDPOINT_ANNOTATION}' annotation`,
+      );
+    }
+
+    return baseUrl;
+  }
+}
