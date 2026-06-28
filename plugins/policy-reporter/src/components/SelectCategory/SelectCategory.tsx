@@ -21,10 +21,13 @@ export const SelectCategory = () => {
     },
   });
 
-  const categories = useMemo(
-    () => new Set(categoryOptions.items.map(c => c.label)),
-    [categoryOptions.items],
-  );
+  const categories = useMemo(() => {
+    if (categoryOptions.isLoading || categoryOptions.items.length === 0) {
+      return undefined;
+    }
+
+    return new Set(categoryOptions.items.map(c => c.label));
+  }, [categoryOptions.isLoading, categoryOptions.items]);
 
   // useRef to avoid dependency on the useAsyncList result
   const categoryRef = useRef(categoryOptions);
@@ -43,6 +46,8 @@ export const SelectCategory = () => {
   selectedCategoriesRef.current = selectedCategories;
 
   useEffect(() => {
+    if (!categories) return;
+
     const selected = selectedCategoriesRef.current;
 
     if (selected.every(category => categories.has(category))) return;
@@ -57,6 +62,8 @@ export const SelectCategory = () => {
       updateFilter({ categories: [] });
       return;
     }
+
+    if (!categories) return;
 
     if (!Array.isArray(key)) {
       updateFilter({
