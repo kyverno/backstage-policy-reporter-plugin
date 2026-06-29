@@ -13,6 +13,7 @@ import { FilterLayout } from '../FilterLayout';
 import { SelectSource } from '../SelectSource';
 import { SelectKind } from '../SelectKind';
 import { SelectCategory } from '../SelectCategory';
+import { SelectPolicy } from '../SelectPolicy';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -85,6 +86,7 @@ export const PolicyReportsPage = ({
               <SelectSource />
               <SelectKind />
               <SelectCategory />
+              <SelectPolicy />
             </FilterLayout.Filters>
             <FilterLayout.Content>
               <Flex direction="column" gap="4">

@@ -347,6 +347,68 @@ paths:
               schema:
                 $ref: '#/components/schemas/RequestError'
 
+  /v1/namespaced-resources/policies:
+    get:
+      summary: Get policies with namespaced policy results
+      description: List of all Policies with namespace scoped results
+      operationId: getPolicies
+      parameters:
+        - name: environment
+          in: query
+          required: true
+          description: The environment entity reference (URL encoded)
+          schema:
+            type: string
+            example: 'default/component/my-service'
+        - name: sources
+          in: query
+          description: Filter by a list of sources
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: namespaces
+          in: query
+          description: Filter by a list of namespaces
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: categories
+          in: query
+          description: Filter by a list of categories
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+      responses:
+        '200':
+          description: List of policies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: Bad request - invalid entityRef or missing annotation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '500':
+          description: Internal server error - failed to fetch policies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+
 components:
   schemas:
     Status:
@@ -522,7 +584,6 @@ components:
           additionalProperties:
             type: string
           description: Additional key-value properties
-
     RequestError:
       type: object
       required:

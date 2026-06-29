@@ -69,6 +69,18 @@ export type GetNamespaces = {
 /**
  * @public
  */
+export type GetPolicies = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+    namespaces?: Array<string>;
+    categories?: Array<string>;
+  };
+  response: Array<string> | RequestError | RequestError;
+};
+/**
+ * @public
+ */
 export type GetSources = {
   query: {
     environment: string;
@@ -84,6 +96,8 @@ export type EndpointMap = {
   '#get|/namespaced-resources/results': GetNamespacedResults;
 
   '#get|/v1/namespaces': GetNamespaces;
+
+  '#get|/v1/namespaced-resources/policies': GetPolicies;
 
   '#get|/v1/namespaced-resources/sources': GetSources;
 };

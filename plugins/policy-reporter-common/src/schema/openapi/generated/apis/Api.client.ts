@@ -86,6 +86,17 @@ export type GetNamespaces = {
 /**
  * @public
  */
+export type GetPolicies = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+    namespaces?: Array<string>;
+    categories?: Array<string>;
+  };
+};
+/**
+ * @public
+ */
 export type GetSources = {
   query: {
     environment: string;
@@ -221,6 +232,36 @@ export class DefaultApiClient {
     const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
 
     const uriTemplate = `/v1/namespaces{?environment,sources*,categories*,policies*}`;
+
+    const uri = parser.parse(uriTemplate).expand({
+      ...request.query,
+    });
+
+    return await this.fetchApi.fetch(`${baseUrl}${uri}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.token && { Authorization: `Bearer ${options?.token}` }),
+      },
+      method: 'GET',
+    });
+  }
+
+  /**
+   * List of all Policies with namespace scoped results
+   * Get policies with namespaced policy results
+   * @param environment - The environment entity reference (URL encoded)
+   * @param sources - Filter by a list of sources
+   * @param namespaces - Filter by a list of namespaces
+   * @param categories - Filter by a list of categories
+   */
+  public async getPolicies(
+    // @ts-ignore
+    request: GetPolicies,
+    options?: RequestOptions,
+  ): Promise<TypedResponse<Array<string>>> {
+    const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
+
+    const uriTemplate = `/v1/namespaced-resources/policies{?environment,sources*,namespaces*,categories*}`;
 
     const uri = parser.parse(uriTemplate).expand({
       ...request.query,
