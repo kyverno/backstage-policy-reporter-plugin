@@ -1,4 +1,8 @@
-import { AuthService, LoggerService } from '@backstage/backend-plugin-api';
+import {
+  AuthService,
+  LoggerService,
+  RootConfigService,
+} from '@backstage/backend-plugin-api';
 import * as parser from 'uri-template';
 import { ResultList } from '../schema/openapi/generated/models';
 import { CatalogService } from '@backstage/plugin-catalog-node';
@@ -9,23 +13,9 @@ import {
   ServiceUnavailableError,
 } from '@backstage/errors';
 import { KYVERNO_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
-
-function ensureTrailingSlash(url: string): string {
-  return url.endsWith('/') ? url : `${url}/`;
-}
+import { JsonObject } from '@backstage/types';
 
 type QueryParams = Record<string, unknown>;
-
-export class PolicyReporterServiceError extends Error {
-  constructor(
-    message: string,
-    readonly cause?: unknown,
-    readonly status?: number,
-  ) {
-    super(message);
-    this.name = 'PolicyReporterServiceError';
-  }
-}
 
 export interface PolicyReporterApi {
   getNamespacedResourceResults(options: {
@@ -57,13 +47,25 @@ export interface PolicyReporterApi {
 }
 
 export class PolicyReporterService implements PolicyReporterApi {
+  private readonly defaultHeaders: Record<string, string>;
+
   constructor(
     private readonly deps: {
       logger: LoggerService;
       catalogService: CatalogService;
       authService: AuthService;
+      configService: RootConfigService;
     },
-  ) {}
+  ) {
+    const headers = this.deps.configService
+      .getOptionalConfig('policyReporter.headers')
+      ?.get<JsonObject>();
+
+    this.defaultHeaders = {
+      'Content-Type': 'application/json',
+      ...headers,
+    };
+  }
 
   async getNamespacedResourceResults(options: {
     entityRef: string;
@@ -155,7 +157,7 @@ export class PolicyReporterService implements PolicyReporterApi {
     operation: string;
   }): Promise<T> {
     const uri = parser.parse(options.uriTemplate).expand(options.query);
-    const url = `${ensureTrailingSlash(options.baseUrl)}${uri}`;
+    const url = `${this.ensureTrailingSlash(options.baseUrl)}${uri}`;
 
     let response: Response;
 
@@ -163,7 +165,7 @@ export class PolicyReporterService implements PolicyReporterApi {
       response = await fetch(url, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
+          ...this.defaultHeaders,
         },
       });
     } catch (error) {
@@ -186,6 +188,10 @@ export class PolicyReporterService implements PolicyReporterApi {
     }
 
     return (await response.json()) as T;
+  }
+
+  private ensureTrailingSlash(url: string): string {
+    return url.endsWith('/') ? url : `${url}/`;
   }
 
   private async getBaseUrl(entityRef: string): Promise<string> {

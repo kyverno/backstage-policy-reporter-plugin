@@ -47,6 +47,7 @@
     "@backstage/errors": "backstage:^",
     "@backstage/plugin-catalog-node": "backstage:^",
     "@backstage/repo-tools": "backstage:^",
+    "@backstage/types": "backstage:^",
     "@kyverno/backstage-plugin-policy-reporter-common": "workspace:^",
     "@types/express": "*",
     "express": "^4.17.1",

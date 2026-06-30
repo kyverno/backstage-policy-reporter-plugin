@@ -51,6 +51,7 @@ export async function createRouter(
     logger,
     catalogService,
     authService,
+    configService: config,
   });
 
   const router = await createOpenApiRouter();
