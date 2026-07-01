@@ -132,13 +132,31 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResultList'
         '400':
-          description: Bad request - invalid entityRef or missing annotation
+          description: Bad request - environment entity missing required annotations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '404':
+          description: Not Found - environment entity not found in the catalog
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RequestError'
         '500':
           description: Internal server error - failed to fetch policies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '503':
+          description: Service Unavailable
           content:
             application/json:
               schema:
@@ -167,13 +185,31 @@ paths:
                 items:
                   type: string
         '400':
-          description: Bad request - invalid entityRef or missing annotation
+          description: Bad request - environment entity missing required annotations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '404':
+          description: Not Found - environment entity not found in the catalog
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RequestError'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '503':
+          description: Service Unavailable
           content:
             application/json:
               schema:
@@ -220,13 +256,31 @@ paths:
                 items:
                   type: string
         '400':
-          description: Bad request - invalid entityRef or missing annotation
+          description: Bad request - environment entity missing required annotations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '404':
+          description: Not Found - environment entity not found in the catalog
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RequestError'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '503':
+          description: Service Unavailable
           content:
             application/json:
               schema:
@@ -273,13 +327,31 @@ paths:
                 items:
                   type: string
         '400':
-          description: Bad request - invalid entityRef or missing annotation
+          description: Bad request - environment entity missing required annotations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '404':
+          description: Not Found - environment entity not found in the catalog
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RequestError'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '503':
+          description: Service Unavailable
           content:
             application/json:
               schema:
@@ -335,13 +407,31 @@ paths:
                 items:
                   type: string
         '400':
-          description: Bad request - invalid entityRef or missing annotation
+          description: Bad request - environment entity missing required annotations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '404':
+          description: Not Found - environment entity not found in the catalog
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RequestError'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '503':
+          description: Service Unavailable
           content:
             application/json:
               schema:
@@ -397,13 +487,31 @@ paths:
                 items:
                   type: string
         '400':
-          description: Bad request - invalid entityRef or missing annotation
+          description: Bad request - environment entity missing required annotations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '404':
+          description: Not Found - environment entity not found in the catalog
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RequestError'
         '500':
           description: Internal server error - failed to fetch policies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '503':
+          description: Service Unavailable
           content:
             application/json:
               schema:

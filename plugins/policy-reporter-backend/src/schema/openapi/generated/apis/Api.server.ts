@@ -19,7 +19,12 @@ export type GetCategories = {
     sources?: Array<string>;
     namespaces?: Array<string>;
   };
-  response: Array<string> | RequestError | RequestError;
+  response:
+    | Array<string>
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
 };
 /**
  * @public
@@ -30,7 +35,12 @@ export type GetKinds = {
     sources?: Array<string>;
     namespaces?: Array<string>;
   };
-  response: Array<string> | RequestError | RequestError;
+  response:
+    | Array<string>
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
 };
 /**
  * @public
@@ -64,7 +74,12 @@ export type GetNamespaces = {
     categories?: Array<string>;
     policies?: Array<string>;
   };
-  response: Array<string> | RequestError | RequestError;
+  response:
+    | Array<string>
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
 };
 /**
  * @public
@@ -76,7 +91,12 @@ export type GetPolicies = {
     namespaces?: Array<string>;
     categories?: Array<string>;
   };
-  response: Array<string> | RequestError | RequestError;
+  response:
+    | Array<string>
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
 };
 /**
  * @public
@@ -85,7 +105,12 @@ export type GetSources = {
   query: {
     environment: string;
   };
-  response: Array<string> | RequestError | RequestError;
+  response:
+    | Array<string>
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
 };
 
 export type EndpointMap = {
