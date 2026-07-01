@@ -9,12 +9,6 @@ const authService = mockServices.auth.mock();
 const catalogService = catalogServiceMock({ entities: [] }) as CatalogService;
 
 describe('PolicyReporterService', () => {
-  const getDefaultHeaders = (
-    service: PolicyReporterService,
-  ): Record<string, string> => {
-    return Reflect.get(service, 'defaultHeaders') as Record<string, string>;
-  };
-
   it('creates service with default mocked rootConfig service', () => {
     const service = new PolicyReporterService({
       logger,
@@ -41,15 +35,14 @@ describe('PolicyReporterService', () => {
           data: {
             policyReporter: {
               requestHeaders: {
-                Authorization: 'Bearer test-token',
-                'X-Tenant': 'team-a',
+                ...headers,
               },
             },
           },
         }),
       });
 
-      expect(getDefaultHeaders(service)).toEqual({
+      expect(Reflect.get(service, 'defaultHeaders')).toEqual({
         'Content-Type': 'application/json',
         ...headers,
       });
@@ -63,7 +56,7 @@ describe('PolicyReporterService', () => {
         configService: mockServices.rootConfig(),
       });
 
-      expect(getDefaultHeaders(service)).toEqual({
+      expect(Reflect.get(service, 'defaultHeaders')).toEqual({
         'Content-Type': 'application/json',
       });
     });
