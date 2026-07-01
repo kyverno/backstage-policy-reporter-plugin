@@ -1,10 +1,9 @@
-import { AuthService, RootConfigService } from '@backstage/backend-plugin-api';
+import { RootConfigService } from '@backstage/backend-plugin-api';
 import { LoggerService } from '@backstage/backend-plugin-api';
 import express from 'express';
 import { MiddlewareFactory } from '@backstage/backend-defaults/rootHttpRouter';
-import { CatalogService } from '@backstage/plugin-catalog-node';
 import { createOpenApiRouter } from '../schema/openapi';
-import { PolicyReporterService } from './policyReporterService';
+import { PolicyReporterApi } from './policyReporterService';
 import {
   ForwardedError,
   InputError,
@@ -15,8 +14,7 @@ import {
 export interface RouterOptions {
   logger: LoggerService;
   config: RootConfigService;
-  catalogService: CatalogService;
-  authService: AuthService;
+  policyReporterService: PolicyReporterApi;
 }
 
 function handlePolicyReporterError(
@@ -45,25 +43,18 @@ function handlePolicyReporterError(
 export async function createRouter(
   options: RouterOptions,
 ): Promise<express.Router> {
-  const { logger, config, catalogService, authService } = options;
-
-  const policyReporterService = new PolicyReporterService({
-    logger,
-    catalogService,
-    authService,
-    configService: config,
-  });
+  const { logger, config, policyReporterService } = options;
 
   const router = await createOpenApiRouter();
   router.use(express.json());
 
   router.get('/namespaced-resources/results', async (request, response) => {
     try {
-      const entityRef = decodeURIComponent(String(request.query.environment));
+      const { environment, ...query } = request.query;
 
       const result = await policyReporterService.getNamespacedResourceResults({
-        entityRef,
-        query: request.query,
+        entityRef: decodeURIComponent(environment),
+        query: query,
       });
 
       return response.status(200).json(result);
@@ -74,11 +65,11 @@ export async function createRouter(
 
   router.get('/v1/namespaces', async (request, response) => {
     try {
-      const entityRef = decodeURIComponent(String(request.query.environment));
+      const { environment, ...query } = request.query;
 
       const result = await policyReporterService.getNamespaces({
-        entityRef,
-        query: request.query,
+        entityRef: decodeURIComponent(environment),
+        query: query,
       });
 
       return response.status(200).json(result);
@@ -89,10 +80,10 @@ export async function createRouter(
 
   router.get('/v1/namespaced-resources/sources', async (request, response) => {
     try {
-      const entityRef = decodeURIComponent(String(request.query.environment));
+      const { environment } = request.query;
 
       const result = await policyReporterService.getSources({
-        entityRef,
+        entityRef: decodeURIComponent(environment),
       });
 
       return response.status(200).json(result);
@@ -103,11 +94,11 @@ export async function createRouter(
 
   router.get('/v1/namespaced-resources/kinds', async (request, response) => {
     try {
-      const entityRef = decodeURIComponent(String(request.query.environment));
+      const { environment, ...query } = request.query;
 
       const result = await policyReporterService.getKinds({
-        entityRef,
-        query: request.query,
+        entityRef: decodeURIComponent(environment),
+        query,
       });
 
       return response.status(200).json(result);
@@ -120,11 +111,11 @@ export async function createRouter(
     '/v1/namespaced-resources/categories',
     async (request, response) => {
       try {
-        const entityRef = decodeURIComponent(String(request.query.environment));
+        const { environment, ...query } = request.query;
 
         const result = await policyReporterService.getCategories({
-          entityRef,
-          query: request.query,
+          entityRef: decodeURIComponent(environment),
+          query,
         });
 
         return response.status(200).json(result);
@@ -136,11 +127,11 @@ export async function createRouter(
 
   router.get('/v1/namespaced-resources/policies', async (request, response) => {
     try {
-      const entityRef = decodeURIComponent(String(request.query.environment));
+      const { environment, ...query } = request.query;
 
       const result = await policyReporterService.getPolicies({
-        entityRef,
-        query: request.query,
+        entityRef: decodeURIComponent(environment),
+        query,
       });
 
       return response.status(200).json(result);

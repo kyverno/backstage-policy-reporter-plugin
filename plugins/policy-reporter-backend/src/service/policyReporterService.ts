@@ -4,7 +4,11 @@ import {
   RootConfigService,
 } from '@backstage/backend-plugin-api';
 import * as parser from 'uri-template';
-import { ResultList } from '../schema/openapi/generated/models';
+import {
+  Filter,
+  Pagination,
+  ResultList,
+} from '../schema/openapi/generated/models';
 import { CatalogService } from '@backstage/plugin-catalog-node';
 import {
   ForwardedError,
@@ -15,38 +19,38 @@ import {
 import { KYVERNO_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { JsonObject } from '@backstage/types';
 
-type QueryParams = Record<string, unknown>;
-
 export interface PolicyReporterApi {
   getNamespacedResourceResults(options: {
     entityRef: string;
-    query: QueryParams;
+    query: Filter & Pagination;
   }): Promise<ResultList>;
 
   getNamespaces(options: {
     entityRef: string;
-    query: QueryParams;
+    query: Pick<Filter, 'sources' | 'categories' | 'policies'>;
   }): Promise<string[]>;
 
   getSources(options: { entityRef: string }): Promise<string[]>;
 
   getKinds(options: {
     entityRef: string;
-    query: QueryParams;
+    query: Pick<Filter, 'sources' | 'kinds'>;
   }): Promise<string[]>;
 
   getCategories(options: {
     entityRef: string;
-    query: QueryParams;
+    query: Pick<Filter, 'sources' | 'namespaces'>;
   }): Promise<string[]>;
 
   getPolicies(options: {
     entityRef: string;
-    query: QueryParams;
+    query: Pick<Filter, 'sources' | 'namespaces' | 'categories'>;
   }): Promise<string[]>;
 }
 
 export class PolicyReporterService implements PolicyReporterApi {
+  // TODO: Add testcase to verify that defaultHeaders property has expected values
+  // Do we need a getter or update it to protected to validate this when testing ?
   private readonly defaultHeaders: Record<string, string>;
 
   constructor(
@@ -57,6 +61,7 @@ export class PolicyReporterService implements PolicyReporterApi {
       configService: RootConfigService;
     },
   ) {
+    // TODO: Add testcase to verify undefined headers doesnt break anything
     const headers = this.deps.configService
       .getOptionalConfig('policyReporter.headers')
       ?.get<JsonObject>();
@@ -69,7 +74,7 @@ export class PolicyReporterService implements PolicyReporterApi {
 
   async getNamespacedResourceResults(options: {
     entityRef: string;
-    query: QueryParams;
+    query: Filter & Pagination;
   }): Promise<ResultList> {
     const baseUrl = await this.getBaseUrl(options.entityRef);
 
@@ -77,21 +82,21 @@ export class PolicyReporterService implements PolicyReporterApi {
       baseUrl,
       uriTemplate:
         'v1/namespaced-resources/results{?sources*,namespaces*,kinds*,resources*,categories*,policies*,status*,severities*,search,labels*,page,offset,direction}',
-      query: options.query,
+      query: { ...options.query },
       operation: 'fetch namespaced resource results',
     });
   }
 
   async getNamespaces(options: {
     entityRef: string;
-    query: QueryParams;
+    query: Pick<Filter, 'sources' | 'categories' | 'policies'>;
   }): Promise<string[]> {
     const baseUrl = await this.getBaseUrl(options.entityRef);
 
     return this.request<string[]>({
       baseUrl,
       uriTemplate: 'v1/namespaces{?sources*,categories*,policies*}',
-      query: options.query,
+      query: { ...options.query },
       operation: 'fetch namespaces',
     });
   }
@@ -109,7 +114,7 @@ export class PolicyReporterService implements PolicyReporterApi {
 
   async getKinds(options: {
     entityRef: string;
-    query: QueryParams;
+    query: Pick<Filter, 'sources' | 'namespaces'>;
   }): Promise<string[]> {
     const baseUrl = await this.getBaseUrl(options.entityRef);
 
@@ -123,7 +128,7 @@ export class PolicyReporterService implements PolicyReporterApi {
 
   async getCategories(options: {
     entityRef: string;
-    query: QueryParams;
+    query: Pick<Filter, 'sources' | 'namespaces'>;
   }): Promise<string[]> {
     const baseUrl = await this.getBaseUrl(options.entityRef);
 
@@ -137,7 +142,7 @@ export class PolicyReporterService implements PolicyReporterApi {
 
   async getPolicies(options: {
     entityRef: string;
-    query: QueryParams;
+    query: Pick<Filter, 'sources' | 'namespaces' | 'categories'>;
   }): Promise<string[]> {
     const baseUrl = await this.getBaseUrl(options.entityRef);
 
@@ -153,7 +158,7 @@ export class PolicyReporterService implements PolicyReporterApi {
   private async request<T>(options: {
     baseUrl: string;
     uriTemplate: string;
-    query: QueryParams;
+    query: Record<string, unknown>;
     operation: string;
   }): Promise<T> {
     const uri = parser.parse(options.uriTemplate).expand(options.query);
@@ -202,7 +207,7 @@ export class PolicyReporterService implements PolicyReporterApi {
     });
 
     if (!entity) {
-      throw new NotFoundError();
+      throw new NotFoundError('Entity not found');
     }
 
     const baseUrl = entity.metadata.annotations?.[KYVERNO_ENDPOINT_ANNOTATION];
