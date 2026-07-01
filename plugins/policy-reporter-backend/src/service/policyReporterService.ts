@@ -49,8 +49,6 @@ export interface PolicyReporterApi {
 }
 
 export class PolicyReporterService implements PolicyReporterApi {
-  // TODO: Add testcase to verify that defaultHeaders property has expected values
-  // Do we need a getter or update it to protected to validate this when testing ?
   private readonly defaultHeaders: Record<string, string>;
 
   constructor(
@@ -61,9 +59,8 @@ export class PolicyReporterService implements PolicyReporterApi {
       configService: RootConfigService;
     },
   ) {
-    // TODO: Add testcase to verify undefined headers doesnt break anything
     const headers = this.deps.configService
-      .getOptionalConfig('policyReporter.headers')
+      .getOptionalConfig('policyReporter.requestHeaders')
       ?.get<JsonObject>();
 
     this.defaultHeaders = {

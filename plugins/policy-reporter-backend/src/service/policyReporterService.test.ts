@@ -40,7 +40,7 @@ describe('PolicyReporterService', () => {
         configService: mockServices.rootConfig({
           data: {
             policyReporter: {
-              headers: {
+              requestHeaders: {
                 Authorization: 'Bearer test-token',
                 'X-Tenant': 'team-a',
               },

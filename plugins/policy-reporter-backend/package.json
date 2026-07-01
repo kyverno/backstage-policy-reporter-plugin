@@ -68,7 +68,9 @@
     "msw": "^1.0.0",
     "supertest": "^6.2.4"
   },
+  "configSchema": "config.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "config.d.ts"
   ]
 }
