@@ -4,6 +4,7 @@ import { policyReporterApiRef } from '../../api';
 import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 
 const mockGetKinds = jest.fn().mockResolvedValue({
+  ok: true,
   json: jest.fn().mockResolvedValue(['Deployment', 'Pod']),
 });
 

@@ -4,6 +4,7 @@ import { policyReporterApiRef } from '../../api';
 import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
 
 const mockGetPolicies = jest.fn().mockResolvedValue({
+  ok: true,
   json: jest
     .fn()
     .mockResolvedValue(['require-non-root-groups', 'require-request-limits']),
