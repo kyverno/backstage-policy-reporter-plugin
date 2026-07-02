@@ -1,22 +1,37 @@
 import { IdentifiedOption, Select, useAsyncList } from '@backstage/ui';
 import { Key, useEffect, useMemo, useRef } from 'react';
 import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
-import { useApi } from '@backstage/frontend-plugin-api';
+import { toastApiRef, useApi } from '@backstage/frontend-plugin-api';
 import { policyReporterApiRef } from '../../api';
+import { RequestError } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 export const SelectNamespace = () => {
   const { filter, updateFilter, environment } = usePolicyReportsFilters();
   const api = useApi(policyReporterApiRef);
+  const toast = useApi(toastApiRef);
 
   const namespaceOptions = useAsyncList<IdentifiedOption>({
     async load({}) {
       if (!environment) return { items: [] };
       const response = await api.getNamespaces({ query: { environment } });
-
       const result = await response.json();
 
+      if (!response.ok) {
+        toast.post({
+          title: 'Failed to fetch namespaces',
+          description:
+            (result as unknown as RequestError).error ??
+            response.statusText ??
+            `Request failed with status ${response.status}`,
+          status: 'danger',
+        });
+        return { items: [] };
+      }
+
+      const namespaces = Array.isArray(result) ? result : [];
+
       return {
-        items: result.map(ns => ({ id: ns, label: ns })),
+        items: namespaces.map(ns => ({ id: ns, label: ns })),
       };
     },
   });

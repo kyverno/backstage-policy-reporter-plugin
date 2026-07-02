@@ -2,18 +2,31 @@ import { IdentifiedOption, Select, useAsyncList } from '@backstage/ui';
 import { Key, useEffect, useMemo, useRef } from 'react';
 import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
 import { policyReporterApiRef } from '../../api';
-import { useApi } from '@backstage/frontend-plugin-api';
+import { toastApiRef, useApi } from '@backstage/frontend-plugin-api';
+import { RequestError } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 export const SelectSource = () => {
   const { filter, updateFilter, environment } = usePolicyReportsFilters();
   const api = useApi(policyReporterApiRef);
+  const toast = useApi(toastApiRef);
 
   const sourceOptions = useAsyncList<IdentifiedOption>({
     async load({}) {
       if (!environment) return { items: [] };
       const response = await api.getSources({ query: { environment } });
-
       const result = await response.json();
+
+      if (!response.ok) {
+        toast.post({
+          title: 'Failed to fetch sources',
+          description:
+            (result as unknown as RequestError).error ??
+            response.statusText ??
+            `Request failed with status ${response.status}`,
+          status: 'danger',
+        });
+        return { items: [] };
+      }
 
       return {
         items: result.map(s => ({ id: s, label: s })),
