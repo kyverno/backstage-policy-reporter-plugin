@@ -3,6 +3,7 @@ import { Entity } from '@backstage/catalog-model';
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
 import { EntityCustomPoliciesContent } from './EntityCustomPoliciesContent';
 import { EntityProvider, catalogApiRef } from '@backstage/plugin-catalog-react';
+import { toastApiRef } from '@backstage/frontend-plugin-api';
 
 const mockGetNamespacedResults = jest.fn().mockResolvedValue({
   json: jest.fn().mockResolvedValue({
@@ -20,6 +21,10 @@ const mockPolicyReportApiRef = {
 
 const mockCatalogApiRef = {
   getEntitiesByRefs: jest.fn(),
+};
+
+const mockToastApiRef = {
+  post: jest.fn(),
 };
 
 const mockEntity: Entity = {
@@ -62,6 +67,7 @@ describe('EntityCustomPoliciesContent component', () => {
         apis={[
           [policyReporterApiRef, mockPolicyReportApiRef as any],
           [catalogApiRef, mockCatalogApiRef],
+          [toastApiRef, mockToastApiRef],
         ]}
       >
         <EntityProvider entity={mockEntityNoAnnotations}>
@@ -92,6 +98,7 @@ describe('EntityCustomPoliciesContent component', () => {
         apis={[
           [policyReporterApiRef, mockPolicyReportApiRef as any],
           [catalogApiRef, mockCatalogApiRef],
+          [toastApiRef, mockToastApiRef],
         ]}
       >
         <EntityProvider entity={mockEntityNoAnnotations}>
@@ -119,6 +126,7 @@ describe('EntityCustomPoliciesContent component', () => {
         apis={[
           [policyReporterApiRef, mockPolicyReportApiRef as any],
           [catalogApiRef, mockCatalogApiRef],
+          [toastApiRef, mockToastApiRef],
         ]}
       >
         <EntityProvider entity={mockEntity}>

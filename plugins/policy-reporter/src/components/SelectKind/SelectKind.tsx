@@ -20,8 +20,8 @@ export const SelectKind = () => {
         toast.post({
           title: 'Failed to fetch kinds',
           description:
-            (result as unknown as RequestError).error ??
-            response.statusText ??
+            (result as unknown as RequestError).error ||
+            response.statusText ||
             `Request failed with status ${response.status}`,
           status: 'danger',
         });

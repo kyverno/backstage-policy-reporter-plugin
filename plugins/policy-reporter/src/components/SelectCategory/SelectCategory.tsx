@@ -20,8 +20,8 @@ export const SelectCategory = () => {
         toast.post({
           title: 'Failed to fetch categories',
           description:
-            (result as unknown as RequestError).error ??
-            response.statusText ??
+            (result as unknown as RequestError).error ||
+            response.statusText ||
             `Request failed with status ${response.status}`,
           status: 'danger',
         });

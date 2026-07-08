@@ -81,8 +81,8 @@ export const PolicyReportsTable = ({
         toast.post({
           title: 'Failed to fetch policies',
           description:
-            (result as unknown as RequestError).error ??
-            response.statusText ??
+            (result as unknown as RequestError).error ||
+            response.statusText ||
             `Request failed with status ${response.status}`,
           status: 'danger',
         });
