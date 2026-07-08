@@ -2,6 +2,7 @@ import { policyReporterApiRef } from '../../api';
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
 import { catalogApiRef } from '@backstage/plugin-catalog-react';
 import { PolicyReportsPage } from './PolicyReportsPage';
+import { toastApiRef } from '@backstage/frontend-plugin-api';
 
 const mockGetNamespacedResults = jest.fn().mockResolvedValue({
   json: jest.fn().mockResolvedValue({
@@ -21,6 +22,10 @@ const mockCatalogApiRef = {
   getEntities: jest.fn(),
 };
 
+const mockToast = {
+  post: jest.fn(),
+};
+
 describe('EntityKyvernoPolicyReportsContent component', () => {
   it('should not render when kubernetes-cluster resources are missing', async () => {
     // Act
@@ -29,6 +34,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
         apis={[
           [policyReporterApiRef, mockPolicyReportApiRef as any],
           [catalogApiRef, mockCatalogApiRef],
+          [toastApiRef, mockToast],
         ]}
       >
         <PolicyReportsPage />,
@@ -55,6 +61,7 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
         apis={[
           [policyReporterApiRef, mockPolicyReportApiRef as any],
           [catalogApiRef, mockCatalogApiRef],
+          [toastApiRef, mockToast],
         ]}
       >
         <PolicyReportsPage />

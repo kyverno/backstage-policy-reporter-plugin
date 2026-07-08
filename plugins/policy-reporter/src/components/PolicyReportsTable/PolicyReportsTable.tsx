@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { ListResult } from '@kyverno/backstage-plugin-policy-reporter-common';
+import {
+  ListResult,
+  RequestError,
+} from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Drawer } from '@material-ui/core';
 import { StatusComponent } from '../StatusComponent';
 import { SeverityComponent } from '../SeverityComponent';
@@ -13,7 +16,7 @@ import {
   Cell,
   Link,
 } from '@backstage/ui';
-import { useApi } from '@backstage/frontend-plugin-api';
+import { toastApiRef, useApi } from '@backstage/frontend-plugin-api';
 import { policyReporterApiRef } from '../../api';
 import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
 
@@ -29,6 +32,7 @@ export const PolicyReportsTable = ({
   const policyReporterApi = useApi(policyReporterApiRef);
   const { filter, environment } = usePolicyReportsFilters();
   const search = filter.search;
+  const toast = useApi(toastApiRef);
 
   const [drawerContent, setDrawerContent] = useState<ListResult | undefined>(
     undefined,
@@ -72,6 +76,18 @@ export const PolicyReportsTable = ({
       });
 
       const result = await response.json();
+
+      if (!response.ok) {
+        toast.post({
+          title: 'Failed to fetch policies',
+          description:
+            (result as unknown as RequestError).error ||
+            response.statusText ||
+            `Request failed with status ${response.status}`,
+          status: 'danger',
+        });
+        return { data: [], totalCount: 0 };
+      }
 
       return {
         data: result.items,

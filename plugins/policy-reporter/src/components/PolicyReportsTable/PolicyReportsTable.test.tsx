@@ -4,8 +4,10 @@ import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
 import { PolicyReportsTable } from './PolicyReportsTable';
 import { policyReporterApiRef } from '../../api';
 import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
+import { toastApiRef } from '@backstage/frontend-plugin-api';
 
 const mockGetNamespacedResults = jest.fn().mockResolvedValue({
+  ok: true,
   json: jest.fn().mockResolvedValue({
     items: [],
     count: 0,
@@ -19,12 +21,19 @@ const mockPolicyReportApiRef = {
   getNamespacedResults: mockGetNamespacedResults,
 };
 
+const mockToastApiRef = {
+  post: jest.fn(),
+};
+
 const renderTable = (
   props: Partial<Parameters<typeof PolicyReportsTable>[0]> = {},
 ) =>
   renderInTestApp(
     <TestApiProvider
-      apis={[[policyReporterApiRef, mockPolicyReportApiRef as any]]}
+      apis={[
+        [policyReporterApiRef, mockPolicyReportApiRef as any],
+        [toastApiRef, mockToastApiRef],
+      ]}
     >
       <PolicyReportsFiltersProvider
         defaultFilters={{}}
@@ -37,9 +46,14 @@ const renderTable = (
   );
 
 describe('KyvernoPolicyReportsTable', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should render table displaying the fetched data', async () => {
     // Arrange
     mockGetNamespacedResults.mockResolvedValueOnce({
+      ok: true,
       json: jest.fn().mockResolvedValue({
         items: [
           {
@@ -70,6 +84,7 @@ describe('KyvernoPolicyReportsTable', () => {
   it('should render table displaying the emptyContentText when there are no policies', async () => {
     // Arrange
     mockGetNamespacedResults.mockResolvedValueOnce({
+      ok: true,
       json: jest.fn().mockResolvedValue({
         items: [],
         count: 0,
@@ -102,6 +117,7 @@ describe('KyvernoPolicyReportsTable', () => {
   it('should render Drawer when clicking on a policy', async () => {
     // Arrange
     mockGetNamespacedResults.mockResolvedValueOnce({
+      ok: true,
       json: jest.fn().mockResolvedValue({
         items: [
           {
@@ -136,6 +152,57 @@ describe('KyvernoPolicyReportsTable', () => {
     await waitFor(() => {
       const drawer = screen.getByTestId('policy-reports-drawer');
       expect(drawer).toBeInTheDocument();
+    });
+  });
+
+  it('should call toast api with error from response body when api returns bad response', async () => {
+    mockGetNamespacedResults.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: 'Internal Server Error',
+      json: jest.fn().mockResolvedValue({ error: 'Something went wrong' }),
+    });
+
+    await renderTable();
+
+    expect(mockToastApiRef.post).toHaveBeenCalledWith({
+      title: 'Failed to fetch policies',
+      description: 'Something went wrong',
+      status: 'danger',
+    });
+  });
+
+  it('should call toast api with statusText when api returns bad response without error body', async () => {
+    mockGetNamespacedResults.mockResolvedValueOnce({
+      ok: false,
+      status: 503,
+      statusText: 'Service Unavailable',
+      json: jest.fn().mockResolvedValue({}),
+    });
+
+    await renderTable();
+
+    expect(mockToastApiRef.post).toHaveBeenCalledWith({
+      title: 'Failed to fetch policies',
+      description: 'Service Unavailable',
+      status: 'danger',
+    });
+  });
+
+  it('should call toast api with fallback status message when api returns bad response without error body or statusText', async () => {
+    mockGetNamespacedResults.mockResolvedValueOnce({
+      ok: false,
+      status: 418,
+      statusText: '',
+      json: jest.fn().mockResolvedValue({}),
+    });
+
+    await renderTable();
+
+    expect(mockToastApiRef.post).toHaveBeenCalledWith({
+      title: 'Failed to fetch policies',
+      description: 'Request failed with status 418',
+      status: 'danger',
     });
   });
 });
