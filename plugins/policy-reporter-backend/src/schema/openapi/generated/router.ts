@@ -273,6 +273,26 @@ export const spec = {
               },
             },
           },
+          '502': {
+            description: 'Bad Gateway',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '503': {
+            description: 'Service Unavailable',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -355,6 +375,26 @@ export const spec = {
               },
             },
           },
+          '502': {
+            description: 'Bad Gateway',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '503': {
+            description: 'Service Unavailable',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -428,6 +468,26 @@ export const spec = {
           },
           '500': {
             description: 'Internal server error',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '502': {
+            description: 'Bad Gateway',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '503': {
+            description: 'Service Unavailable',
             content: {
               'application/json': {
                 schema: {
@@ -530,6 +590,26 @@ export const spec = {
               },
             },
           },
+          '502': {
+            description: 'Bad Gateway',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '503': {
+            description: 'Service Unavailable',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -616,6 +696,26 @@ export const spec = {
           },
           '500': {
             description: 'Internal server error - failed to fetch policies',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '502': {
+            description: 'Bad Gateway',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '503': {
+            description: 'Service Unavailable',
             content: {
               'application/json': {
                 schema: {

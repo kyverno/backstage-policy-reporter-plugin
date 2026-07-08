@@ -4,6 +4,7 @@ import {
 } from '@backstage/backend-plugin-api';
 import { createRouter } from './service/router';
 import { catalogServiceRef } from '@backstage/plugin-catalog-node';
+import { PolicyReporterService } from './service/policyReporterService';
 
 /**
  * kyvernoPolicyReportsPlugin backend plugin
@@ -22,12 +23,18 @@ export const kyvernoPolicyReportsPlugin = createBackendPlugin({
         authService: coreServices.auth,
       },
       async init({ httpRouter, logger, config, catalogService, authService }) {
+        const policyReporterService = new PolicyReporterService({
+          logger,
+          configService: config,
+          catalogService,
+          authService,
+        });
+
         httpRouter.use(
           await createRouter({
             logger,
             config,
-            catalogService,
-            authService,
+            policyReporterService,
           }),
         );
       },

@@ -7,6 +7,8 @@ import { Entity } from '@backstage/catalog-model';
 import { createRouter } from './router';
 import { catalogServiceMock } from '@backstage/plugin-catalog-node/testUtils';
 import { CatalogService } from '@backstage/plugin-catalog-node';
+import { PolicyReporterService } from './policyReporterService';
+import { KYVERNO_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 const mockEntities: Entity[] = [
   {
@@ -100,14 +102,25 @@ describe('createRouter', () => {
 
   beforeAll(async () => {
     server.listen({});
+    const logger = mockServices.logger.mock();
+    const config = mockServices.rootConfig();
+    const authService = mockServices.auth();
+    // catalogServiceMock currently returns a CatalogApi instead of CatalogService
+    const catalogService = catalogServiceMock({
+      entities: mockEntities,
+    }) as CatalogService;
+
+    const policyReporterService = new PolicyReporterService({
+      logger,
+      configService: config,
+      catalogService,
+      authService,
+    });
+
     const router = await createRouter({
-      logger: mockServices.logger.mock(),
-      config: mockServices.rootConfig(),
-      authService: mockServices.auth(),
-      // catalogServiceMock currently returns a CatalogApi instead of CatalogService
-      catalogService: catalogServiceMock({
-        entities: mockEntities,
-      }) as CatalogService,
+      logger,
+      config,
+      policyReporterService,
     });
     app = express().use(router);
   });
@@ -127,18 +140,18 @@ describe('createRouter', () => {
 
       expect(response.status).toBe(400);
       expect(response.body).toStrictEqual({
-        error: `Entity missing 'kyverno.io/endpoint' annotation`,
+        error: `Entity missing '${KYVERNO_ENDPOINT_ANNOTATION}' annotation`,
       });
     });
 
-    it('Should return 400 if entity is invalid', async () => {
+    it('Should return 404 if entity is not found in catalog', async () => {
       const response = await request(app).get(
         `/namespaced-resources/results?environment=resource%3Adefault%2Finvalid`,
       );
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({
-        error: `Invalid entityRef`,
+        error: 'Entity not found',
       });
     });
 
@@ -162,18 +175,18 @@ describe('createRouter', () => {
 
       expect(response.status).toBe(400);
       expect(response.body).toStrictEqual({
-        error: `Entity missing 'kyverno.io/endpoint' annotation`,
+        error: `Entity missing '${KYVERNO_ENDPOINT_ANNOTATION}' annotation`,
       });
     });
 
-    it('Should return 400 if entity is invalid', async () => {
+    it('Should return 404 if entity is not found in the catalog', async () => {
       const response = await request(app).get(
         `/v1/namespaces?environment=resource%3Adefault%2Finvalid`,
       );
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({
-        error: `Invalid entityRef`,
+        error: 'Entity not found',
       });
     });
 
@@ -195,18 +208,18 @@ describe('createRouter', () => {
 
       expect(response.status).toBe(400);
       expect(response.body).toStrictEqual({
-        error: `Entity missing 'kyverno.io/endpoint' annotation`,
+        error: `Entity missing '${KYVERNO_ENDPOINT_ANNOTATION}' annotation`,
       });
     });
 
-    it('Should return 400 if entity is invalid', async () => {
+    it('Should return 404 if entity is not found in the catalog', async () => {
       const response = await request(app).get(
         `/v1/namespaced-resources/sources?environment=resource%3Adefault%2Finvalid`,
       );
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({
-        error: `Invalid entityRef`,
+        error: 'Entity not found',
       });
     });
 
@@ -232,14 +245,14 @@ describe('createRouter', () => {
       });
     });
 
-    it('Should return 400 if entity is invalid', async () => {
+    it('Should return 404 if entity is not found in the catalog', async () => {
       const response = await request(app).get(
         `/v1/namespaced-resources/kinds?environment=resource%3Adefault%2Finvalid`,
       );
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({
-        error: `Invalid entityRef`,
+        error: 'Entity not found',
       });
     });
 
@@ -265,14 +278,14 @@ describe('createRouter', () => {
       });
     });
 
-    it('Should return 400 if entity is invalid', async () => {
+    it('Should return 404 if entity is not found in the catalog', async () => {
       const response = await request(app).get(
         `/v1/namespaced-resources/categories?environment=resource%3Adefault%2Finvalid`,
       );
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({
-        error: `Invalid entityRef`,
+        error: 'Entity not found',
       });
     });
 
@@ -302,14 +315,14 @@ describe('createRouter', () => {
       });
     });
 
-    it('Should return 400 if entity is invalid', async () => {
+    it('Should return 404 if entity is not found in the catalog', async () => {
       const response = await request(app).get(
         `/v1/namespaced-resources/policies?environment=resource%3Adefault%2Finvalid`,
       );
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
       expect(response.body).toStrictEqual({
-        error: `Invalid entityRef`,
+        error: 'Entity not found',
       });
     });
 

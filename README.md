@@ -184,3 +184,16 @@ metadata:
 +    kyverno.io/kind: Deployment,Pod                 # Specify the kind(s) of the Kubernetes resource(s)
 +    kyverno.io/resource-name: policy-reporter       # Specify the name of the resource
 ```
+
+## Authenticating to the Policy Reporter API (optional)
+
+If the Policy Reporter Core APIs sit behind a gateway/proxy that requires headers, set `policyReporter.requestHeaders` in app-config. Every outbound request to all the Policy Reporter APIs gets these headers:
+
+```yaml
+policyReporter:
+  requestHeaders:
+    Authorization: Bearer ${POLICY_REPORTER_API_TOKEN}
+```
+
+> [!NOTE]
+> If you have multiple cluster with Policy Reporter API running using different credentials, configuring headers per cluster or environment is currently not supported

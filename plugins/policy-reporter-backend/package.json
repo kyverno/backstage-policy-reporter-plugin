@@ -44,8 +44,10 @@
     "@backstage/backend-openapi-utils": "backstage:^",
     "@backstage/backend-plugin-api": "backstage:^",
     "@backstage/config": "backstage:^",
+    "@backstage/errors": "backstage:^",
     "@backstage/plugin-catalog-node": "backstage:^",
     "@backstage/repo-tools": "backstage:^",
+    "@backstage/types": "backstage:^",
     "@kyverno/backstage-plugin-policy-reporter-common": "workspace:^",
     "@types/express": "*",
     "express": "^4.17.1",
@@ -66,7 +68,9 @@
     "msw": "^1.0.0",
     "supertest": "^6.2.4"
   },
+  "configSchema": "config.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "config.d.ts"
   ]
 }

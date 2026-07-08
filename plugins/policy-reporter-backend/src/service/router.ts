@@ -1,311 +1,143 @@
-import { AuthService, RootConfigService } from '@backstage/backend-plugin-api';
+import { RootConfigService } from '@backstage/backend-plugin-api';
 import { LoggerService } from '@backstage/backend-plugin-api';
 import express from 'express';
-import { KYVERNO_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { MiddlewareFactory } from '@backstage/backend-defaults/rootHttpRouter';
-import { CatalogService } from '@backstage/plugin-catalog-node';
 import { createOpenApiRouter } from '../schema/openapi';
-
-import * as parser from 'uri-template';
+import { PolicyReporterApi } from './policyReporterService';
+import {
+  ForwardedError,
+  InputError,
+  NotFoundError,
+  ServiceUnavailableError,
+} from '@backstage/errors';
 
 export interface RouterOptions {
   logger: LoggerService;
   config: RootConfigService;
-  catalogService: CatalogService;
-  authService: AuthService;
+  policyReporterService: PolicyReporterApi;
 }
 
-const ensureTrailingSlash = (url: string) =>
-  url.endsWith('/') ? url : `${url}/`;
+function handlePolicyReporterError(
+  error: unknown,
+  response: express.Response,
+): express.Response {
+  if (error instanceof NotFoundError) {
+    return response.status(404).json({ error: error.message });
+  }
+
+  if (error instanceof InputError) {
+    return response.status(400).json({ error: error.message });
+  }
+
+  if (error instanceof ServiceUnavailableError) {
+    return response.status(503).json({ error: error.message });
+  }
+
+  if (error instanceof ForwardedError) {
+    return response.status(502).json({ error: error.message });
+  }
+
+  return response.status(500).json({ error: 'Unknown error' });
+}
 
 export async function createRouter(
   options: RouterOptions,
 ): Promise<express.Router> {
-  const { logger, config, catalogService, authService } = options;
+  const { logger, config, policyReporterService } = options;
 
   const router = await createOpenApiRouter();
   router.use(express.json());
 
   router.get('/namespaced-resources/results', async (request, response) => {
-    // Get entityRef from query.
-    const entityRef = decodeURIComponent(request.query.environment);
+    try {
+      const { environment, ...query } = request.query;
 
-    const credentials = await authService.getOwnServiceCredentials();
-
-    const entity = await catalogService.getEntityByRef(entityRef, {
-      credentials,
-    });
-
-    if (!entity)
-      return response.status(400).json({ error: 'Invalid entityRef' });
-
-    const kyvernoEndpoint =
-      entity?.metadata.annotations?.[KYVERNO_ENDPOINT_ANNOTATION];
-
-    if (!kyvernoEndpoint)
-      return response
-        .status(400)
-        .json({ error: `Entity missing 'kyverno.io/endpoint' annotation` });
-
-    const uriTemplate = `v1/namespaced-resources/results{?sources*,namespaces*,kinds*,resources*,categories*,policies*,status*,severities*,search,labels*,page,offset,direction}`;
-
-    const uri = parser.parse(uriTemplate).expand({
-      ...request.query,
-    });
-
-    const policyResponse = await fetch(
-      `${ensureTrailingSlash(kyvernoEndpoint)}${uri}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'GET',
-      },
-    );
-
-    if (!policyResponse.ok) {
-      return response.status(500).json({
-        error: `Failed to fetch policies ${policyResponse.status} ${policyResponse.statusText}`,
+      const result = await policyReporterService.getNamespacedResourceResults({
+        entityRef: decodeURIComponent(environment),
+        query: query,
       });
+
+      return response.status(200).json(result);
+    } catch (error) {
+      return handlePolicyReporterError(error, response);
     }
-
-    const result = await policyResponse.json();
-
-    return response.status(200).json(result);
   });
 
   router.get('/v1/namespaces', async (request, response) => {
-    // Get entityRef from query.
-    const entityRef = decodeURIComponent(request.query.environment);
+    try {
+      const { environment, ...query } = request.query;
 
-    const credentials = await authService.getOwnServiceCredentials();
-    const entity = await catalogService.getEntityByRef(entityRef, {
-      credentials,
-    });
-
-    if (!entity) {
-      return response.status(400).json({ error: 'Invalid entityRef' });
-    }
-
-    const kyvernoEndpoint =
-      entity?.metadata.annotations?.[KYVERNO_ENDPOINT_ANNOTATION];
-
-    if (!kyvernoEndpoint) {
-      return response
-        .status(400)
-        .json({ error: `Entity missing 'kyverno.io/endpoint' annotation` });
-    }
-
-    const uriTemplate = `v1/namespaces{?sources*,categories*,policies*}`;
-
-    const uri = parser.parse(uriTemplate).expand({
-      ...request.query,
-    });
-
-    const policyResponse = await fetch(
-      `${ensureTrailingSlash(kyvernoEndpoint)}${uri}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'GET',
-      },
-    );
-
-    if (!policyResponse.ok) {
-      return response.status(500).json({
-        error: `Failed to fetch namespaces: ${policyResponse.statusText}`,
+      const result = await policyReporterService.getNamespaces({
+        entityRef: decodeURIComponent(environment),
+        query: query,
       });
-    }
 
-    const result = await policyResponse.json();
-    return response.status(200).json(result);
+      return response.status(200).json(result);
+    } catch (error) {
+      return handlePolicyReporterError(error, response);
+    }
   });
 
   router.get('/v1/namespaced-resources/sources', async (request, response) => {
-    // Get entityRef from query.
-    const entityRef = decodeURIComponent(request.query.environment);
+    try {
+      const { environment } = request.query;
 
-    const credentials = await authService.getOwnServiceCredentials();
-    const entity = await catalogService.getEntityByRef(entityRef, {
-      credentials,
-    });
-
-    if (!entity) {
-      return response.status(400).json({ error: 'Invalid entityRef' });
-    }
-
-    const kyvernoEndpoint =
-      entity?.metadata.annotations?.[KYVERNO_ENDPOINT_ANNOTATION];
-
-    if (!kyvernoEndpoint) {
-      return response
-        .status(400)
-        .json({ error: `Entity missing 'kyverno.io/endpoint' annotation` });
-    }
-
-    const policyResponse = await fetch(
-      `${ensureTrailingSlash(kyvernoEndpoint)}v1/namespaced-resources/sources`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'GET',
-      },
-    );
-
-    if (!policyResponse.ok) {
-      return response.status(500).json({
-        error: `Failed to fetch sources: ${policyResponse.statusText}`,
+      const result = await policyReporterService.getSources({
+        entityRef: decodeURIComponent(environment),
       });
-    }
 
-    const result = await policyResponse.json();
-    return response.status(200).json(result);
+      return response.status(200).json(result);
+    } catch (error) {
+      return handlePolicyReporterError(error, response);
+    }
   });
 
   router.get('/v1/namespaced-resources/kinds', async (request, response) => {
-    const entityRef = decodeURIComponent(request.query.environment);
+    try {
+      const { environment, ...query } = request.query;
 
-    const credentials = await authService.getOwnServiceCredentials();
-    const entity = await catalogService.getEntityByRef(entityRef, {
-      credentials,
-    });
-
-    if (!entity) {
-      return response.status(400).json({ error: 'Invalid entityRef' });
-    }
-
-    const kyvernoEndpoint =
-      entity?.metadata.annotations?.[KYVERNO_ENDPOINT_ANNOTATION];
-
-    if (!kyvernoEndpoint) {
-      return response
-        .status(400)
-        .json({ error: `Entity missing 'kyverno.io/endpoint' annotation` });
-    }
-
-    const uriTemplate = `v1/namespaced-resources/kinds{?sources*,namespaces*}`;
-
-    const uri = parser.parse(uriTemplate).expand({
-      ...request.query,
-    });
-
-    const policyResponse = await fetch(
-      `${ensureTrailingSlash(kyvernoEndpoint)}${uri}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'GET',
-      },
-    );
-
-    if (!policyResponse.ok) {
-      return response.status(500).json({
-        error: `Failed to fetch kinds: ${policyResponse.statusText}`,
+      const result = await policyReporterService.getKinds({
+        entityRef: decodeURIComponent(environment),
+        query,
       });
-    }
 
-    const result = await policyResponse.json();
-    return response.status(200).json(result);
+      return response.status(200).json(result);
+    } catch (error) {
+      return handlePolicyReporterError(error, response);
+    }
   });
 
   router.get(
     '/v1/namespaced-resources/categories',
     async (request, response) => {
-      // Get entityRef from query.
-      const entityRef = decodeURIComponent(request.query.environment);
+      try {
+        const { environment, ...query } = request.query;
 
-      const credentials = await authService.getOwnServiceCredentials();
-      const entity = await catalogService.getEntityByRef(entityRef, {
-        credentials,
-      });
-
-      if (!entity) {
-        return response.status(400).json({ error: 'Invalid entityRef' });
-      }
-
-      const kyvernoEndpoint =
-        entity?.metadata.annotations?.[KYVERNO_ENDPOINT_ANNOTATION];
-
-      if (!kyvernoEndpoint) {
-        return response
-          .status(400)
-          .json({ error: `Entity missing 'kyverno.io/endpoint' annotation` });
-      }
-
-      const uriTemplate = `v1/namespaced-resources/categories{?sources*,namespaces*}`;
-      const uri = parser.parse(uriTemplate).expand({
-        ...request.query,
-      });
-
-      const policyResponse = await fetch(
-        `${ensureTrailingSlash(kyvernoEndpoint)}${uri}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'GET',
-        },
-      );
-
-      if (!policyResponse.ok) {
-        return response.status(500).json({
-          error: `Failed to fetch categories: ${policyResponse.statusText}`,
+        const result = await policyReporterService.getCategories({
+          entityRef: decodeURIComponent(environment),
+          query,
         });
-      }
 
-      const result = await policyResponse.json();
-      return response.status(200).json(result);
+        return response.status(200).json(result);
+      } catch (error) {
+        return handlePolicyReporterError(error, response);
+      }
     },
   );
 
   router.get('/v1/namespaced-resources/policies', async (request, response) => {
-    // Get entityRef from query.
-    const entityRef = decodeURIComponent(request.query.environment);
+    try {
+      const { environment, ...query } = request.query;
 
-    const credentials = await authService.getOwnServiceCredentials();
-    const entity = await catalogService.getEntityByRef(entityRef, {
-      credentials,
-    });
-
-    if (!entity) {
-      return response.status(400).json({ error: 'Invalid entityRef' });
-    }
-
-    const kyvernoEndpoint =
-      entity?.metadata.annotations?.[KYVERNO_ENDPOINT_ANNOTATION];
-
-    if (!kyvernoEndpoint) {
-      return response
-        .status(400)
-        .json({ error: `Entity missing 'kyverno.io/endpoint' annotation` });
-    }
-
-    const uriTemplate = `v1/namespaced-resources/policies{?sources*,namespaces*,categories*}`;
-    const uri = parser.parse(uriTemplate).expand({
-      ...request.query,
-    });
-
-    const policyResponse = await fetch(
-      `${ensureTrailingSlash(kyvernoEndpoint)}${uri}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'GET',
-      },
-    );
-
-    if (!policyResponse.ok) {
-      return response.status(500).json({
-        error: `Failed to fetch policies: ${policyResponse.statusText}`,
+      const result = await policyReporterService.getPolicies({
+        entityRef: decodeURIComponent(environment),
+        query,
       });
-    }
 
-    const result = await policyResponse.json();
-    return response.status(200).json(result);
+      return response.status(200).json(result);
+    } catch (error) {
+      return handlePolicyReporterError(error, response);
+    }
   });
 
   const middleware = MiddlewareFactory.create({ logger, config });
