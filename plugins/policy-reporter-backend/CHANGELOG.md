@@ -1,5 +1,35 @@
 # @kyverno/backstage-plugin-policy-reporter-backend
 
+## 2.6.0
+
+### Minor Changes
+
+- fa25ccc: Added additional responses to all routes, they can now also return 404, 502 and 503
+- 256fb9a: Added source filtering to the PolicyReportsPage. Users can now filter the list of policy reports by selecting one or more sources from the selected cluster.
+- 2f4ac45: Added policy filtering to the PolicyReportsPage. Users can now filter the list of policy reports by selecting one or more policies from the selected cluster.
+- d598ade: Added category filtering to the PolicyReportsPage. Users can now filter the list of policy reports by selecting one or more categories from the selected cluster.
+- a664d0c: Added kind filtering to the PolicyReportsPage. Users can now filter the list of policy reports by selecting one or more kinds from the selected cluster.
+- 880eecc: Backstage version bump to v1.51.1
+- fa25ccc: Add support for configuring requestHeaders for the Policy Reporter Backend in your config using policyReporter.requestHeaders. This can be used for configuring Basic Auth credentials to the backend.
+
+  ```yaml
+  policyReporter:
+    requestHeaders:
+      Authorization: Bearer ${POLICY_REPORTER_API_TOKEN}
+  ```
+
+- 44c5238: Backstage version bump to v1.52.0
+
+### Patch Changes
+
+- Updated dependencies [256fb9a]
+- Updated dependencies [2f4ac45]
+- Updated dependencies [d598ade]
+- Updated dependencies [a664d0c]
+- Updated dependencies [880eecc]
+- Updated dependencies [44c5238]
+  - @kyverno/backstage-plugin-policy-reporter-common@2.5.0
+
 ## 2.5.0
 
 ### Minor Changes
