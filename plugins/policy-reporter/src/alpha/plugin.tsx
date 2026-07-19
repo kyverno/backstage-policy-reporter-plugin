@@ -41,6 +41,21 @@ const policyReporterPage = PageBlueprint.make({
 });
 
 /** @alpha */
+const policyReporterClusterPoliciesSubPage = SubPageBlueprint.make({
+  name: 'cluster-policy',
+  params: {
+    path: 'cluster-policies',
+    routeRef: createRouteRef(),
+    // TODO: Support configuration of the actual component
+    title: 'Cluster Policies',
+    loader: () =>
+      import('../components/ClusterPoliciesSubPage/').then(m => (
+        <m.ClusterPoliciesSubPage />
+      )),
+  },
+});
+
+/** @alpha */
 const policyReporterNamespacedPoliciesPage = SubPageBlueprint.make({
   name: 'namespaced-policy',
   params: {
@@ -85,5 +100,6 @@ export default createFrontendPlugin({
     policyReporterEntityContent,
     policyReporterPage,
     policyReporterNamespacedPoliciesPage,
+    policyReporterClusterPoliciesSubPage,
   ],
 });

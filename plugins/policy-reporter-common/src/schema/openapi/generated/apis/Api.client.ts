@@ -44,6 +44,25 @@ export type GetCategories = {
 /**
  * @public
  */
+export type GetClusterResults = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+    kinds?: Array<string>;
+    categories?: Array<string>;
+    policies?: Array<string>;
+    status?: Array<Status>;
+    severities?: Array<Severity>;
+    search?: string;
+    labels?: Array<string>;
+    page?: number;
+    offset?: number;
+    direction?: Direction;
+  };
+};
+/**
+ * @public
+ */
 export type GetKinds = {
   query: {
     environment: string;
@@ -133,6 +152,44 @@ export class DefaultApiClient {
     const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
 
     const uriTemplate = `/v1/namespaced-resources/categories{?environment,sources*,namespaces*}`;
+
+    const uri = parser.parse(uriTemplate).expand({
+      ...request.query,
+    });
+
+    return await this.fetchApi.fetch(`${baseUrl}${uri}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.token && { Authorization: `Bearer ${options?.token}` }),
+      },
+      method: 'GET',
+    });
+  }
+
+  /**
+   * Retrieves policy results for a specific environment with optional filtering and pagination
+   * Get cluster policy results
+   * @param environment - The environment entity reference (URL encoded)
+   * @param sources - Filter by a list of sources
+   * @param kinds - Filter by a list of Kubernetes resource kinds
+   * @param categories - Filter by a list of categories
+   * @param policies - Filter by a list of policies
+   * @param status - Filter by policy result status
+   * @param severities - Filter by severity levels
+   * @param search - Search string to filter results
+   * @param labels - Filter by label-value pairs
+   * @param page - Requested list page number
+   * @param offset - Number of results per page
+   * @param direction - Sort direction for results
+   */
+  public async getClusterResults(
+    // @ts-ignore
+    request: GetClusterResults,
+    options?: RequestOptions,
+  ): Promise<TypedResponse<ResultList>> {
+    const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
+
+    const uriTemplate = `/v1/cluster-resources/results{?environment,sources*,kinds*,categories*,policies*,status*,severities*,search,labels*,page,offset,direction}`;
 
     const uri = parser.parse(uriTemplate).expand({
       ...request.query,

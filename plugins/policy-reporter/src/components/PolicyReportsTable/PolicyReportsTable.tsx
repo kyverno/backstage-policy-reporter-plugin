@@ -30,7 +30,7 @@ export const PolicyReportsTable = ({
   policyDocumentationUrl,
 }: PolicyReportsTableProps) => {
   const policyReporterApi = useApi(policyReporterApiRef);
-  const { filter, environment } = usePolicyReportsFilters();
+  const { filter, environment, context } = usePolicyReportsFilters();
   const search = filter.search;
   const toast = useApi(toastApiRef);
 
@@ -65,7 +65,7 @@ export const PolicyReportsTable = ({
       // Math.floor(0/20) + 1 = 1, Math.floor(20/20) + 1 = 2, etc.
       const page = Math.floor(offset / pageSize) + 1;
 
-      const response = await policyReporterApi.getNamespacedResults({
+      const request = {
         query: {
           environment: encodeURI(environment),
           page: page,
@@ -73,7 +73,12 @@ export const PolicyReportsTable = ({
           ...fetchFilter,
           search: searchParam === '' ? undefined : searchParam,
         },
-      });
+      };
+
+      const response =
+        context === 'cluster'
+          ? await policyReporterApi.getClusterResults(request)
+          : await policyReporterApi.getNamespacedResults(request);
 
       const result = await response.json();
 
@@ -103,12 +108,16 @@ export const PolicyReportsTable = ({
       isRowHeader: true,
       cell: item => <CellText title={item.name} />,
     },
-    {
-      id: 'namespace',
-      label: 'Namespace',
-      isRowHeader: true,
-      cell: item => <CellText title={item.namespace} />,
-    },
+    ...(context === 'namespaced'
+      ? ([
+          {
+            id: 'namespace',
+            label: 'Namespace',
+            isRowHeader: true,
+            cell: item => <CellText title={item.namespace} />,
+          },
+        ] as ColumnConfig<ListResult>[])
+      : []),
     {
       id: 'kind',
       label: 'Kind',

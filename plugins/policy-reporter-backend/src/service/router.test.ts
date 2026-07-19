@@ -58,6 +58,25 @@ describe('createRouter', () => {
       },
     ),
     rest.get(
+      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/results',
+      (_req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.json({
+            count: 1,
+            items: [
+              {
+                source: 'kyverno',
+                kind: 'Namespace',
+                name: 'kube-system',
+                status: 'pass',
+              },
+            ],
+          }),
+        );
+      },
+    ),
+    rest.get(
       'http://kyverno.io/policy-reporter/api/v1/namespaces',
       (_req, res, ctx) => {
         return res(ctx.status(200), ctx.json(['default', 'kube-system']));
@@ -312,6 +331,49 @@ describe('createRouter', () => {
       expect(response.status).toBe(400);
       expect(response.body).toStrictEqual({
         error: `Entity missing 'kyverno.io/endpoint' annotation`,
+      });
+
+      describe('cluster results', () => {
+        it('Should return 400 if entity is missing kyverno.io/endpoint annotation', async () => {
+          const response = await request(app).get(
+            `/v1/cluster-resources/results?environment=resource%3Adefault%2Fdev`,
+          );
+
+          expect(response.status).toBe(400);
+          expect(response.body).toStrictEqual({
+            error: `Entity missing 'kyverno.io/endpoint' annotation`,
+          });
+        });
+
+        it('Should return 404 if entity is not found in the catalog', async () => {
+          const response = await request(app).get(
+            `/v1/cluster-resources/results?environment=resource%3Adefault%2Finvalid`,
+          );
+
+          expect(response.status).toBe(404);
+          expect(response.body).toStrictEqual({
+            error: 'Entity not found',
+          });
+        });
+
+        it('Should return 200 and valid response when entity is valid', async () => {
+          const response = await request(app).get(
+            `/v1/cluster-resources/results?environment=resource%3Adefault%2Fprod`,
+          );
+
+          expect(response.status).toBe(200);
+          expect(response.body).toStrictEqual({
+            count: 1,
+            items: [
+              {
+                source: 'kyverno',
+                kind: 'Namespace',
+                name: 'kube-system',
+                status: 'pass',
+              },
+            ],
+          });
+        });
       });
     });
 

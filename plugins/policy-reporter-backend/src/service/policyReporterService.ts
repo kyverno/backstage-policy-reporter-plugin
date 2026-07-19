@@ -25,6 +25,22 @@ export interface PolicyReporterApi {
     query: Filter & Pagination;
   }): Promise<ResultList>;
 
+  getClusterResourceResults(options: {
+    entityRef: string;
+    query: Pick<
+      Filter,
+      | 'sources'
+      | 'kinds'
+      | 'categories'
+      | 'policies'
+      | 'status'
+      | 'severities'
+      | 'search'
+      | 'labels'
+    > &
+      Pagination;
+  }): Promise<ResultList>;
+
   getNamespaces(options: {
     entityRef: string;
     query: Pick<Filter, 'sources' | 'categories' | 'policies'>;
@@ -67,6 +83,32 @@ export class PolicyReporterService implements PolicyReporterApi {
       'Content-Type': 'application/json',
       ...headers,
     };
+  }
+
+  async getClusterResourceResults(options: {
+    entityRef: string;
+    query: Pick<
+      Filter,
+      | 'sources'
+      | 'kinds'
+      | 'categories'
+      | 'policies'
+      | 'status'
+      | 'severities'
+      | 'search'
+      | 'labels'
+    > &
+      Pagination;
+  }): Promise<ResultList> {
+    const baseUrl = await this.getBaseUrl(options.entityRef);
+
+    return this.request<ResultList>({
+      baseUrl,
+      uriTemplate:
+        'v1/cluster-resources/results{?sources*,kinds*,categories*,policies*,status*,severities*,search,labels*,page,offset,direction}',
+      query: { ...options.query },
+      operation: 'fetch cluster resource results',
+    });
   }
 
   async getNamespacedResourceResults(options: {

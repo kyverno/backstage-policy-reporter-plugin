@@ -24,6 +24,33 @@ export type GetCategories = {
     | RequestError
     | RequestError
     | RequestError
+    | RequestError
+    | RequestError;
+};
+/**
+ * @public
+ */
+export type GetClusterResults = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+    kinds?: Array<string>;
+    categories?: Array<string>;
+    policies?: Array<string>;
+    status?: Array<Status>;
+    severities?: Array<Severity>;
+    search?: string;
+    labels?: Array<string>;
+    page?: number;
+    offset?: number;
+    direction?: Direction;
+  };
+  response:
+    | ResultList
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError
     | RequestError;
 };
 /**
@@ -37,6 +64,7 @@ export type GetKinds = {
   };
   response:
     | Array<string>
+    | RequestError
     | RequestError
     | RequestError
     | RequestError
@@ -62,7 +90,13 @@ export type GetNamespacedResults = {
     offset?: number;
     direction?: Direction;
   };
-  response: ResultList | RequestError | RequestError;
+  response:
+    | ResultList
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
 };
 /**
  * @public
@@ -76,6 +110,7 @@ export type GetNamespaces = {
   };
   response:
     | Array<string>
+    | RequestError
     | RequestError
     | RequestError
     | RequestError
@@ -96,6 +131,7 @@ export type GetPolicies = {
     | RequestError
     | RequestError
     | RequestError
+    | RequestError
     | RequestError;
 };
 /**
@@ -110,11 +146,14 @@ export type GetSources = {
     | RequestError
     | RequestError
     | RequestError
+    | RequestError
     | RequestError;
 };
 
 export type EndpointMap = {
   '#get|/v1/namespaced-resources/categories': GetCategories;
+
+  '#get|/v1/cluster-resources/results': GetClusterResults;
 
   '#get|/v1/namespaced-resources/kinds': GetKinds;
 

@@ -13,6 +13,7 @@ import type { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 export type PolicyReportsFiltersContextValue = {
   filter: Filter;
+  context: 'cluster' | 'namespaced';
   updateFilter: (update: Partial<Filter>) => void;
   environment: string;
   setEnvironment: (entityRef: string) => void;
@@ -32,6 +33,7 @@ export type PolicyReportsFiltersProviderProps = PropsWithChildren<{
    * when no ?environment= param is present in the URL.
    */
   defaultEnvironment: string;
+  context: 'cluster' | 'namespaced';
 }>;
 
 /**
@@ -42,6 +44,7 @@ export const PolicyReportsFiltersProvider = ({
   children,
   defaultFilters,
   defaultEnvironment,
+  context,
 }: PolicyReportsFiltersProviderProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -127,8 +130,9 @@ export const PolicyReportsFiltersProvider = ({
       updateFilter,
       environment,
       setEnvironment,
+      context,
     }),
-    [filter, updateFilter, environment, setEnvironment],
+    [filter, updateFilter, environment, setEnvironment, context],
   );
 
   return (
