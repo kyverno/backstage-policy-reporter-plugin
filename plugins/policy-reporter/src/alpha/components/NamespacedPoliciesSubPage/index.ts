@@ -1,0 +1,1 @@
+export { NamespacedPoliciesSubPage } from './NamespacedPoliciesSubPage';

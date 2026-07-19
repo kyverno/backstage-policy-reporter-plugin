@@ -67,9 +67,10 @@ const policyReporterNamespacedPoliciesPage = SubPageBlueprint.make({
     // TODO: Support configuration of the actual component
     title: 'Namespaced Policies',
     loader: () =>
-      // TODO: Create dedicated PolicyReporterNamespacedPoliciesPage Component
-      import('../components/PolicyReportsPage/').then(m => (
-        <m.PolicyReportsPage /> // TODO: Update the PolicyReportsPage to be only used for old frontend system to mimic PageBlueprint from NFS
+      import('./components/NamespacedPoliciesSubPage/').then(m => (
+        <Container>
+          <m.NamespacedPoliciesSubPage />
+        </Container>
       )),
   },
 });
