@@ -14,6 +14,7 @@ import { SelectSource } from '../SelectSource';
 import { SelectKind } from '../SelectKind';
 import { SelectCategory } from '../SelectCategory';
 import { SelectPolicy } from '../SelectPolicy';
+import { MissingKubernetesCluster } from '../MissingKubernetesCluster';
 
 export interface PolicyReportsPageProps {
   title?: string;
@@ -41,27 +42,7 @@ export const PolicyReportsPage = ({
       <Container>
         <Header title={title} />
         <Content>
-          <EmptyState
-            missing="content"
-            title="No kubernetes-cluster Resources found"
-            description={
-              <>
-                You need to define a Resource with the kubernetes-cluster type
-                and a<code> kyverno.io/endpoint </code> annotation for this
-                plugin to work.
-              </>
-            }
-            action={
-              <>
-                <ButtonLink
-                  target="_blank"
-                  href="https://github.com/kyverno/backstage-policy-reporter-plugin"
-                >
-                  Read More
-                </ButtonLink>
-              </>
-            }
-          />
+          <MissingKubernetesCluster />
         </Content>
       </Container>
     );
