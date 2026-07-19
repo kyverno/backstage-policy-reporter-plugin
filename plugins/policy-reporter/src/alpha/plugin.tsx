@@ -15,6 +15,7 @@ import { DefaultApiClient } from '@kyverno/backstage-plugin-policy-reporter-comm
 import { EntityContentBlueprint } from '@backstage/plugin-catalog-react/alpha';
 import { isPolicyReporterAvailable } from '../utils/annotations';
 import PolicyIcon from '@material-ui/icons/Policy';
+import { Container } from '@backstage/ui';
 
 /** @alpha */
 export const policyReporterApi = ApiBlueprint.make({
@@ -49,8 +50,10 @@ const policyReporterClusterPoliciesSubPage = SubPageBlueprint.make({
     // TODO: Support configuration of the actual component
     title: 'Cluster Policies',
     loader: () =>
-      import('../components/ClusterPoliciesSubPage/').then(m => (
-        <m.ClusterPoliciesSubPage />
+      import('./components/ClusterPoliciesSubPage/').then(m => (
+        <Container>
+          <m.ClusterPoliciesSubPage />
+        </Container>
       )),
   },
 });
