@@ -74,6 +74,7 @@ export const EntityKyvernoPoliciesContent = ({
         search: getResourceName(annotations),
       }}
       defaultEnvironment={environments[0].entityRef}
+      context="namespaced"
     >
       <Container>
         <Header
