@@ -1,8 +1,8 @@
 import { policyReporterApiRef } from '../../api';
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
 import { catalogApiRef } from '@backstage/plugin-catalog-react';
-import { PolicyReportsPage } from './ClusterPoliciesSubPagebPage';
 import { toastApiRef } from '@backstage/frontend-plugin-api';
+import { ClusterPoliciesSubPage } from './ClusterPoliciesSubPage.tsx';
 
 const mockGetNamespacedResults = jest.fn().mockResolvedValue({
   json: jest.fn().mockResolvedValue({
@@ -26,18 +26,18 @@ const mockToast = {
   post: jest.fn(),
 };
 
-describe('EntityKyvernoPolicyReportsContent component', () => {
+describe('ClusterPoliciesSubPage component', () => {
   it('should not render when kubernetes-cluster resources are missing', async () => {
     // Act
     const extension = await renderInTestApp(
       <TestApiProvider
         apis={[
-          [policyReporterApiRef, mockPolicyReportApiRef as any],
+          [policyReporterApiRef, mockPolicyReportApiRef],
           [catalogApiRef, mockCatalogApiRef],
           [toastApiRef, mockToast],
         ]}
       >
-        <PolicyReportsPage />,
+        <ClusterPoliciesSubPage />,
       </TestApiProvider>,
     );
 
@@ -45,11 +45,9 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
     expect(
       extension.getByText('No kubernetes-cluster Resources found'),
     ).toBeTruthy();
-
-    expect(extension.getByText('Policy Reports')).toBeTruthy();
   });
 
-  it('should render PolicyReportsTable if environments are valid', async () => {
+  it('should render ClusterPoliciesSubPage if environments are valid', async () => {
     // Arrange
     mockCatalogApiRef.getEntities.mockImplementationOnce(() => {
       return Promise.resolve({ items: [{ metadata: { name: 'dev' } }] });
@@ -64,15 +62,15 @@ describe('EntityKyvernoPolicyReportsContent component', () => {
           [toastApiRef, mockToast],
         ]}
       >
-        <PolicyReportsPage />
+        <ClusterPoliciesSubPage />
       </TestApiProvider>,
     );
 
     // Assert
-    expect(extension.getByText('Policy Reports')).toBeTruthy();
     expect(extension.getAllByText('Name')).toBeTruthy();
-    expect(extension.getAllByText('Namespace')).toBeTruthy();
     expect(extension.getAllByText('Kind')).toBeTruthy();
     expect(extension.getAllByText('Policy')).toBeTruthy();
+
+    expect(extension.getAllByText('Namespace')).toBeFalsy();
   });
 });
