@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import {
+  GetClusterResults,
+  GetNamespacedResults,
   ListResult,
   RequestError,
 } from '@kyverno/backstage-plugin-policy-reporter-common';
@@ -65,7 +67,7 @@ export const PolicyReportsTable = ({
       // Math.floor(0/20) + 1 = 1, Math.floor(20/20) + 1 = 2, etc.
       const page = Math.floor(offset / pageSize) + 1;
 
-      const request = {
+      const request: GetClusterResults | GetNamespacedResults = {
         query: {
           environment: encodeURI(environment),
           page: page,

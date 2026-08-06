@@ -1,34 +1,28 @@
 import { Progress } from '@backstage/core-components';
 import { Flex } from '@backstage/ui';
 import { useEnvironments } from '../../../hooks/useEnvironments';
-import { SelectEnvironment } from '../../../components/SelectEnvironment/';
+import { SelectEnvironment } from '../../../components/SelectEnvironment';
 import { PolicyReportsTable } from '../../../components/PolicyReportsTable';
-import { SelectStatus } from '../../../components/SelectStatus';
-import { SelectSeverity } from '../../../components/SelectSeverity';
 import { SearchField } from '../../../components/SearchField';
 import { PolicyReportsFiltersProvider } from '../../../hooks/usePolicyReportsFilters';
 import { FilterLayout } from '../../../components/FilterLayout';
 import { MissingKubernetesCluster } from '../../../components/MissingKubernetesCluster';
 import { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
-import { SelectCategory } from '../../../components/SelectCategory';
-import { SelectPolicy } from '../../../components/SelectPolicy';
-import { SelectKind } from '../../../components/SelectKind';
-import { SelectSource } from '../../../components/SelectSource';
-import { SelectNamespace } from '../../../components/SelectNamespace';
+import { ReactNode } from 'react';
 
-export interface NamespacedPoliciesSubPageProps {
+export interface PolicyReporterPoliciesSubPageProps {
   // This naming aligns with the current Backstage catalog page
   initiallySelectedFilter?: Filter;
   // TODO: Could we implement something like this ?
   // columns?: TableColumn<CatalogTableRow>[] | CatalogTableColumnsFunc;
-  // TODO: Implement injection of the filter components
-  // filters?: ReactNode;
+  filters?: ReactNode;
+  context: 'namespaced' | 'cluster';
 }
 
-export const NamespacedPoliciesSubPage = (
-  props: NamespacedPoliciesSubPageProps,
+export const PolicyReporterPoliciesSubPage = (
+  props: PolicyReporterPoliciesSubPageProps,
 ) => {
-  const { initiallySelectedFilter } = props;
+  const { initiallySelectedFilter, filters, context } = props;
   const { environments, environmentsLoading } = useEnvironments();
 
   // Loading environments
@@ -40,19 +34,13 @@ export const NamespacedPoliciesSubPage = (
   return (
     <PolicyReportsFiltersProvider
       defaultEnvironment={environments[0].entityRef}
-      context="namespaced"
+      context={context}
       defaultFilters={initiallySelectedFilter}
     >
       <FilterLayout>
         <FilterLayout.Filters>
           <SelectEnvironment environments={environments} />
-          <SelectStatus />
-          <SelectSeverity />
-          <SelectNamespace />
-          <SelectSource />
-          <SelectKind />
-          <SelectCategory />
-          <SelectPolicy />
+          {filters}
         </FilterLayout.Filters>
         <FilterLayout.Content>
           <Flex direction="column" gap="4">

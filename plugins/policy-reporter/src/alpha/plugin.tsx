@@ -11,11 +11,17 @@ import {
 import { rootRouteRef } from '../routes';
 import { policyReporterApiRef } from '../api';
 import { DefaultApiClient } from '@kyverno/backstage-plugin-policy-reporter-common';
-
 import { EntityContentBlueprint } from '@backstage/plugin-catalog-react/alpha';
 import { isPolicyReporterAvailable } from '../utils/annotations';
 import PolicyIcon from '@material-ui/icons/Policy';
 import { Container } from '@backstage/ui';
+import { SelectStatus } from '../components/SelectStatus';
+import { SelectSeverity } from '../components/SelectSeverity';
+import { SelectNamespace } from '../components/SelectNamespace';
+import { SelectSource } from '../components/SelectSource';
+import { SelectKind } from '../components/SelectKind';
+import { SelectCategory } from '../components/SelectCategory';
+import { SelectPolicy } from '../components/SelectPolicy';
 
 /** @alpha */
 export const policyReporterApi = ApiBlueprint.make({
@@ -47,29 +53,54 @@ const policyReporterClusterPoliciesSubPage = SubPageBlueprint.make({
   params: {
     path: 'cluster-policies',
     routeRef: createRouteRef(),
-    // TODO: Support configuration of the actual component
     title: 'Cluster Policies',
     loader: () =>
-      import('./components/ClusterPoliciesSubPage/').then(m => (
+      import('./components/PolicyReporterPoliciesSubPage').then(m => (
         <Container>
-          <m.ClusterPoliciesSubPage />
+          <m.PolicyReporterPoliciesSubPage
+            // TODO: Add support for configuring initiallySelectedFilter using NFS
+            initiallySelectedFilter={{ status: ['fail'] }}
+            context="cluster"
+            // TODO: Add support for configuring filters using NFS blueprint/extension
+            filters={
+              <>
+                <SelectStatus />
+                <SelectSeverity />
+              </>
+            }
+          />
         </Container>
       )),
   },
 });
 
 /** @alpha */
-const policyReporterNamespacedPoliciesPage = SubPageBlueprint.make({
+const policyReporterNamespacedPoliciesSubPage = SubPageBlueprint.make({
   name: 'namespaced-policy',
   params: {
     path: 'namespaced-policies',
     routeRef: createRouteRef(),
-    // TODO: Support configuration of the actual component
     title: 'Namespaced Policies',
     loader: () =>
-      import('./components/NamespacedPoliciesSubPage/').then(m => (
+      import('./components/PolicyReporterPoliciesSubPage').then(m => (
         <Container>
-          <m.NamespacedPoliciesSubPage />
+          <m.PolicyReporterPoliciesSubPage
+            // TODO: Add support for configuring initiallySelectedFilter using NFS
+            initiallySelectedFilter={{ status: ['fail'] }}
+            context="namespaced"
+            // TODO: Add support for configuring filters using NFS blueprint/extension
+            filters={
+              <>
+                <SelectStatus />
+                <SelectSeverity />
+                <SelectNamespace />
+                <SelectSource />
+                <SelectKind />
+                <SelectCategory />
+                <SelectPolicy />
+              </>
+            }
+          />
         </Container>
       )),
   },
@@ -103,7 +134,7 @@ export default createFrontendPlugin({
     policyReporterApi,
     policyReporterEntityContent,
     policyReporterPage,
-    policyReporterNamespacedPoliciesPage,
+    policyReporterNamespacedPoliciesSubPage,
     policyReporterClusterPoliciesSubPage,
   ],
 });
