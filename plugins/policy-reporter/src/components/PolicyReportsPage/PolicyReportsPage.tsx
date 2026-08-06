@@ -1,5 +1,5 @@
-import { Content, EmptyState, Progress } from '@backstage/core-components';
-import { Container, Flex, Header, ButtonLink } from '@backstage/ui';
+import { Content, Progress } from '@backstage/core-components';
+import { Container, Flex, Header } from '@backstage/ui';
 import { useEnvironments } from '../../hooks/useEnvironments';
 import { SelectEnvironment } from '../SelectEnvironment';
 import { PolicyReportsTable } from '../PolicyReportsTable';
