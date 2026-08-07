@@ -6,6 +6,7 @@ describe('SelectStatus', () => {
   it('should render the selected status from provider defaults', async () => {
     const extension = await renderInTestApp(
       <PolicyReportsFiltersProvider
+        context="namespaced"
         defaultEnvironment="resource:default/dev"
         defaultFilters={{ status: ['fail'] }}
       >
@@ -19,6 +20,7 @@ describe('SelectStatus', () => {
   it('should render multiple selected statuses from provider defaults', async () => {
     const extension = await renderInTestApp(
       <PolicyReportsFiltersProvider
+        context="namespaced"
         defaultEnvironment="resource:default/dev"
         defaultFilters={{ status: ['fail', 'summary'] }}
       >
@@ -32,7 +34,10 @@ describe('SelectStatus', () => {
 
   it('should render all when no defaults are set', async () => {
     const extension = await renderInTestApp(
-      <PolicyReportsFiltersProvider defaultEnvironment="resource:default/dev">
+      <PolicyReportsFiltersProvider
+        context="namespaced"
+        defaultEnvironment="resource:default/dev"
+      >
         <SelectStatus />
       </PolicyReportsFiltersProvider>,
     );

@@ -36,6 +36,7 @@ const renderTable = (
       ]}
     >
       <PolicyReportsFiltersProvider
+        context="namespaced"
         defaultFilters={{}}
         defaultEnvironment="resource:default/dev"
       >

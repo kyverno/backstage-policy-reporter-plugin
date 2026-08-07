@@ -6,6 +6,7 @@ describe('SelectSeverity', () => {
   it('should render the selected severity from provider defaults', async () => {
     const extension = await renderInTestApp(
       <PolicyReportsFiltersProvider
+        context="namespaced"
         defaultEnvironment="resource:default/dev"
         defaultFilters={{ severities: ['critical'] }}
       >
@@ -19,6 +20,7 @@ describe('SelectSeverity', () => {
   it('should render multiple selected severities from provider defaults', async () => {
     const extension = await renderInTestApp(
       <PolicyReportsFiltersProvider
+        context="namespaced"
         defaultEnvironment="resource:default/dev"
         defaultFilters={{ severities: ['info', 'low'] }}
       >
@@ -32,7 +34,10 @@ describe('SelectSeverity', () => {
 
   it('should render all when no defaults are set', async () => {
     const extension = await renderInTestApp(
-      <PolicyReportsFiltersProvider defaultEnvironment="resource:default/dev">
+      <PolicyReportsFiltersProvider
+        context="namespaced"
+        defaultEnvironment="resource:default/dev"
+      >
         <SelectSeverity />
       </PolicyReportsFiltersProvider>,
     );
