@@ -517,6 +517,145 @@ paths:
               schema:
                 $ref: '#/components/schemas/RequestError'
 
+  /v1/cluster-resources/results:
+    get:
+      summary: Get cluster policy results
+      description: Retrieves policy results for a specific environment with optional filtering and pagination
+      operationId: getClusterResults
+      parameters:
+        - name: environment
+          in: query
+          required: true
+          description: The environment entity reference (URL encoded)
+          schema:
+            type: string
+            example: 'default/component/my-service'
+        - name: sources
+          in: query
+          description: Filter by a list of sources
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: kinds
+          in: query
+          description: Filter by a list of Kubernetes resource kinds
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: categories
+          in: query
+          description: Filter by a list of categories
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: policies
+          in: query
+          description: Filter by a list of policies
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: status
+          in: query
+          description: Filter by policy result status
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Status'
+          style: form
+          explode: true
+        - name: severities
+          in: query
+          description: Filter by severity levels
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Severity'
+          style: form
+          explode: true
+        - name: search
+          in: query
+          description: Search string to filter results
+          schema:
+            type: string
+        - name: labels
+          in: query
+          description: Filter by label-value pairs
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: page
+          in: query
+          description: Requested list page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: offset
+          in: query
+          description: Number of results per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: direction
+          in: query
+          description: Sort direction for results
+          schema:
+            $ref: '#/components/schemas/Direction'
+      responses:
+        '200':
+          description: Policy results retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultList'
+        '400':
+          description: Bad request - environment entity missing required annotations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '404':
+          description: Not Found - environment entity not found in the catalog
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '500':
+          description: Internal server error - failed to fetch policies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+        '503':
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestError'
+
 components:
   schemas:
     Status:

@@ -12,7 +12,10 @@ const environments: Environment[] = [
 describe('SelectEnvironment', () => {
   it('should render the current environment from the provider default', async () => {
     const extension = await renderInTestApp(
-      <PolicyReportsFiltersProvider defaultEnvironment="resource:default/prod">
+      <PolicyReportsFiltersProvider
+        context="namespaced"
+        defaultEnvironment="resource:default/prod"
+      >
         <SelectEnvironment environments={environments} />
       </PolicyReportsFiltersProvider>,
     );
@@ -28,7 +31,10 @@ describe('SelectEnvironment', () => {
     };
 
     const extension = await renderInTestApp(
-      <PolicyReportsFiltersProvider defaultEnvironment="resource:default/dev">
+      <PolicyReportsFiltersProvider
+        context="namespaced"
+        defaultEnvironment="resource:default/dev"
+      >
         <SelectEnvironment environments={[environment]} />
       </PolicyReportsFiltersProvider>,
     );

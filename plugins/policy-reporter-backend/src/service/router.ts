@@ -63,6 +63,21 @@ export async function createRouter(
     }
   });
 
+  router.get('/v1/cluster-resources/results', async (request, response) => {
+    try {
+      const { environment, ...query } = request.query;
+
+      const result = await policyReporterService.getClusterResourceResults({
+        entityRef: decodeURIComponent(environment),
+        query: query,
+      });
+
+      return response.status(200).json(result);
+    } catch (error) {
+      return handlePolicyReporterError(error, response);
+    }
+  });
+
   router.get('/v1/namespaces', async (request, response) => {
     try {
       const { environment, ...query } = request.query;

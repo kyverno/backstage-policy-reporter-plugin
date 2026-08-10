@@ -28,6 +28,7 @@ const renderWithEnv = (defaultFilters: Record<string, unknown> = {}) =>
       ]}
     >
       <PolicyReportsFiltersProvider
+        context="namespaced"
         defaultEnvironment="resource:default/dev"
         defaultFilters={defaultFilters}
       >

@@ -7,6 +7,7 @@ import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilter
 const renderWithProvider = (defaultFilters = {}) =>
   renderInTestApp(
     <PolicyReportsFiltersProvider
+      context="namespaced"
       defaultEnvironment="resource:default/dev"
       defaultFilters={defaultFilters}
     >
