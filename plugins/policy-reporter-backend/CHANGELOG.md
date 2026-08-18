@@ -1,5 +1,16 @@
 # @kyverno/backstage-plugin-policy-reporter-backend
 
+## 2.7.0
+
+### Minor Changes
+
+- 32f327e: Add support for fetching cluster-scoped policy results.
+
+### Patch Changes
+
+- Updated dependencies [32f327e]
+  - @kyverno/backstage-plugin-policy-reporter-common@2.6.0
+
 ## 2.6.0
 
 ### Minor Changes
