@@ -27,7 +27,7 @@ jobs:
           package-manager-cache: false
 
       - name: yarn install
-        uses: backstage/actions/yarn-install@2cd6978b476cbdc39fec48346f8b6ca13199dd6a # v0.7.8
+        uses: backstage/actions/yarn-install@0d281eb2e96927466db49d4cd01d52b14809a66b # v0.7.10
         with:
           cache-prefix: ${{ runner.os }}-v22
 
@@ -39,7 +39,7 @@ jobs:
 
       - name: Publish
         id: changesets
-        uses: changesets/action@8488615a623b1b9c987934bb89eae8af6a946ac1
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51
         with:
           version-script: node .github/changeset-version.cjs
           publish-script: yarn publish
