@@ -6,14 +6,19 @@ import { toastApiRef, useApi } from '@backstage/frontend-plugin-api';
 import { RequestError } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 export const SelectKind = () => {
-  const { filter, updateFilter, environment } = usePolicyReportsFilters();
+  const { filter, updateFilter, environment, context } =
+    usePolicyReportsFilters();
   const api = useApi(policyReporterApiRef);
   const toast = useApi(toastApiRef);
 
   const kindOptions = useAsyncList<IdentifiedOption>({
     async load({}) {
       if (!environment) return { items: [] };
-      const response = await api.getKinds({ query: { environment } });
+      const request = { query: { environment } };
+      const response =
+        context === 'cluster'
+          ? await api.getClusterKinds(request)
+          : await api.getKinds(request);
       const result = await response.json();
 
       if (!response.ok) {
@@ -47,7 +52,7 @@ export const SelectKind = () => {
 
   useEffect(() => {
     kindRef.current.reload();
-  }, [environment]);
+  }, [environment, context]);
 
   const selectedKinds = filter.kinds ?? [];
 

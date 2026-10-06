@@ -66,6 +66,10 @@ const policyReporterClusterPoliciesSubPage = SubPageBlueprint.make({
               <>
                 <SelectStatus />
                 <SelectSeverity />
+                <SelectSource />
+                <SelectKind />
+                <SelectCategory />
+                <SelectPolicy />
               </>
             }
           />

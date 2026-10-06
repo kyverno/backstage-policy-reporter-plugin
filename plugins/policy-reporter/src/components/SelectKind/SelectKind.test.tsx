@@ -1,4 +1,5 @@
 import { TestApiProvider, renderInTestApp } from '@backstage/test-utils';
+import { waitFor } from '@testing-library/react';
 import { SelectKind } from './SelectKind';
 import { policyReporterApiRef } from '../../api';
 import { PolicyReportsFiltersProvider } from '../../hooks/usePolicyReportsFilters';
@@ -9,15 +10,24 @@ const mockGetKinds = jest.fn().mockResolvedValue({
   json: jest.fn().mockResolvedValue(['Deployment', 'Pod']),
 });
 
+const mockGetClusterKinds = jest.fn().mockResolvedValue({
+  ok: true,
+  json: jest.fn().mockResolvedValue(['ClusterRole', 'Namespace']),
+});
+
 const mockPolicyReportApiRef = {
   getKinds: mockGetKinds,
+  getClusterKinds: mockGetClusterKinds,
 };
 
 const mockToastApiRef = {
   post: jest.fn(),
 };
 
-const renderWithEnv = (defaultFilters: Record<string, unknown> = {}) =>
+const renderWithEnv = (
+  defaultFilters: Record<string, unknown> = {},
+  context: 'cluster' | 'namespaced' = 'namespaced',
+) =>
   renderInTestApp(
     <TestApiProvider
       apis={[
@@ -26,7 +36,7 @@ const renderWithEnv = (defaultFilters: Record<string, unknown> = {}) =>
       ]}
     >
       <PolicyReportsFiltersProvider
-        context="namespaced"
+        context={context}
         defaultEnvironment="resource:default/dev"
         defaultFilters={defaultFilters}
       >
@@ -38,6 +48,47 @@ const renderWithEnv = (defaultFilters: Record<string, unknown> = {}) =>
 describe('SelectKind', () => {
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('should call the cluster api when context is cluster', async () => {
+    await renderWithEnv({}, 'cluster');
+
+    await waitFor(() =>
+      expect(mockGetClusterKinds).toHaveBeenCalledWith({
+        query: { environment: 'resource:default/dev' },
+      }),
+    );
+    expect(mockGetKinds).not.toHaveBeenCalled();
+  });
+
+  it('should call the namespaced api when context is namespaced', async () => {
+    await renderWithEnv({}, 'namespaced');
+
+    await waitFor(() =>
+      expect(mockGetKinds).toHaveBeenCalledWith({
+        query: { environment: 'resource:default/dev' },
+      }),
+    );
+    expect(mockGetClusterKinds).not.toHaveBeenCalled();
+  });
+
+  it('should toast when the cluster api returns a bad response', async () => {
+    mockGetClusterKinds.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: 'Internal Server Error',
+      json: jest.fn().mockResolvedValue({ error: 'Something went wrong' }),
+    });
+
+    await renderWithEnv({}, 'cluster');
+
+    await waitFor(() =>
+      expect(mockToastApiRef.post).toHaveBeenCalledWith({
+        title: 'Failed to fetch kinds',
+        description: 'Something went wrong',
+        status: 'danger',
+      }),
+    );
   });
 
   it('should render the selected kind from provider defaults', async () => {
