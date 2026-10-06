@@ -30,6 +30,56 @@ export type GetCategories = {
 /**
  * @public
  */
+export type GetClusterCategories = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+  };
+  response:
+    | Array<string>
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
+};
+/**
+ * @public
+ */
+export type GetClusterKinds = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+    namespaces?: Array<string>;
+  };
+  response:
+    | Array<string>
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
+};
+/**
+ * @public
+ */
+export type GetClusterPolicies = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+    categories?: Array<string>;
+  };
+  response:
+    | Array<string>
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
+};
+/**
+ * @public
+ */
 export type GetClusterResults = {
   query: {
     environment: string;
@@ -47,6 +97,21 @@ export type GetClusterResults = {
   };
   response:
     | ResultList
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
+};
+/**
+ * @public
+ */
+export type GetClusterSources = {
+  query: {
+    environment: string;
+  };
+  response:
+    | Array<string>
     | RequestError
     | RequestError
     | RequestError
@@ -153,7 +218,15 @@ export type GetSources = {
 export type EndpointMap = {
   '#get|/v1/namespaced-resources/categories': GetCategories;
 
+  '#get|/v1/cluster-resources/categories': GetClusterCategories;
+
+  '#get|/v1/cluster-resources/kinds': GetClusterKinds;
+
+  '#get|/v1/cluster-resources/policies': GetClusterPolicies;
+
   '#get|/v1/cluster-resources/results': GetClusterResults;
+
+  '#get|/v1/cluster-resources/sources': GetClusterSources;
 
   '#get|/v1/namespaced-resources/kinds': GetKinds;
 

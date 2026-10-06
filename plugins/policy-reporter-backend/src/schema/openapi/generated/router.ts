@@ -813,6 +813,416 @@ export const spec = {
         },
       },
     },
+    '/v1/cluster-resources/sources': {
+      get: {
+        summary: 'Get cluster sources',
+        description: 'List of all Sources with cluster scoped results',
+        operationId: 'getClusterSources',
+        parameters: [
+          {
+            name: 'environment',
+            in: 'query',
+            required: true,
+            description: 'The environment entity reference (URL encoded)',
+            schema: {
+              type: 'string',
+              example: 'default/component/my-service',
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'List of sources',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description:
+              'Bad request - environment entity missing required annotations',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '404': {
+            description:
+              'Not Found - environment entity not found in the catalog',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '500': {
+            description: 'Internal server error',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '502': {
+            description: 'Bad Gateway',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '503': {
+            description: 'Service Unavailable',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/v1/cluster-resources/kinds': {
+      get: {
+        summary: 'Get cluster kinds',
+        description:
+          'List of all Kubernetes resource kinds with cluster scoped results',
+        operationId: 'getClusterKinds',
+        parameters: [
+          {
+            name: 'environment',
+            in: 'query',
+            required: true,
+            description: 'The environment entity reference (URL encoded)',
+            schema: {
+              type: 'string',
+              example: 'default/component/my-service',
+            },
+          },
+          {
+            name: 'sources',
+            in: 'query',
+            description: 'Filter by a list of sources',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+            style: 'form',
+            explode: true,
+          },
+          {
+            name: 'namespaces',
+            in: 'query',
+            description: 'Filter by a list of namespaces',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+            style: 'form',
+            explode: true,
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'List of kinds',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description:
+              'Bad request - environment entity missing required annotations',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '404': {
+            description:
+              'Not Found - environment entity not found in the catalog',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '500': {
+            description: 'Internal server error',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '502': {
+            description: 'Bad Gateway',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '503': {
+            description: 'Service Unavailable',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/v1/cluster-resources/categories': {
+      get: {
+        summary: 'Get cluster categories',
+        description: 'List of all Categories with cluster scoped results',
+        operationId: 'getClusterCategories',
+        parameters: [
+          {
+            name: 'environment',
+            in: 'query',
+            required: true,
+            description: 'The environment entity reference (URL encoded)',
+            schema: {
+              type: 'string',
+              example: 'default/component/my-service',
+            },
+          },
+          {
+            name: 'sources',
+            in: 'query',
+            description: 'Filter by a list of sources',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+            style: 'form',
+            explode: true,
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'List of categories',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description:
+              'Bad request - environment entity missing required annotations',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '404': {
+            description:
+              'Not Found - environment entity not found in the catalog',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '500': {
+            description: 'Internal server error',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '502': {
+            description: 'Bad Gateway',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '503': {
+            description: 'Service Unavailable',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/v1/cluster-resources/policies': {
+      get: {
+        summary: 'Get cluster policies',
+        description: 'List of all Policies with cluster scoped results',
+        operationId: 'getClusterPolicies',
+        parameters: [
+          {
+            name: 'environment',
+            in: 'query',
+            required: true,
+            description: 'The environment entity reference (URL encoded)',
+            schema: {
+              type: 'string',
+              example: 'default/component/my-service',
+            },
+          },
+          {
+            name: 'sources',
+            in: 'query',
+            description: 'Filter by a list of sources',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+            style: 'form',
+            explode: true,
+          },
+          {
+            name: 'categories',
+            in: 'query',
+            description: 'Filter by a list of categories',
+            schema: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+            style: 'form',
+            explode: true,
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'List of policies',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description:
+              'Bad request - environment entity missing required annotations',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '404': {
+            description:
+              'Not Found - environment entity not found in the catalog',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '500': {
+            description: 'Internal server error - failed to fetch policies',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '502': {
+            description: 'Bad Gateway',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '503': {
+            description: 'Service Unavailable',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     '/v1/cluster-resources/results': {
       get: {
         summary: 'Get cluster policy results',
