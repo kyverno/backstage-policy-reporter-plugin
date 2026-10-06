@@ -117,6 +117,33 @@ describe('createRouter', () => {
         );
       },
     ),
+    rest.get(
+      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/sources',
+      (_req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(['kyverno', 'trivy']));
+      },
+    ),
+    rest.get(
+      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/kinds',
+      (_req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(['ClusterRole', 'Namespace']));
+      },
+    ),
+    rest.get(
+      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/categories',
+      (_req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(['Cluster Security']));
+      },
+    ),
+    rest.get(
+      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/policies',
+      (_req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.json(['require-labels', 'disallow-privileged']),
+        );
+      },
+    ),
   );
 
   beforeAll(async () => {
@@ -399,6 +426,46 @@ describe('createRouter', () => {
       expect(response.body).toStrictEqual({
         error: `Entity missing 'kyverno.io/endpoint' annotation`,
       });
+    });
+  });
+
+  describe.each([
+    ['cluster sources', 'sources', ['kyverno', 'trivy']],
+    ['cluster kinds', 'kinds', ['ClusterRole', 'Namespace']],
+    ['cluster categories', 'categories', ['Cluster Security']],
+    [
+      'cluster policy names',
+      'policies',
+      ['require-labels', 'disallow-privileged'],
+    ],
+  ])('%s', (_name, path, expected) => {
+    it('Should return 400 if entity is missing kyverno.io/endpoint annotation', async () => {
+      const response = await request(app).get(
+        `/v1/cluster-resources/${path}?environment=resource%3Adefault%2Fdev`,
+      );
+
+      expect(response.status).toBe(400);
+      expect(response.body).toStrictEqual({
+        error: `Entity missing '${KYVERNO_ENDPOINT_ANNOTATION}' annotation`,
+      });
+    });
+
+    it('Should return 404 if entity is not found in the catalog', async () => {
+      const response = await request(app).get(
+        `/v1/cluster-resources/${path}?environment=resource%3Adefault%2Finvalid`,
+      );
+
+      expect(response.status).toBe(404);
+      expect(response.body).toStrictEqual({ error: 'Entity not found' });
+    });
+
+    it('Should return 200 and valid response when entity is valid', async () => {
+      const response = await request(app).get(
+        `/v1/cluster-resources/${path}?environment=resource%3Adefault%2Fprod`,
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body).toStrictEqual(expected);
     });
   });
 });
