@@ -44,6 +44,35 @@ export type GetCategories = {
 /**
  * @public
  */
+export type GetClusterCategories = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+  };
+};
+/**
+ * @public
+ */
+export type GetClusterKinds = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+    namespaces?: Array<string>;
+  };
+};
+/**
+ * @public
+ */
+export type GetClusterPolicies = {
+  query: {
+    environment: string;
+    sources?: Array<string>;
+    categories?: Array<string>;
+  };
+};
+/**
+ * @public
+ */
 export type GetClusterResults = {
   query: {
     environment: string;
@@ -58,6 +87,14 @@ export type GetClusterResults = {
     page?: number;
     offset?: number;
     direction?: Direction;
+  };
+};
+/**
+ * @public
+ */
+export type GetClusterSources = {
+  query: {
+    environment: string;
   };
 };
 /**
@@ -167,6 +204,92 @@ export class DefaultApiClient {
   }
 
   /**
+   * List of all Categories with cluster scoped results
+   * Get cluster categories
+   * @param environment - The environment entity reference (URL encoded)
+   * @param sources - Filter by a list of sources
+   */
+  public async getClusterCategories(
+    // @ts-ignore
+    request: GetClusterCategories,
+    options?: RequestOptions,
+  ): Promise<TypedResponse<Array<string>>> {
+    const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
+
+    const uriTemplate = `/v1/cluster-resources/categories{?environment,sources*}`;
+
+    const uri = parser.parse(uriTemplate).expand({
+      ...request.query,
+    });
+
+    return await this.fetchApi.fetch(`${baseUrl}${uri}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.token && { Authorization: `Bearer ${options?.token}` }),
+      },
+      method: 'GET',
+    });
+  }
+
+  /**
+   * List of all Kubernetes resource kinds with cluster scoped results
+   * Get cluster kinds
+   * @param environment - The environment entity reference (URL encoded)
+   * @param sources - Filter by a list of sources
+   * @param namespaces - Filter by a list of namespaces
+   */
+  public async getClusterKinds(
+    // @ts-ignore
+    request: GetClusterKinds,
+    options?: RequestOptions,
+  ): Promise<TypedResponse<Array<string>>> {
+    const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
+
+    const uriTemplate = `/v1/cluster-resources/kinds{?environment,sources*,namespaces*}`;
+
+    const uri = parser.parse(uriTemplate).expand({
+      ...request.query,
+    });
+
+    return await this.fetchApi.fetch(`${baseUrl}${uri}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.token && { Authorization: `Bearer ${options?.token}` }),
+      },
+      method: 'GET',
+    });
+  }
+
+  /**
+   * List of all Policies with cluster scoped results
+   * Get cluster policies
+   * @param environment - The environment entity reference (URL encoded)
+   * @param sources - Filter by a list of sources
+   * @param categories - Filter by a list of categories
+   */
+  public async getClusterPolicies(
+    // @ts-ignore
+    request: GetClusterPolicies,
+    options?: RequestOptions,
+  ): Promise<TypedResponse<Array<string>>> {
+    const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
+
+    const uriTemplate = `/v1/cluster-resources/policies{?environment,sources*,categories*}`;
+
+    const uri = parser.parse(uriTemplate).expand({
+      ...request.query,
+    });
+
+    return await this.fetchApi.fetch(`${baseUrl}${uri}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.token && { Authorization: `Bearer ${options?.token}` }),
+      },
+      method: 'GET',
+    });
+  }
+
+  /**
    * Retrieves policy results for a specific environment with optional filtering and pagination
    * Get cluster policy results
    * @param environment - The environment entity reference (URL encoded)
@@ -190,6 +313,33 @@ export class DefaultApiClient {
     const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
 
     const uriTemplate = `/v1/cluster-resources/results{?environment,sources*,kinds*,categories*,policies*,status*,severities*,search,labels*,page,offset,direction}`;
+
+    const uri = parser.parse(uriTemplate).expand({
+      ...request.query,
+    });
+
+    return await this.fetchApi.fetch(`${baseUrl}${uri}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.token && { Authorization: `Bearer ${options?.token}` }),
+      },
+      method: 'GET',
+    });
+  }
+
+  /**
+   * List of all Sources with cluster scoped results
+   * Get cluster sources
+   * @param environment - The environment entity reference (URL encoded)
+   */
+  public async getClusterSources(
+    // @ts-ignore
+    request: GetClusterSources,
+    options?: RequestOptions,
+  ): Promise<TypedResponse<Array<string>>> {
+    const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
+
+    const uriTemplate = `/v1/cluster-resources/sources{?environment}`;
 
     const uri = parser.parse(uriTemplate).expand({
       ...request.query,

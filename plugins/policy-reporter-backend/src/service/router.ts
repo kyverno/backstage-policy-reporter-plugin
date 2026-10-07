@@ -155,6 +155,65 @@ export async function createRouter(
     }
   });
 
+  router.get('/v1/cluster-resources/sources', async (request, response) => {
+    try {
+      const { environment } = request.query;
+
+      const result = await policyReporterService.getClusterSources({
+        entityRef: decodeURIComponent(environment),
+      });
+
+      return response.status(200).json(result);
+    } catch (error) {
+      return handlePolicyReporterError(error, response);
+    }
+  });
+
+  router.get('/v1/cluster-resources/kinds', async (request, response) => {
+    try {
+      const { environment, ...query } = request.query;
+
+      const result = await policyReporterService.getClusterKinds({
+        entityRef: decodeURIComponent(environment),
+        query,
+      });
+
+      return response.status(200).json(result);
+    } catch (error) {
+      return handlePolicyReporterError(error, response);
+    }
+  });
+
+  router.get('/v1/cluster-resources/categories', async (request, response) => {
+    try {
+      const { environment, ...query } = request.query;
+
+      const result = await policyReporterService.getClusterCategories({
+        entityRef: decodeURIComponent(environment),
+        query,
+      });
+
+      return response.status(200).json(result);
+    } catch (error) {
+      return handlePolicyReporterError(error, response);
+    }
+  });
+
+  router.get('/v1/cluster-resources/policies', async (request, response) => {
+    try {
+      const { environment, ...query } = request.query;
+
+      const result = await policyReporterService.getClusterPolicies({
+        entityRef: decodeURIComponent(environment),
+        query,
+      });
+
+      return response.status(200).json(result);
+    } catch (error) {
+      return handlePolicyReporterError(error, response);
+    }
+  });
+
   const middleware = MiddlewareFactory.create({ logger, config });
 
   router.use(middleware.error());

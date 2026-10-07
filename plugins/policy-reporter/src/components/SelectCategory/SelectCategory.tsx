@@ -6,14 +6,19 @@ import { toastApiRef, useApi } from '@backstage/frontend-plugin-api';
 import { RequestError } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 export const SelectCategory = () => {
-  const { filter, updateFilter, environment } = usePolicyReportsFilters();
+  const { filter, updateFilter, environment, context } =
+    usePolicyReportsFilters();
   const api = useApi(policyReporterApiRef);
   const toast = useApi(toastApiRef);
 
   const categoryOptions = useAsyncList<IdentifiedOption>({
     async load({}) {
       if (!environment) return { items: [] };
-      const response = await api.getCategories({ query: { environment } });
+      const request = { query: { environment } };
+      const response =
+        context === 'cluster'
+          ? await api.getClusterCategories(request)
+          : await api.getCategories(request);
       const result = await response.json();
 
       if (!response.ok) {
@@ -49,7 +54,7 @@ export const SelectCategory = () => {
   // Fetch sources again after changes to the environment
   useEffect(() => {
     categoryRef.current.reload();
-  }, [environment]);
+  }, [environment, context]);
 
   const selectedCategories = filter.categories ?? [];
 

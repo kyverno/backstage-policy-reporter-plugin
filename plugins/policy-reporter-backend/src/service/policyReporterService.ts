@@ -62,6 +62,23 @@ export interface PolicyReporterApi {
     entityRef: string;
     query: Pick<Filter, 'sources' | 'namespaces' | 'categories'>;
   }): Promise<string[]>;
+
+  getClusterSources(options: { entityRef: string }): Promise<string[]>;
+
+  getClusterKinds(options: {
+    entityRef: string;
+    query: Pick<Filter, 'sources' | 'namespaces'>;
+  }): Promise<string[]>;
+
+  getClusterCategories(options: {
+    entityRef: string;
+    query: Pick<Filter, 'sources'>;
+  }): Promise<string[]>;
+
+  getClusterPolicies(options: {
+    entityRef: string;
+    query: Pick<Filter, 'sources' | 'categories'>;
+  }): Promise<string[]>;
 }
 
 export class PolicyReporterService implements PolicyReporterApi {
@@ -191,6 +208,59 @@ export class PolicyReporterService implements PolicyReporterApi {
         'v1/namespaced-resources/policies{?sources*,namespaces*,categories*}',
       query: options.query,
       operation: 'fetch policies',
+    });
+  }
+
+  async getClusterSources(options: { entityRef: string }): Promise<string[]> {
+    const baseUrl = await this.getBaseUrl(options.entityRef);
+
+    return this.request<string[]>({
+      baseUrl,
+      uriTemplate: 'v1/cluster-resources/sources',
+      query: {},
+      operation: 'fetch cluster sources',
+    });
+  }
+
+  async getClusterKinds(options: {
+    entityRef: string;
+    query: Pick<Filter, 'sources' | 'namespaces'>;
+  }): Promise<string[]> {
+    const baseUrl = await this.getBaseUrl(options.entityRef);
+
+    return this.request<string[]>({
+      baseUrl,
+      uriTemplate: 'v1/cluster-resources/kinds{?sources*,namespaces*}',
+      query: options.query,
+      operation: 'fetch cluster kinds',
+    });
+  }
+
+  async getClusterCategories(options: {
+    entityRef: string;
+    query: Pick<Filter, 'sources'>;
+  }): Promise<string[]> {
+    const baseUrl = await this.getBaseUrl(options.entityRef);
+
+    return this.request<string[]>({
+      baseUrl,
+      uriTemplate: 'v1/cluster-resources/categories{?sources*}',
+      query: options.query,
+      operation: 'fetch cluster categories',
+    });
+  }
+
+  async getClusterPolicies(options: {
+    entityRef: string;
+    query: Pick<Filter, 'sources' | 'categories'>;
+  }): Promise<string[]> {
+    const baseUrl = await this.getBaseUrl(options.entityRef);
+
+    return this.request<string[]>({
+      baseUrl,
+      uriTemplate: 'v1/cluster-resources/policies{?sources*,categories*}',
+      query: options.query,
+      operation: 'fetch cluster policies',
     });
   }
 
