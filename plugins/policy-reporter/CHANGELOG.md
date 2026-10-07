@@ -1,5 +1,20 @@
 # @kyverno/backstage-plugin-policy-reporter
 
+## 2.11.0
+
+### Minor Changes
+
+- 32f327e: Add cluster-scoped source, kind, category and policy filters.
+- 32f327e: NFS (/alpha): Add a new subpage for viewing cluster-scoped policies.
+- 32f327e: Backstage verion bump to v1.55.3
+
+### Patch Changes
+
+- Updated dependencies [32f327e]
+- Updated dependencies [32f327e]
+- Updated dependencies [32f327e]
+  - @kyverno/backstage-plugin-policy-reporter-common@2.6.0
+
 ## 2.10.0
 
 ### Minor Changes
