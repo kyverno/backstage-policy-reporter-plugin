@@ -26,6 +26,8 @@
 
 The Backstage-policy-reporter-plugin integrates [Policy Reporter](https://kyverno.github.io/policy-reporter/) with Backstage to provide a clear and detailed view of Kyverno Policies applied to your entities
 
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the request flow and package responsibilities.
+
 ## Setup Backstage with policy-reporter plugin
 
 ### Step 1: Install packages
@@ -197,3 +199,8 @@ policyReporter:
 
 > [!NOTE]
 > If you have multiple cluster with Policy Reporter API running using different credentials, configuring headers per cluster or environment is currently not supported
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development checks, required DCO
+sign-offs, and Changesets guidance.
