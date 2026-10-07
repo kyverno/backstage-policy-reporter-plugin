@@ -2,6 +2,9 @@
 
 ## Project overview
 
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the request flow, catalog configuration,
+and package responsibilities.
+
 This repository is a Yarn workspaces monorepo for the Kyverno Policy Reporter
 Backstage plugin. The published plugin code is under `plugins/`:
 
