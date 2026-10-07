@@ -197,3 +197,8 @@ policyReporter:
 
 > [!NOTE]
 > If you have multiple cluster with Policy Reporter API running using different credentials, configuring headers per cluster or environment is currently not supported
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development checks, required DCO
+sign-offs, and Changesets guidance.
