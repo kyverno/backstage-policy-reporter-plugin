@@ -5,9 +5,9 @@ app:
   packages: all
 
   # Uncomment to enable the Validating Admission Policies sub-page (new frontend system only).
-  # Requires the Policy Reporter VAP plugin, see DEVELOPMENT.md.
-  extensions:
-    - sub-page:policy-reporter/validating-admission-policies: true
+  # Requires the Policy Reporter VAP plugin available locally
+  # extensions:
+  #   - sub-page:policy-reporter/validating-admission-policies: true
 
 organization:
   name: My Company
