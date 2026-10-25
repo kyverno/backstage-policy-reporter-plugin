@@ -934,7 +934,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/VapPolicy'
+                  $ref: '#/components/schemas/PluginPolicy'
         '400':
           description: Bad request - environment entity missing required annotations
           content:
@@ -1142,9 +1142,9 @@ components:
             type: string
           description: Additional key-value properties
 
-    VapPolicy:
+    PluginPolicy:
       type: object
-      description: A ValidatingAdmissionPolicy as listed by the Policy Reporter VAP plugin
+      description: A policy as listed by a Policy Reporter plugin (for example VAP, Kyverno or Trivy)
       additionalProperties: true
       required:
         - name
@@ -1152,7 +1152,10 @@ components:
       properties:
         name:
           type: string
-          description: ValidatingAdmissionPolicy name
+          description: Policy name
+        namespace:
+          type: string
+          description: Policy namespace, only set for namespaced policies
         title:
           type: string
           description: Display title of the policy

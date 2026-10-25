@@ -10,10 +10,10 @@ import crossFetch from 'cross-fetch';
 import { pluginId } from '../pluginId';
 import * as parser from 'uri-template';
 import { Direction } from '../models/Direction.model';
+import { PluginPolicy } from '../models/PluginPolicy.model';
 import { ResultList } from '../models/ResultList.model';
 import { Severity } from '../models/Severity.model';
 import { Status } from '../models/Status.model';
-import { VapPolicy } from '../models/VapPolicy.model';
 
 /**
  * Wraps the Response type to convey a type on the json call.
@@ -528,7 +528,7 @@ export class DefaultApiClient {
     // @ts-ignore
     request: GetVapPolicies,
     options?: RequestOptions,
-  ): Promise<TypedResponse<Array<VapPolicy>>> {
+  ): Promise<TypedResponse<Array<PluginPolicy>>> {
     const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
 
     const uriTemplate = `/plugins/vap/v1/policies{?environment}`;

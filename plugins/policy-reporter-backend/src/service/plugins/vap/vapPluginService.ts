@@ -6,11 +6,11 @@ import {
 import { CatalogService } from '@backstage/plugin-catalog-node';
 import { KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { JsonObject } from '@backstage/types';
-import { VapPolicy } from '../../../schema/openapi/generated/models';
+import { PluginPolicy } from '../../../schema/openapi/generated/models';
 import { fetchUpstream, getEntityEndpoint } from '../../upstream';
 
 export interface VapPluginApi {
-  getVapPolicies(options: { entityRef: string }): Promise<VapPolicy[]>;
+  getVapPolicies(options: { entityRef: string }): Promise<PluginPolicy[]>;
 }
 
 /**
@@ -39,7 +39,9 @@ export class VapPluginService implements VapPluginApi {
     };
   }
 
-  async getVapPolicies(options: { entityRef: string }): Promise<VapPolicy[]> {
+  async getVapPolicies(options: {
+    entityRef: string;
+  }): Promise<PluginPolicy[]> {
     const baseUrl = await getEntityEndpoint({
       catalogService: this.deps.catalogService,
       authService: this.deps.authService,
@@ -47,7 +49,7 @@ export class VapPluginService implements VapPluginApi {
       annotation: KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION,
     });
 
-    return fetchUpstream<VapPolicy[]>({
+    return fetchUpstream<PluginPolicy[]>({
       logger: this.deps.logger,
       upstreamName: 'Policy Reporter VAP plugin',
       baseUrl,

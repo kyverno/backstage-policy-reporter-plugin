@@ -5,15 +5,19 @@
 // ******************************************************************
 
 /**
- * A ValidatingAdmissionPolicy as listed by the Policy Reporter VAP plugin
+ * A policy as listed by a Policy Reporter plugin (for example VAP, Kyverno or Trivy)
  * @public
  */
-export interface VapPolicy {
+export interface PluginPolicy {
   [key: string]: any;
   /**
-   * ValidatingAdmissionPolicy name
+   * Policy name
    */
   name: string;
+  /**
+   * Policy namespace, only set for namespaced policies
+   */
+  namespace?: string;
   /**
    * Display title of the policy
    */

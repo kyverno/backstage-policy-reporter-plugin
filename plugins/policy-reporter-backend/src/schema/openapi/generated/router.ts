@@ -1461,7 +1461,7 @@ export const spec = {
                 schema: {
                   type: 'array',
                   items: {
-                    $ref: '#/components/schemas/VapPolicy',
+                    $ref: '#/components/schemas/PluginPolicy',
                   },
                 },
               },
@@ -1728,16 +1728,20 @@ export const spec = {
           },
         },
       },
-      VapPolicy: {
+      PluginPolicy: {
         type: 'object',
         description:
-          'A ValidatingAdmissionPolicy as listed by the Policy Reporter VAP plugin',
+          'A policy as listed by a Policy Reporter plugin (for example VAP, Kyverno or Trivy)',
         additionalProperties: true,
         required: ['name', 'title'],
         properties: {
           name: {
             type: 'string',
-            description: 'ValidatingAdmissionPolicy name',
+            description: 'Policy name',
+          },
+          namespace: {
+            type: 'string',
+            description: 'Policy namespace, only set for namespaced policies',
           },
           title: {
             type: 'string',

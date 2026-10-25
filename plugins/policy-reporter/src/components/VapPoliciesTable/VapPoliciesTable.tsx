@@ -2,7 +2,7 @@ import { useAsync } from 'react-use';
 import {
   RequestError,
   Severity,
-  VapPolicy,
+  PluginPolicy,
 } from '@kyverno/backstage-plugin-policy-reporter-common';
 import {
   Cell,
@@ -16,7 +16,7 @@ import { toastApiRef, useApi } from '@backstage/frontend-plugin-api';
 import { policyReporterApiRef } from '../../api';
 import { SeverityComponent } from '../SeverityComponent';
 
-type VapPolicyRow = VapPolicy & { id: string };
+type PluginPolicyRow = PluginPolicy & { id: string };
 
 interface VapPoliciesTableProps {
   environment: string;
@@ -27,7 +27,7 @@ export const VapPoliciesTable = ({ environment }: VapPoliciesTableProps) => {
   const toast = useApi(toastApiRef);
 
   const { value: policies, loading } = useAsync(async (): Promise<
-    VapPolicyRow[]
+    PluginPolicyRow[]
   > => {
     const response = await policyReporterApi.getVapPolicies({
       query: { environment: encodeURI(environment) },
@@ -56,7 +56,7 @@ export const VapPoliciesTable = ({ environment }: VapPoliciesTableProps) => {
     paginationOptions: { pageSize: 20 },
   });
 
-  const columns: ColumnConfig<VapPolicyRow>[] = [
+  const columns: ColumnConfig<PluginPolicyRow>[] = [
     {
       id: 'title',
       label: 'Title',
