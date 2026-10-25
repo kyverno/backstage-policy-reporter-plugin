@@ -1,4 +1,8 @@
-import { AuthService, LoggerService } from '@backstage/backend-plugin-api';
+import {
+  AuthService,
+  LoggerService,
+  RootConfigService,
+} from '@backstage/backend-plugin-api';
 import { CatalogService } from '@backstage/plugin-catalog-node';
 import {
   ForwardedError,
@@ -6,7 +10,23 @@ import {
   NotFoundError,
   ServiceUnavailableError,
 } from '@backstage/errors';
+import { JsonObject } from '@backstage/types';
 import * as parser from 'uri-template';
+
+/**
+ * Builds the default headers for an upstream API from the request headers configured under the given config key
+ */
+export function getRequestHeaders(
+  configService: RootConfigService,
+  configKey: string,
+): Record<string, string> {
+  const headers = configService.getOptionalConfig(configKey)?.get<JsonObject>();
+
+  return {
+    'Content-Type': 'application/json',
+    ...headers,
+  };
+}
 
 /**
  * Resolves the base URL of an upstream API from an annotation on a catalog entity

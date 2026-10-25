@@ -5,9 +5,12 @@ import {
 } from '@backstage/backend-plugin-api';
 import { CatalogService } from '@backstage/plugin-catalog-node';
 import { KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
-import { JsonObject } from '@backstage/types';
 import { PluginPolicy } from '../../../schema/openapi/generated/models';
-import { fetchUpstream, getEntityEndpoint } from '../../upstream';
+import {
+  fetchUpstream,
+  getEntityEndpoint,
+  getRequestHeaders,
+} from '../../upstream';
 
 export interface VapPluginApi {
   getVapPolicies(options: { entityRef: string }): Promise<PluginPolicy[]>;
@@ -29,14 +32,10 @@ export class VapPluginService implements VapPluginApi {
       configService: RootConfigService;
     },
   ) {
-    const headers = this.deps.configService
-      .getOptionalConfig('policyReporter.plugins.vap.requestHeaders')
-      ?.get<JsonObject>();
-
-    this.defaultHeaders = {
-      'Content-Type': 'application/json',
-      ...headers,
-    };
+    this.defaultHeaders = getRequestHeaders(
+      this.deps.configService,
+      'policyReporter.plugins.vap.requestHeaders',
+    );
   }
 
   async getVapPolicies(options: {

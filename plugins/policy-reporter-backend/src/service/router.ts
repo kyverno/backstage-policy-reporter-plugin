@@ -19,7 +19,7 @@ export interface RouterOptions {
   vapPluginService: VapPluginApi;
 }
 
-function handlePolicyReporterError(
+function handleUpstreamError(
   error: unknown,
   response: express.Response,
 ): express.Response {
@@ -61,7 +61,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -76,7 +76,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -91,7 +91,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -105,7 +105,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -120,7 +120,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -137,7 +137,7 @@ export async function createRouter(
 
         return response.status(200).json(result);
       } catch (error) {
-        return handlePolicyReporterError(error, response);
+        return handleUpstreamError(error, response);
       }
     },
   );
@@ -153,7 +153,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -167,7 +167,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -182,7 +182,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -197,7 +197,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -212,7 +212,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -226,7 +226,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 

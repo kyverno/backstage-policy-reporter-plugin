@@ -10,8 +10,11 @@ import {
 } from '../schema/openapi/generated/models';
 import { CatalogService } from '@backstage/plugin-catalog-node';
 import { KYVERNO_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
-import { JsonObject } from '@backstage/types';
-import { fetchUpstream, getEntityEndpoint } from './upstream';
+import {
+  fetchUpstream,
+  getEntityEndpoint,
+  getRequestHeaders,
+} from './upstream';
 
 export interface PolicyReporterApi {
   getNamespacedResourceResults(options: {
@@ -86,14 +89,10 @@ export class PolicyReporterService implements PolicyReporterApi {
       configService: RootConfigService;
     },
   ) {
-    const headers = this.deps.configService
-      .getOptionalConfig('policyReporter.requestHeaders')
-      ?.get<JsonObject>();
-
-    this.defaultHeaders = {
-      'Content-Type': 'application/json',
-      ...headers,
-    };
+    this.defaultHeaders = getRequestHeaders(
+      this.deps.configService,
+      'policyReporter.requestHeaders',
+    );
   }
 
   async getClusterResourceResults(options: {
