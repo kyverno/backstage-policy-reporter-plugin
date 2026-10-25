@@ -65,8 +65,8 @@ initial filters, and `kyverno.io/resource-name` supplies the search value.
 The frontend falls back to `backstage.io/kubernetes-namespace` when the Kyverno
 namespace annotation is absent.
 
-See [README.md](README.md#step-4-define-kubernetes-clusters) for configuration
-examples and [docs/component-setup.md](docs/component-setup.md) for view options.
+See the [frontend plugin README](plugins/policy-reporter/README.md#catalog-setup)
+for configuration examples and the available extensions and components.
 
 ## Package responsibilities
 

@@ -1,252 +1,81 @@
-# backstage-kyverno
-
-![screenshot](docs/assets/policy-reports-page.png)
-
-<!--toc:start-->
-
-- [Description](#description)
-- [Setup Backstage with Kyverno-policy-reports](#setup-backstage-with-kyverno-policy-reports)
-  - [Step 1: Install packages](#step-1-install-packages)
-  - [Step 2: Add the route](#step-2-add-the-route)
-  - [Step 3: Add the backend plugin](#step-3-add-the-backend-plugin)
-  - [Step 4: Define Kubernetes Clusters](#step-4-define-kubernetes-clusters)
-  - [Step 5: Annotate Services](#step-5-annotate-services)
-  - [Optional: Custom policy documentation](#optional-custom-policy-documentation)
-    - [Step 1: Update the **EntityKyvernoPolicyReportsContent** component](#step-1-update-the-entitykyvernopolicyreportscontent-component)
-    - [Step 2: Configure the Policy documentation](#step-2-configure-the-policy-documentation)
-- [How to annotate services](#how-to-annotate-services)
-- [Publishing New Versions of a Package](#publishing-new-versions-of-a-package)
-  - [Step 1: Update the package.json version](#step-1-update-the-packagejson-version)
-  - [Step 2: Run Yarn Install](#step-2-run-yarn-install)
-  - [Step 3: Include the updated yarn.lock in the pull request](#step-3-include-the-updated-yarnlock-in-the-pull-request)
-  - [Step 4: Merge the branch with main](#step-4-merge-the-branch-with-main)
-  <!--toc:end-->
-
-## Description
-
-The Backstage-policy-reporter-plugin integrates [Policy Reporter](https://kyverno.github.io/policy-reporter/) with Backstage to provide a clear and detailed view of Kyverno Policies applied to your entities
-
-See [ARCHITECTURE.md](ARCHITECTURE.md) for the request flow and package responsibilities.
-
-## Setup Backstage with policy-reporter plugin
-
-### Step 1: Install packages
-
-From your backstage root directory, run the following commands:
-
-```bash
-
-yarn --cwd packages/app add @kyverno/backstage-plugin-policy-reporter
-yarn --cwd packages/backend add @kyverno/backstage-plugin-policy-reporter-backend
-
-```
-
-### Step 2: Add the route
-
-Add the desired policy-reporter component(s) to your Entity routes in `packages/app/src/components/catalog/EntityPage.tsx`
-Choose from the available components:
-
-- [EntityKyvernoPoliciesContent](/docs/component-setup.md#entitykyvernopoliciescontent) - Displays kyverno policies for an entity using the `kyverno` source
-- [EntityCustomPoliciesContent](/docs/component-setup.md#entitycustompoliciescontent) - Displays policy reports from a custom source
-
-For detailed setup instructions including screenshots, see the [Component Setup Guide](/docs/component-setup.md).
-
-#### EntityKyvernoPoliciesContent example
-
-```diff
-
-+ import { EntityKyvernoPoliciesContent } from '@kyverno/backstage-plugin-policy-reporter';
-
-const serviceEntityPage = (
-
-  <EntityLayout>
-
-    // ...
-
-+    <EntityLayout.Route path="/kyverno" title="kyverno policy">
-+      <EntityKyvernoPoliciesContent />
-+    </EntityLayout.Route>
-
-    // ..
-
-  </EntityLayout>
-)
-```
-
-### Step 3: Add the backend plugin
-
-for the new backend system, add the plugin in `packages/backend/src/index.ts`
-
-```diff
-
-const backend = createBackend();
-
-// ..
-+backend.add(import('@kyverno/backstage-plugin-policy-reporter-backend'));
-// ..
-
-backend.start();
-
-```
-
-### Step 4: Define Kubernetes Clusters
-
-In your Backstage instance, define your Kubernetes clusters using the `Resource` kind and `kubernetes-cluster` type. Add the `kyverno.io/endpoint` annotation with the URL to the Policy Reporter API for each cluster.
-
-```yaml
-apiVersion: backstage.io/v1alpha1
-kind: Resource
-metadata:
-  name: aks-dev
-  annotations:
-    # Add the Policy Reporter API endpoint as an annotation
-    kyverno.io/endpoint: http://kyverno.io/policy-reporter/api/
-spec:
-  type: kubernetes-cluster
-```
-
-#### Policy Reporter Endpoint Configuration
-
-The `kyverno.io/endpoint` annotation should point to the Policy Reporter API. Use one of the following configurations:
-
-##### When using Policy Reporter UI:
-
-- UI Version 1: Use `http://your-domain/policy-reporter/api/`
-- UI Version 2: Use `http://your-domain/policy-reporter/proxy/default/core/`
-
-##### When using standalone Policy Reporter:
-
-- The Policy Reporter backend needs to be exposed via an ingress (Ingress can be configured in the policy-reporter helmchart)
-- Point to your ingress URL that exposes the Policy Reporter API (e.g., `https://your-domain/api/`)
-
-### Step 5: Annotate Services
-
-To show the policies on the service, add a dependency to the Kubernetes cluster resource in the `catalog-info.yaml` file of your service. Ensure that the necessary annotations are added as well. For more details, refer to the [How to annotate services](#how-to-annotate-services) section.
-
-```yaml
-metadata:
-  annotations:
-    kyverno.io/namespace: default # Specify the namespace of the service
-    kyverno.io/kind: Deployment,Pod # Specify the kind(s) of the Kubernetes resource(s)
-    kyverno.io/resource-name: policy-reporter # Specify the name of the resource
-spec:
-  dependsOn:
-    # Add dependency to all environments the service is deployed to using the Resource entityRef
-    - resource:default/aks-dev
-    - resource:default/aks-tst
-    - resource:default/aks-qa
-    - resource:default/aks-prd
-```
-
-### Optional: Custom policy documentation
-
-To configure the plugin to make the policy Chip a link to custom documentation, follow the steps below.
-
-#### Step 1: Update the **EntityKyvernoPolicyReportsContent** component
-
-To enable policy Chip links, the **EntityKyvernoPolicyReportsContent** component requires the **policyDocumentationUrl** prop to be set to the URL of the documentation.
-
-```typescript
-const serviceEntityPage = (
-  <EntityLayout>
-    // ...
-    <EntityLayout.Route path="/kyverno" title="kyverno policy">
-      <EntityKyvernoPoliciesContent policyDocumentationUrl="Your full URL link" />
-    </EntityLayout.Route>
-    // ..
-  </EntityLayout>
-);
-```
-
-#### Step 2: Configure the Policy documentation
-
-The policy documentation file provided in the above step needs to follow a specific structure.
-
-All policies being used should have a header that matches the exact same name as the policy. Under this header, you can add information about the policy and provide a guide on how to solve it.
-
-The plugin will create a link using the following format: `<DocumentationUrl>#<PolicyName>`
-
-See the [example/policy-documentation.md](example/policy-documentation.md) file for an example of how this could look.
-
-## How to annotate services
-
-To use the Kyverno-Policy-Reports plugin with your services, you need to add the following annotations to your `catalog-info.yaml`:
-
-- `kyverno.io/namespace`: This annotation specifies the Kubernetes namespace where the service is located.
-  Multiple values can be separated by a comma (e.g., `default,kyverno`)
-- `kyverno.io/kind`: This annotation specifies the kind of Kubernetes resource (e.g., Deployment, StatefulSet, Pod)
-  Multiple values can be separated by a comma (e.g., `Deployment,Pod`).
-- `kyverno.io/resource-name`: This annotation specifies the name of the resource
-
-```diff
-metadata:
-  annotations:
-    # Annotations for Kyverno-Policy-Reports
-+    kyverno.io/namespace: default                   # Specify the namespace(s) of the service
-+    kyverno.io/kind: Deployment,Pod                 # Specify the kind(s) of the Kubernetes resource(s)
-+    kyverno.io/resource-name: policy-reporter       # Specify the name of the resource
-```
-
-## Authenticating to the Policy Reporter API (optional)
-
-If the Policy Reporter Core APIs sit behind a gateway/proxy that requires headers, set `policyReporter.requestHeaders` in app-config. Every outbound request to all the Policy Reporter APIs gets these headers:
-
-```yaml
-policyReporter:
-  requestHeaders:
-    Authorization: Bearer ${POLICY_REPORTER_API_TOKEN}
-```
-
-> [!NOTE]
-> If you have multiple cluster with Policy Reporter API running using different credentials, configuring headers per cluster or environment is currently not supported
-
-## Validating Admission Policies (optional)
-
-The plugin can list the Kubernetes ValidatingAdmissionPolicies (VAP) of a cluster using the [Policy Reporter VAP plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/vap). The VAP plugin is deployed separately from Policy Reporter, so it is configured separately as well.
-
-> [!NOTE]
-> The Validating Admission Policies page is currently only available in the new frontend system.
-
-### Step 1: Annotate the Kubernetes clusters
-
-Add the `kyverno.io/plugin-vap-endpoint` annotation with the base URL of the VAP plugin API to each cluster running the VAP plugin. Only clusters with this annotation are listed on the page, independent of the `kyverno.io/endpoint` annotation.
-
-```yaml
-apiVersion: backstage.io/v1alpha1
-kind: Resource
-metadata:
-  name: aks-dev
-  annotations:
-    kyverno.io/endpoint: http://kyverno.io/policy-reporter/api/
-    # Add the Policy Reporter VAP plugin API endpoint as an annotation
-    kyverno.io/plugin-vap-endpoint: http://policy-reporter-vap.policy-reporter:8080/
-spec:
-  type: kubernetes-cluster
-```
-
-### Step 2: Enable the page
-
-The page is disabled by default, since it requires the VAP plugin to be deployed. Enable it in `app-config.yaml` to add a "Validating Admission Policies" sub-page to the Policy Reporter page:
-
-```yaml
-app:
-  extensions:
-    - sub-page:policy-reporter/validating-admission-policies: true
-```
-
-### Step 3: Authenticate to the VAP plugin API (optional)
-
-The headers in `policyReporter.requestHeaders` are not sent to the VAP plugin. If the VAP plugin API requires authentication, for example basic auth, set `policyReporter.plugins.vap.requestHeaders`:
-
-```yaml
-policyReporter:
-  plugins:
-    vap:
-      requestHeaders:
-        Authorization: Basic ${POLICY_REPORTER_VAP_BASIC_AUTH}
-```
+# Backstage Policy Reporter plugin
+
+Shows [Policy Reporter](https://kyverno.github.io/policy-reporter/) results in
+Backstage. You can see which Kyverno policies (and other Policy Reporter
+sources) pass or fail for each catalog entity, and browse every policy result in
+a cluster.
+
+![Policy Reporter page](plugins/policy-reporter/docs/images/policy-reports-page.png)
+
+## Features
+
+- A **Policy Reporter** tab on entity pages with the results for that entity's
+  Kubernetes resources
+- A **Policy Reporter** page with namespaced and cluster-scoped results for each
+  cluster
+- Filters by status, severity, namespace, source, kind, category, and policy
+- An optional **Validating Admission Policies** tab, using the
+  [Policy Reporter VAP plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/vap)
+- Support for both the new and the legacy Backstage frontend systems
+
+## Packages
+
+| Package                                                                                | Install in         | Description                                                    |
+| -------------------------------------------------------------------------------------- | ------------------ | -------------------------------------------------------------- |
+| [`@kyverno/backstage-plugin-policy-reporter`](plugins/policy-reporter)                 | `packages/app`     | Frontend plugin. Setup, catalog configuration, and extensions. |
+| [`@kyverno/backstage-plugin-policy-reporter-backend`](plugins/policy-reporter-backend) | `packages/backend` | Backend plugin. Configuration and authentication.              |
+| [`@kyverno/backstage-plugin-policy-reporter-common`](plugins/policy-reporter-common)   | —                  | Shared annotations, types, and API client.                     |
+
+## Quick start
+
+1. Install the packages:
+
+   ```bash
+   yarn --cwd packages/app add @kyverno/backstage-plugin-policy-reporter
+   yarn --cwd packages/backend add @kyverno/backstage-plugin-policy-reporter-backend
+   ```
+
+2. Add the backend plugin in `packages/backend/src/index.ts`:
+
+   ```ts
+   backend.add(import('@kyverno/backstage-plugin-policy-reporter-backend'));
+   ```
+
+3. Register each cluster with its Policy Reporter API endpoint:
+
+   ```yaml
+   apiVersion: backstage.io/v1alpha1
+   kind: Resource
+   metadata:
+     name: aks-dev
+     annotations:
+       kyverno.io/endpoint: https://your-domain/policy-reporter/api/
+   spec:
+     type: kubernetes-cluster
+   ```
+
+4. Annotate your entities and add a dependency on their clusters:
+
+   ```yaml
+   metadata:
+     annotations:
+       kyverno.io/namespace: default
+       kyverno.io/kind: Deployment,Pod
+       kyverno.io/resource-name: my-service
+   spec:
+     dependsOn:
+       - resource:default/aks-dev
+   ```
+
+5. Set up the frontend. With the new frontend system and feature discovery,
+   the plugin is ready after installing it. For the legacy frontend system, or to
+   configure extensions, see the
+   [frontend plugin README](plugins/policy-reporter#new-frontend-system).
+
+The [frontend plugin README](plugins/policy-reporter) explains each step in detail.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development checks, required DCO
-sign-offs, and Changesets guidance.
+- [CONTRIBUTING.md](CONTRIBUTING.md): pull requests, DCO sign-off, and changesets
+- [DEVELOPMENT.md](DEVELOPMENT.md): local development with a Kubernetes cluster
+- [ARCHITECTURE.md](ARCHITECTURE.md): request flow and package responsibilities
