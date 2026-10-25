@@ -4,6 +4,11 @@ app:
 
   packages: all
 
+  # Uncomment to enable the Validating Admission Policies sub-page (new frontend system only).
+  # Requires the Policy Reporter VAP plugin, see DEVELOPMENT.md.
+  # extensions:
+  #   - sub-page:policy-reporter/validating-admission-policies: true
+
 organization:
   name: My Company
 
@@ -32,3 +37,11 @@ catalog:
     # Local example data, file locations are relative to the backend process, typically `packages/backend`
     - type: file
       target: ../../catalog/entities.yaml
+# Optional request headers for the Policy Reporter APIs
+# policyReporter:
+#   requestHeaders:
+#     Authorization: Bearer ${POLICY_REPORTER_API_TOKEN}
+#   plugins:
+#     vap:
+#       requestHeaders:
+#         Authorization: Basic ${POLICY_REPORTER_VAP_BASIC_AUTH}

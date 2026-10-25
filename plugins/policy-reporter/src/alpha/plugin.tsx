@@ -111,6 +111,23 @@ const policyReporterNamespacedPoliciesSubPage = SubPageBlueprint.make({
 });
 
 /** @alpha */
+// Disabled by default since it requires the separately deployed Policy Reporter VAP plugin
+const policyReporterValidatingAdmissionPoliciesSubPage = SubPageBlueprint.make({
+  name: 'validating-admission-policies',
+  disabled: true,
+  params: {
+    path: 'plugins/vap',
+    title: 'Validating Admission Policies',
+    loader: () =>
+      import('./components/VapPoliciesSubPage').then(m => (
+        <Container>
+          <m.VapPoliciesSubPage />
+        </Container>
+      )),
+  },
+});
+
+/** @alpha */
 const policyReporterEntityContent = EntityContentBlueprint.make({
   name: 'policy-reporter',
   params: {
@@ -140,5 +157,6 @@ export default createFrontendPlugin({
     policyReporterPage,
     policyReporterNamespacedPoliciesSubPage,
     policyReporterClusterPoliciesSubPage,
+    policyReporterValidatingAdmissionPoliciesSubPage,
   ],
 });

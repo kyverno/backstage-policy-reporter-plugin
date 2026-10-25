@@ -42,4 +42,17 @@ describe('SelectEnvironment', () => {
     expect(extension.getByText('Environment')).toBeTruthy();
     expect(extension.getAllByText('dev')).toBeTruthy();
   });
+
+  it('should render the controlled value without a PolicyReportsFiltersProvider', async () => {
+    const extension = await renderInTestApp(
+      <SelectEnvironment
+        environments={environments}
+        value="resource:default/test"
+        onChange={jest.fn()}
+      />,
+    );
+
+    expect(extension.getByText('Environment')).toBeTruthy();
+    expect(extension.getAllByText('test')).toBeTruthy();
+  });
 });

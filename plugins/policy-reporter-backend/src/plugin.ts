@@ -5,6 +5,7 @@ import {
 import { createRouter } from './service/router';
 import { catalogServiceRef } from '@backstage/plugin-catalog-node';
 import { PolicyReporterService } from './service/policyReporterService';
+import { VapPluginService } from './service/plugins/vap/vapPluginService';
 
 /**
  * kyvernoPolicyReportsPlugin backend plugin
@@ -30,11 +31,19 @@ export const kyvernoPolicyReportsPlugin = createBackendPlugin({
           authService,
         });
 
+        const vapPluginService = new VapPluginService({
+          logger,
+          configService: config,
+          catalogService,
+          authService,
+        });
+
         httpRouter.use(
           await createRouter({
             logger,
             config,
             policyReporterService,
+            vapPluginService,
           }),
         );
       },

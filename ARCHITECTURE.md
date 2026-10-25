@@ -27,11 +27,34 @@ Backstage frontend --> Backstage backend --> Policy Reporter API
 The same flow serves policy results and filter options such as namespaces,
 sources, and policies.
 
+### Policy Reporter plugins
+
+Policy Reporter plugins that are deployed as separate services, such as the
+[VAP plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/vap),
+follow the same flow with their own upstream:
+
+```text
+Backstage frontend --> Backstage backend --> Policy Reporter VAP plugin API
+                              |
+                              +--> Catalog service
+                                   Resolve kyverno.io/plugin-vap-endpoint
+```
+
+- Each plugin has a dedicated backend service, for example
+  `service/plugins/vap/vapPluginService.ts`, that owns its endpoint
+  annotation, request headers, and upstream calls.
+- Plugin routes are prefixed with the plugin name and mirror the upstream path,
+  for example `/plugins/vap/v1/policies` proxies `<plugin-vap-endpoint>/v1/policies`.
+- Plugins follow the naming pattern `kyverno.io/plugin-<name>-endpoint` for the
+  annotation and `policyReporter.plugins.<name>.requestHeaders` for headers.
+
 ## Catalog configuration
 
 Register each environment as a `Resource` entity with
 `spec.type: kubernetes-cluster` and a `kyverno.io/endpoint` annotation pointing to
 its Policy Reporter API base URL.
+Add a `kyverno.io/plugin-vap-endpoint` annotation pointing to the VAP plugin API
+base URL to list the cluster on the Validating Admission Policies page.
 
 The entity-specific views find environments through the entity's `spec.dependsOn`
 references. The overview pages discover matching cluster resources across the
@@ -66,7 +89,10 @@ Reporter authentication.
 
 Configure outbound Policy Reporter authentication headers through
 `policyReporter.requestHeaders` in backend configuration. These headers apply
-to all environments; per-cluster credentials are not supported. Keep secrets in
+to all environments; per-cluster credentials are not supported. Headers for the
+VAP plugin are configured separately through
+`policyReporter.plugins.vap.requestHeaders` and are never sent to the Policy
+Reporter API, and vice versa. Keep secrets in
 backend configuration, not catalog annotations or frontend code.
 
 The backend returns `404` for a missing catalog entity, `400` for a missing

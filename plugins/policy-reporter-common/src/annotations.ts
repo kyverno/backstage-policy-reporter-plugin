@@ -14,3 +14,8 @@ export const KUBERNETES_NAMESPACE_ANNOTATION =
 // The endpoint for the Policy Reporter API
 // EXAMPLE: https://kyverno.io/policy-reporter/api/
 export const KYVERNO_ENDPOINT_ANNOTATION = 'kyverno.io/endpoint';
+
+// The endpoint for the Policy Reporter ValidatingAdmissionPolicy (VAP) plugin API
+// EXAMPLE: http://policy-reporter-vap.policy-reporter:8080/
+export const KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION =
+  'kyverno.io/plugin-vap-endpoint';

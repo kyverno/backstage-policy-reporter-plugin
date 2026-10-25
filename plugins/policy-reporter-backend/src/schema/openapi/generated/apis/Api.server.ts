@@ -9,6 +9,7 @@ import { RequestError } from '../models/RequestError.model';
 import { ResultList } from '../models/ResultList.model';
 import { Severity } from '../models/Severity.model';
 import { Status } from '../models/Status.model';
+import { VapPolicy } from '../models/VapPolicy.model';
 
 /**
  * @public
@@ -214,6 +215,21 @@ export type GetSources = {
     | RequestError
     | RequestError;
 };
+/**
+ * @public
+ */
+export type GetVapPolicies = {
+  query: {
+    environment: string;
+  };
+  response:
+    | Array<VapPolicy>
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
+};
 
 export type EndpointMap = {
   '#get|/v1/namespaced-resources/categories': GetCategories;
@@ -237,4 +253,6 @@ export type EndpointMap = {
   '#get|/v1/namespaced-resources/policies': GetPolicies;
 
   '#get|/v1/namespaced-resources/sources': GetSources;
+
+  '#get|/plugins/vap/v1/policies': GetVapPolicies;
 };

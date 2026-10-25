@@ -1435,6 +1435,93 @@ export const spec = {
         },
       },
     },
+    '/plugins/vap/v1/policies': {
+      get: {
+        summary: 'Get ValidatingAdmissionPolicies',
+        description:
+          'List of all ValidatingAdmissionPolicies exposed by the Policy Reporter VAP plugin',
+        operationId: 'getVapPolicies',
+        parameters: [
+          {
+            name: 'environment',
+            in: 'query',
+            required: true,
+            description: 'The environment entity reference (URL encoded)',
+            schema: {
+              type: 'string',
+              example: 'default/component/my-service',
+            },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'List of ValidatingAdmissionPolicies',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/VapPolicy',
+                  },
+                },
+              },
+            },
+          },
+          '400': {
+            description:
+              'Bad request - environment entity missing required annotations',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '404': {
+            description:
+              'Not Found - environment entity not found in the catalog',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '500': {
+            description: 'Internal server error - failed to fetch policies',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '502': {
+            description: 'Bad Gateway',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+          '503': {
+            description: 'Service Unavailable',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/RequestError',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   components: {
     schemas: {
@@ -1638,6 +1725,35 @@ export const spec = {
               type: 'string',
             },
             description: 'Additional key-value properties',
+          },
+        },
+      },
+      VapPolicy: {
+        type: 'object',
+        description:
+          'A ValidatingAdmissionPolicy as listed by the Policy Reporter VAP plugin',
+        additionalProperties: true,
+        required: ['name', 'title'],
+        properties: {
+          name: {
+            type: 'string',
+            description: 'ValidatingAdmissionPolicy name',
+          },
+          title: {
+            type: 'string',
+            description: 'Display title of the policy',
+          },
+          category: {
+            type: 'string',
+            description: 'Policy category',
+          },
+          severity: {
+            type: 'string',
+            description: 'Policy severity',
+          },
+          description: {
+            type: 'string',
+            description: 'Policy description',
           },
         },
       },

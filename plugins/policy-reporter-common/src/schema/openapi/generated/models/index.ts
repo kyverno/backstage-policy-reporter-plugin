@@ -8,3 +8,4 @@ export * from '../models/RequestError.model';
 export * from '../models/ResultList.model';
 export * from '../models/Severity.model';
 export * from '../models/Status.model';
+export * from '../models/VapPolicy.model';

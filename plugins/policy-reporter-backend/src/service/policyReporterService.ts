@@ -3,21 +3,15 @@ import {
   LoggerService,
   RootConfigService,
 } from '@backstage/backend-plugin-api';
-import * as parser from 'uri-template';
 import {
   Filter,
   Pagination,
   ResultList,
 } from '../schema/openapi/generated/models';
 import { CatalogService } from '@backstage/plugin-catalog-node';
-import {
-  ForwardedError,
-  InputError,
-  NotFoundError,
-  ServiceUnavailableError,
-} from '@backstage/errors';
 import { KYVERNO_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { JsonObject } from '@backstage/types';
+import { fetchUpstream, getEntityEndpoint } from './upstream';
 
 export interface PolicyReporterApi {
   getNamespacedResourceResults(options: {
@@ -270,63 +264,20 @@ export class PolicyReporterService implements PolicyReporterApi {
     query: Record<string, unknown>;
     operation: string;
   }): Promise<T> {
-    const uri = parser.parse(options.uriTemplate).expand(options.query);
-    const url = `${this.ensureTrailingSlash(options.baseUrl)}${uri}`;
-
-    let response: Response;
-
-    try {
-      response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          ...this.defaultHeaders,
-        },
-      });
-    } catch (error) {
-      this.deps.logger.error(`Failed to ${options.operation} from ${url}`);
-      throw new ServiceUnavailableError(
-        `Failed to ${options.operation}`,
-        error,
-      );
-    }
-
-    if (!response.ok) {
-      this.deps.logger.warn(
-        `Policy Reporter returned ${response.status} ${response.statusText} for ${url}`,
-      );
-
-      throw new ForwardedError(
-        `Failed to ${options.operation}: ${response.status} ${response.statusText}`,
-        new Error(response.statusText),
-      );
-    }
-
-    return (await response.json()) as T;
-  }
-
-  private ensureTrailingSlash(url: string): string {
-    return url.endsWith('/') ? url : `${url}/`;
+    return fetchUpstream<T>({
+      ...options,
+      logger: this.deps.logger,
+      upstreamName: 'Policy Reporter',
+      headers: this.defaultHeaders,
+    });
   }
 
   private async getBaseUrl(entityRef: string): Promise<string> {
-    const credentials = await this.deps.authService.getOwnServiceCredentials();
-
-    const entity = await this.deps.catalogService.getEntityByRef(entityRef, {
-      credentials,
+    return getEntityEndpoint({
+      catalogService: this.deps.catalogService,
+      authService: this.deps.authService,
+      entityRef,
+      annotation: KYVERNO_ENDPOINT_ANNOTATION,
     });
-
-    if (!entity) {
-      throw new NotFoundError('Entity not found');
-    }
-
-    const baseUrl = entity.metadata.annotations?.[KYVERNO_ENDPOINT_ANNOTATION];
-
-    if (!baseUrl) {
-      throw new InputError(
-        `Entity missing '${KYVERNO_ENDPOINT_ANNOTATION}' annotation`,
-      );
-    }
-
-    return baseUrl;
   }
 }
