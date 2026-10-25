@@ -15,15 +15,13 @@ import {
 import { toastApiRef, useApi } from '@backstage/frontend-plugin-api';
 import { policyReporterApiRef } from '../../api';
 import { SeverityComponent } from '../SeverityComponent';
+import { useEnvironment } from '../../hooks/useEnvironment';
 
 type PluginPolicyRow = PluginPolicy & { id: string };
 
-interface VapPoliciesTableProps {
-  environment: string;
-}
-
-export const VapPoliciesTable = ({ environment }: VapPoliciesTableProps) => {
+export const VapPoliciesTable = () => {
   const policyReporterApi = useApi(policyReporterApiRef);
+  const { environment } = useEnvironment();
   const toast = useApi(toastApiRef);
 
   const { value: policies, loading } = useAsync(async (): Promise<

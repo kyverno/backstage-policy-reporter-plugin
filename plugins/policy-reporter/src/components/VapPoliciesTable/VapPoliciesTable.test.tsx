@@ -3,6 +3,7 @@ import { toastApiRef } from '@backstage/frontend-plugin-api';
 import { waitFor } from '@testing-library/react';
 import { policyReporterApiRef } from '../../api';
 import { VapPoliciesTable } from './VapPoliciesTable';
+import { EnvironmentProvider } from '../../hooks/useEnvironment';
 
 const mockGetVapPolicies = jest.fn();
 const mockToast = { post: jest.fn() };
@@ -15,7 +16,9 @@ const renderTable = () =>
         [toastApiRef, mockToast],
       ]}
     >
-      <VapPoliciesTable environment="resource:default/dev" />
+      <EnvironmentProvider defaultEnvironment="resource:default/dev">
+        <VapPoliciesTable />
+      </EnvironmentProvider>
     </TestApiProvider>,
   );
 

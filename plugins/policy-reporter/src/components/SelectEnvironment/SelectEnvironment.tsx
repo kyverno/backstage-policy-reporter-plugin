@@ -1,20 +1,15 @@
 import { Select } from '@backstage/ui';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Key } from 'react';
-import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
+import { useEnvironment } from '../../hooks/useEnvironment';
 
 type SelectEnvironmentProps = {
   environments: Environment[];
-  // Optional controlled mode, used by pages without a PolicyReportsFiltersProvider
-  value?: string;
-  onChange?: (environment: string) => void;
 };
 
-const EnvironmentSelect = ({
-  environments,
-  value,
-  onChange,
-}: Required<SelectEnvironmentProps>) => {
+export const SelectEnvironment = ({ environments }: SelectEnvironmentProps) => {
+  const { environment, setEnvironment } = useEnvironment();
+
   const options = environments.map(env => ({
     value: env.entityRef,
     label: env.name,
@@ -22,7 +17,7 @@ const EnvironmentSelect = ({
 
   const handleChange = (key: Key | Key[] | null) => {
     if (key === null || Array.isArray(key)) return;
-    onChange(key as string);
+    setEnvironment(key as string);
   };
 
   return (
@@ -30,40 +25,8 @@ const EnvironmentSelect = ({
       label="Environment"
       selectionMode="single"
       options={options}
-      value={value}
+      value={environment}
       onChange={handleChange}
     />
   );
-};
-
-const FiltersSelectEnvironment = ({
-  environments,
-}: Pick<SelectEnvironmentProps, 'environments'>) => {
-  const { environment, setEnvironment } = usePolicyReportsFilters();
-
-  return (
-    <EnvironmentSelect
-      environments={environments}
-      value={environment}
-      onChange={setEnvironment}
-    />
-  );
-};
-
-export const SelectEnvironment = ({
-  environments,
-  value,
-  onChange,
-}: SelectEnvironmentProps) => {
-  if (value !== undefined && onChange) {
-    return (
-      <EnvironmentSelect
-        environments={environments}
-        value={value}
-        onChange={onChange}
-      />
-    );
-  }
-
-  return <FiltersSelectEnvironment environments={environments} />;
 };
