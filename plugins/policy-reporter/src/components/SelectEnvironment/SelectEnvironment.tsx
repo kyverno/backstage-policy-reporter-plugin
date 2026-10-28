@@ -1,14 +1,14 @@
 import { Select } from '@backstage/ui';
 import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
 import { Key } from 'react';
-import { usePolicyReportsFilters } from '../../hooks/usePolicyReportsFilters';
+import { useEnvironment } from '../../hooks/useEnvironment';
 
 type SelectEnvironmentProps = {
   environments: Environment[];
 };
 
 export const SelectEnvironment = ({ environments }: SelectEnvironmentProps) => {
-  const { environment, setEnvironment } = usePolicyReportsFilters();
+  const { environment, setEnvironment } = useEnvironment();
 
   const options = environments.map(env => ({
     value: env.entityRef,

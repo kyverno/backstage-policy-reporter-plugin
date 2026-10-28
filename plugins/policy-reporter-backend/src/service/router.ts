@@ -4,6 +4,7 @@ import express from 'express';
 import { MiddlewareFactory } from '@backstage/backend-defaults/rootHttpRouter';
 import { createOpenApiRouter } from '../schema/openapi';
 import { PolicyReporterApi } from './policyReporterService';
+import { VapPluginApi } from './plugins/vap/vapPluginService';
 import {
   ForwardedError,
   InputError,
@@ -15,9 +16,10 @@ export interface RouterOptions {
   logger: LoggerService;
   config: RootConfigService;
   policyReporterService: PolicyReporterApi;
+  vapPluginService: VapPluginApi;
 }
 
-function handlePolicyReporterError(
+function handleUpstreamError(
   error: unknown,
   response: express.Response,
 ): express.Response {
@@ -43,7 +45,7 @@ function handlePolicyReporterError(
 export async function createRouter(
   options: RouterOptions,
 ): Promise<express.Router> {
-  const { logger, config, policyReporterService } = options;
+  const { logger, config, policyReporterService, vapPluginService } = options;
 
   const router = await createOpenApiRouter();
   router.use(express.json());
@@ -59,7 +61,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -74,7 +76,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -89,7 +91,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -103,7 +105,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -118,7 +120,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -135,7 +137,7 @@ export async function createRouter(
 
         return response.status(200).json(result);
       } catch (error) {
-        return handlePolicyReporterError(error, response);
+        return handleUpstreamError(error, response);
       }
     },
   );
@@ -151,7 +153,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -165,7 +167,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -180,7 +182,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -195,7 +197,7 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
     }
   });
 
@@ -210,7 +212,21 @@ export async function createRouter(
 
       return response.status(200).json(result);
     } catch (error) {
-      return handlePolicyReporterError(error, response);
+      return handleUpstreamError(error, response);
+    }
+  });
+
+  router.get('/plugins/vap/v1/policies', async (request, response) => {
+    try {
+      const { environment } = request.query;
+
+      const result = await vapPluginService.getVapPolicies({
+        entityRef: decodeURIComponent(environment),
+      });
+
+      return response.status(200).json(result);
+    } catch (error) {
+      return handleUpstreamError(error, response);
     }
   });
 

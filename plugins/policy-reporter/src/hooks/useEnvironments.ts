@@ -1,12 +1,19 @@
 import { useAsync } from 'react-use';
-import { Environment } from '@kyverno/backstage-plugin-policy-reporter-common';
+import {
+  Environment,
+  KYVERNO_ENDPOINT_ANNOTATION,
+} from '@kyverno/backstage-plugin-policy-reporter-common';
 import {
   CATALOG_FILTER_EXISTS,
   catalogApiRef,
 } from '@backstage/plugin-catalog-react';
 import { useApi } from '@backstage/core-plugin-api';
 
-export const useEnvironments = () => {
+/**
+ * Finds kubernetes-cluster Resources that have the given endpoint annotation
+ * @param annotation - The annotation an environment must have, defaults to the Policy Reporter endpoint
+ */
+export const useEnvironments = (annotation = KYVERNO_ENDPOINT_ANNOTATION) => {
   const catalogApi = useApi(catalogApiRef);
 
   const { value: environments, loading: environmentsLoading } =
@@ -16,7 +23,7 @@ export const useEnvironments = () => {
         filter: {
           kind: 'Resource',
           'spec.type': 'kubernetes-cluster',
-          'metadata.annotations.kyverno.io/endpoint': CATALOG_FILTER_EXISTS,
+          [`metadata.annotations.${annotation}`]: CATALOG_FILTER_EXISTS,
         },
       });
 
@@ -27,7 +34,7 @@ export const useEnvironments = () => {
         entityRef: `${entity.kind}:${entity.metadata.namespace}/${entity.metadata.name}`,
         name: entity.metadata.name,
       }));
-    }, []);
+    }, [annotation]);
 
   return { environments, environmentsLoading };
 };

@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { Filter } from '@kyverno/backstage-plugin-policy-reporter-common';
+import { EnvironmentProvider, useEnvironment } from './useEnvironment';
 
 export type PolicyReportsFiltersContextValue = {
   filter: Filter;
@@ -36,16 +37,12 @@ export type PolicyReportsFiltersProviderProps = PropsWithChildren<{
   context: 'cluster' | 'namespaced';
 }>;
 
-/**
- * Provides shared filter state and selected environment for all policy report
- * filter components.
- */
-export const PolicyReportsFiltersProvider = ({
+const FiltersProvider = ({
   children,
   defaultFilters,
-  defaultEnvironment,
   context,
-}: PolicyReportsFiltersProviderProps) => {
+}: Omit<PolicyReportsFiltersProviderProps, 'defaultEnvironment'>) => {
+  const { environment, setEnvironment } = useEnvironment();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const parsed = useMemo(
@@ -64,11 +61,6 @@ export const PolicyReportsFiltersProvider = ({
     () =>
       urlEnvironment ? ((parsed.filter ?? {}) as Filter) : defaultFilters ?? {},
     [parsed, urlEnvironment, defaultFilters],
-  );
-
-  const environment = useMemo(
-    () => urlEnvironment ?? defaultEnvironment,
-    [urlEnvironment, defaultEnvironment],
   );
 
   // setSearchParams is not stable (https://github.com/remix-run/react-router/issues/9991),
@@ -98,14 +90,16 @@ export const PolicyReportsFiltersProvider = ({
     [],
   );
 
+  // Initialise the URL with the default filters and environment in a single
+  // update, since EnvironmentProvider never writes to the URL on mount.
   useLayoutEffect(() => {
     if (!urlEnvironment) {
       updateParams({
         filter: defaultFilters,
-        environment: defaultEnvironment,
+        environment,
       });
     }
-  }, [defaultEnvironment, urlEnvironment, defaultFilters, updateParams]);
+  }, [environment, urlEnvironment, defaultFilters, updateParams]);
 
   const updateFilter = useCallback(
     (update: Partial<Filter>) => {
@@ -113,13 +107,6 @@ export const PolicyReportsFiltersProvider = ({
         ...prev,
         filter: { ...(prev.filter as object), ...update },
       }));
-    },
-    [updateParams],
-  );
-
-  const setEnvironment = useCallback(
-    (entityRef: string) => {
-      updateParams(prev => ({ ...prev, environment: entityRef }));
     },
     [updateParams],
   );
@@ -141,6 +128,19 @@ export const PolicyReportsFiltersProvider = ({
     </PolicyReportsFiltersContext.Provider>
   );
 };
+
+/**
+ * Provides shared filter state and selected environment for all policy report
+ * filter components. The environment is provided by an EnvironmentProvider.
+ */
+export const PolicyReportsFiltersProvider = ({
+  defaultEnvironment,
+  ...props
+}: PolicyReportsFiltersProviderProps) => (
+  <EnvironmentProvider defaultEnvironment={defaultEnvironment}>
+    <FiltersProvider {...props} />
+  </EnvironmentProvider>
+);
 
 /**
  * Hook for reading and updating policy report filters and the selected

@@ -200,6 +200,52 @@ policyReporter:
 > [!NOTE]
 > If you have multiple cluster with Policy Reporter API running using different credentials, configuring headers per cluster or environment is currently not supported
 
+## Validating Admission Policies (optional)
+
+The plugin can list the Kubernetes ValidatingAdmissionPolicies (VAP) of a cluster using the [Policy Reporter VAP plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/vap). The VAP plugin is deployed separately from Policy Reporter, so it is configured separately as well.
+
+> [!NOTE]
+> The Validating Admission Policies page is currently only available in the new frontend system.
+
+### Step 1: Annotate the Kubernetes clusters
+
+Add the `kyverno.io/plugin-vap-endpoint` annotation with the base URL of the VAP plugin API to each cluster running the VAP plugin. Only clusters with this annotation are listed on the page, independent of the `kyverno.io/endpoint` annotation.
+
+```yaml
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: aks-dev
+  annotations:
+    kyverno.io/endpoint: http://kyverno.io/policy-reporter/api/
+    # Add the Policy Reporter VAP plugin API endpoint as an annotation
+    kyverno.io/plugin-vap-endpoint: http://policy-reporter-vap.policy-reporter:8080/
+spec:
+  type: kubernetes-cluster
+```
+
+### Step 2: Enable the page
+
+The page is disabled by default, since it requires the VAP plugin to be deployed. Enable it in `app-config.yaml` to add a "Validating Admission Policies" sub-page to the Policy Reporter page:
+
+```yaml
+app:
+  extensions:
+    - sub-page:policy-reporter/validating-admission-policies: true
+```
+
+### Step 3: Authenticate to the VAP plugin API (optional)
+
+The headers in `policyReporter.requestHeaders` are not sent to the VAP plugin. If the VAP plugin API requires authentication, for example basic auth, set `policyReporter.plugins.vap.requestHeaders`:
+
+```yaml
+policyReporter:
+  plugins:
+    vap:
+      requestHeaders:
+        Authorization: Basic ${POLICY_REPORTER_VAP_BASIC_AUTH}
+```
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development checks, required DCO

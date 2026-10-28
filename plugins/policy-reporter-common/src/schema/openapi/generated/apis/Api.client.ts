@@ -10,6 +10,7 @@ import crossFetch from 'cross-fetch';
 import { pluginId } from '../pluginId';
 import * as parser from 'uri-template';
 import { Direction } from '../models/Direction.model';
+import { PluginPolicy } from '../models/PluginPolicy.model';
 import { ResultList } from '../models/ResultList.model';
 import { Severity } from '../models/Severity.model';
 import { Status } from '../models/Status.model';
@@ -154,6 +155,14 @@ export type GetPolicies = {
  * @public
  */
 export type GetSources = {
+  query: {
+    environment: string;
+  };
+};
+/**
+ * @public
+ */
+export type GetVapPolicies = {
   query: {
     environment: string;
   };
@@ -496,6 +505,33 @@ export class DefaultApiClient {
     const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
 
     const uriTemplate = `/v1/namespaced-resources/sources{?environment}`;
+
+    const uri = parser.parse(uriTemplate).expand({
+      ...request.query,
+    });
+
+    return await this.fetchApi.fetch(`${baseUrl}${uri}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.token && { Authorization: `Bearer ${options?.token}` }),
+      },
+      method: 'GET',
+    });
+  }
+
+  /**
+   * List of all ValidatingAdmissionPolicies exposed by the Policy Reporter VAP plugin
+   * Get ValidatingAdmissionPolicies
+   * @param environment - The environment entity reference (URL encoded)
+   */
+  public async getVapPolicies(
+    // @ts-ignore
+    request: GetVapPolicies,
+    options?: RequestOptions,
+  ): Promise<TypedResponse<Array<PluginPolicy>>> {
+    const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
+
+    const uriTemplate = `/plugins/vap/v1/policies{?environment}`;
 
     const uri = parser.parse(uriTemplate).expand({
       ...request.query,

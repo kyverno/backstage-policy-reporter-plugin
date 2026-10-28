@@ -8,7 +8,11 @@ import { createRouter } from './router';
 import { catalogServiceMock } from '@backstage/plugin-catalog-node/testUtils';
 import { CatalogService } from '@backstage/plugin-catalog-node';
 import { PolicyReporterService } from './policyReporterService';
-import { KYVERNO_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugin-policy-reporter-common';
+import { VapPluginService } from './plugins/vap/vapPluginService';
+import {
+  KYVERNO_ENDPOINT_ANNOTATION,
+  KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION,
+} from '@kyverno/backstage-plugin-policy-reporter-common';
 
 const mockEntities: Entity[] = [
   {
@@ -31,6 +35,22 @@ const mockEntities: Entity[] = [
       description: 'Development Cluster',
       annotations: {
         'kyverno.io/endpoint': 'http://kyverno.io/policy-reporter/api/',
+      },
+    },
+    spec: {
+      type: 'kubernetes-cluster',
+      owner: 'user:guest',
+    },
+  },
+  {
+    apiVersion: 'backstage.io/v1alpha1',
+    kind: 'Resource',
+    metadata: {
+      name: 'vap',
+      description: 'Cluster with the VAP plugin',
+      annotations: {
+        'kyverno.io/plugin-vap-endpoint':
+          'http://kyverno.io/policy-reporter-vap',
       },
     },
     spec: {
@@ -144,6 +164,22 @@ describe('createRouter', () => {
         );
       },
     ),
+    rest.get(
+      'http://kyverno.io/policy-reporter-vap/v1/policies',
+      (_req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.json([
+            {
+              category: 'Pod Security',
+              name: 'deny-privileged',
+              title: 'Deny Privileged',
+              severity: 'high',
+            },
+          ]),
+        );
+      },
+    ),
   );
 
   beforeAll(async () => {
@@ -163,10 +199,18 @@ describe('createRouter', () => {
       authService,
     });
 
+    const vapPluginService = new VapPluginService({
+      logger,
+      configService: config,
+      catalogService,
+      authService,
+    });
+
     const router = await createRouter({
       logger,
       config,
       policyReporterService,
+      vapPluginService,
     });
     app = express().use(router);
   });
@@ -466,6 +510,44 @@ describe('createRouter', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toStrictEqual(expected);
+    });
+  });
+
+  describe('vap plugin policies', () => {
+    it('Should return 400 if entity is missing kyverno.io/plugin-vap-endpoint annotation', async () => {
+      const response = await request(app).get(
+        `/plugins/vap/v1/policies?environment=resource%3Adefault%2Fprod`,
+      );
+
+      expect(response.status).toBe(400);
+      expect(response.body).toStrictEqual({
+        error: `Entity missing '${KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION}' annotation`,
+      });
+    });
+
+    it('Should return 404 if entity is not found in the catalog', async () => {
+      const response = await request(app).get(
+        `/plugins/vap/v1/policies?environment=resource%3Adefault%2Finvalid`,
+      );
+
+      expect(response.status).toBe(404);
+      expect(response.body).toStrictEqual({ error: 'Entity not found' });
+    });
+
+    it('Should return 200 and valid response when entity is valid', async () => {
+      const response = await request(app).get(
+        `/plugins/vap/v1/policies?environment=resource%3Adefault%2Fvap`,
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body).toStrictEqual([
+        {
+          category: 'Pod Security',
+          name: 'deny-privileged',
+          title: 'Deny Privileged',
+          severity: 'high',
+        },
+      ]);
     });
   });
 });

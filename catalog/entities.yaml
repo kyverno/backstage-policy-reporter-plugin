@@ -6,6 +6,7 @@ metadata:
   description: Development Cluster
   annotations:
     kyverno.io/endpoint: 'http://localhost:8080/'
+    kyverno.io/plugin-vap-endpoint: 'http://localhost:8081/'
 spec:
   type: kubernetes-cluster
   owner: user:guest
