@@ -27,20 +27,23 @@ frontend system. Workspace packages are declared in the root `package.json`.
 - No environment file or database setup is required just to build or test.
   Running the local example against a cluster does require a reachable Policy
   Reporter API; see `DEVELOPMENT.md` for optional Kind, Kyverno, and Helm setup.
+  The frontend plugin's own dev app needs neither a backend nor a cluster — it
+  serves fixture data from `plugins/policy-reporter/dev/mock`.
 
 ## Development commands
 
 Run commands from the repository root:
 
-| Purpose                                               | Command                   |
-| ----------------------------------------------------- | ------------------------- |
-| Start the default Backstage examples                  | `yarn start`              |
-| Start the migrated app with the backend               | `yarn start:app-migrated` |
-| Build all packages                                    | `yarn build:all`          |
-| Build the backend plugin only                         | `yarn build:backend`      |
-| Type-check                                            | `yarn tsc`                |
-| Clean generated build output                          | `yarn clean`              |
-| Generate the backend OpenAPI server and common client | `yarn generate`           |
+| Purpose                                               | Command                                                          |
+| ----------------------------------------------------- | ---------------------------------------------------------------- |
+| Start the default Backstage examples                  | `yarn start`                                                     |
+| Start the migrated app with the backend               | `yarn start:app-migrated`                                        |
+| Start only the frontend plugin, on fixture data       | `yarn workspace @kyverno/backstage-plugin-policy-reporter start` |
+| Build all packages                                    | `yarn build:all`                                                 |
+| Build the backend plugin only                         | `yarn build:backend`                                             |
+| Type-check                                            | `yarn tsc`                                                       |
+| Clean generated build output                          | `yarn clean`                                                     |
+| Generate the backend OpenAPI server and common client | `yarn generate`                                                  |
 
 Use `yarn start` for local development; the root `dev` script is only a
 placeholder. The root package scripts and each workspace's `package.json` are
