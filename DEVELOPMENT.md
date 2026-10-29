@@ -1,91 +1,99 @@
-# Setting Up Local Development
+# Local development
 
 ## Requirements
 
-- Node.js: This project requires Node.js version 18 or 20 to run.
-- Yarn: This project uses Yarn version 4 for package management.
-- Kind: This project uses Kind to run a local Kubernetes cluster.
-- Kubectl: This project uses Kubectl to interact with the Kubernetes cluster.
-- Policy Reporter: Ensure you have a Policy Reporter instance running. The plugin is configured to query `http://localhost:8080/api/policy-reporter`.
+- Node.js 22 or 24
+- Yarn 4 (the repository pins the version in `.yarnrc.yml`)
+- For real policy data: Docker, [Kind](https://kind.sigs.k8s.io/),
+  `kubectl`, and [Helm](https://helm.sh/)
 
-## Step 1: Install Dependencies
+## Install and start
 
-Before starting local development, install the necessary dependencies using Yarn.
-
-```sh
+```bash
 yarn install
-```
-
-## Step 2: Start Local Development
-
-Prerequired Steps (without existing Cluster)
-
-1. Create a local cluster (e.g. with Kind or Minikube)
-
-```bash
-kind create cluster -n kyverno
-```
-
-NOTE: if you get error on [too many open files](https://kind.sigs.k8s.io/docs/user/known-issues/#pod-errors-due-to-too-many-open-files) you need to increase the inotify limits.
-
-2. Install Kyverno + Kyverno PSS Policies
-
-Kyverno installs the required CRDS and you get some sample PolicyReports by installing the PSS policies.
-
-Add Helm chart
-
-```bash
-helm repo add kyverno https://kyverno.github.io/kyverno/
-helm repo add policy-reporter https://kyverno.github.io/policy-reporter
-helm repo update
-```
-
-install Kyverno + CRDs
-
-```bash
-helm upgrade --install kyverno kyverno/kyverno -n kyverno --create-namespace
-```
-
-Add Pod Security Standard Policies
-
-```bash
-helm upgrade --install kyverno-policies kyverno/kyverno-policies -n kyverno --set podSecurityStandard=restricted
-```
-
-Add Policy Reporter
-
-```bash
-helm install policy-reporter policy-reporter/policy-reporter --create-namespace -n policy-reporter --set ui.enabled=true --set kyverno-plugin.enabled=true --version ^2.0.0
-kubectl port-forward service/policy-reporter 8080:8080 -n policy-reporter
-```
-
-To start local development, use the `yarn dev` command. This command starts the local development server using the `dev` folders inside the `kyverno-policy-reports` and `kyverno-policy-reports-backend` directories.
-
-```sh
 yarn start
 ```
 
-## Optional: Setting Up Local Development Using Dev Containers
+This starts the example Backstage app (`packages/app`, legacy frontend system) on
+<http://localhost:3000> and the backend (`packages/backend`) on
+<http://localhost:7007>.
 
-Dev Containers provide a fully configured development environment that contains everything needed to start development.
+To work on the new frontend system, start the migrated app instead:
 
-1. Install Docker: Dev Containers require Docker.
-2. Install [VSCode](https://code.visualstudio.com/download). JetBrains IDEs also support Dev Containers.
-3. Install the [Remote - Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
-4. Open the project in VSCode and run the command `Remote-Containers: Reopen in Container`. This will start the Dev Container process.
+```bash
+yarn start:app-migrated
+```
 
-## Policy Reporter Configuration
+Each plugin can also run on its own through its `dev/` folder, for example
+`yarn workspace @kyverno/backstage-plugin-policy-reporter start`.
 
-Ensure that your Policy Reporter instance is running and accessible at `http://localhost:8080/api/policy-reporter`. You can adjust the configuration if your Policy Reporter instance is running on a different host or port.
+## Example catalog
 
-To change the endpoint used by the plugin locally, update the `endpoint` annotation in the `catalog/entities.yaml` file to the desired endpoint.
+The example apps load their entities from `catalog/entities.yaml`:
 
-Depending on what policies are present in your Policy Reporter instance, you might need to change the mock entity annotations used during `yarn dev` that define the policies to display.
+| Entity                      | Purpose                                                                                        |
+| --------------------------- | ---------------------------------------------------------------------------------------------- |
+| `resource:dev`              | Cluster with `kyverno.io/endpoint: http://localhost:8080/` and the VAP endpoint on port 8081.  |
+| `resource:test`             | Cluster with `kyverno.io/endpoint: http://localhost:8080/`.                                    |
+| `component:policy-reporter` | Entity annotated for the `kyverno-background-controller` resources in the `kyverno` namespace. |
 
-To update the mock entity annotations, modify the annotations in the `plugins/kyverno-policy-reports/dev/index.ts` file to match the policies available in your Policy Reporter instance.
+Change the endpoints or entity annotations there to match your cluster.
 
-## Publishing New Versions of a Package
+## Run Policy Reporter locally
 
-Include a changeset for changes to published packages. See
-[CONTRIBUTING.md](CONTRIBUTING.md#changesets) for instructions. Maintainers use the
-Changesets release workflow to prepare versions and publish packages.
+You need a Policy Reporter API with some policy reports for the plugin to show
+data. One way to get one is with Kind:
+
+1. Create a cluster:
+
+   ```bash
+   kind create cluster -n kyverno
+   ```
+
+   If pods fail with "too many open files", increase the
+   [inotify limits](https://kind.sigs.k8s.io/docs/user/known-issues/#pod-errors-due-to-too-many-open-files).
+
+2. Add the Helm repositories:
+
+   ```bash
+   helm repo add kyverno https://kyverno.github.io/kyverno/
+   helm repo add policy-reporter https://kyverno.github.io/policy-reporter
+   helm repo update
+   ```
+
+3. Install Kyverno and the Pod Security Standard policies, which create policy
+   reports:
+
+   ```bash
+   helm upgrade --install kyverno kyverno/kyverno -n kyverno --create-namespace
+   helm upgrade --install kyverno-policies kyverno/kyverno-policies -n kyverno --set podSecurityStandard=restricted
+   ```
+
+4. Install Policy Reporter and forward its API to `localhost:8080`:
+
+   ```bash
+   helm upgrade --install policy-reporter policy-reporter/policy-reporter -n policy-reporter --create-namespace
+   kubectl port-forward service/policy-reporter 8080:8080 -n policy-reporter
+   ```
+
+### Optional: Policy Reporter VAP plugin
+
+To work on the Validating Admission Policies tab, deploy the
+[Policy Reporter VAP plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/vap)
+and forward its API to `localhost:8081`. Then enable the tab in
+`app-config.yaml` (the line is already there, commented out) and run
+`yarn start:app-migrated`.
+
+To test request headers, uncomment the `policyReporter` block in
+`app-config.yaml`.
+
+## Dev Container
+
+The repository includes a [Dev Container](https://containers.dev/) in
+`.devcontainer/`. Open the repository in VS Code (or another editor that
+supports Dev Containers) and run **Dev Containers: Reopen in Container**.
+
+## Checks and releases
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the checks to run before opening a
+pull request and for how releases work with changesets.
