@@ -24,8 +24,43 @@ To work on the new frontend system, start the migrated app instead:
 yarn start:app-migrated
 ```
 
-Each plugin can also run on its own through its `dev/` folder, for example
-`yarn workspace @kyverno/backstage-plugin-policy-reporter start`.
+## Frontend only, with no backend
+
+For screenshots and for reviewing frontend changes, the frontend plugin runs on
+its own against fixture data — no backend, no cluster, no network:
+
+```bash
+yarn workspace @kyverno/backstage-plugin-policy-reporter start
+```
+
+This serves the plugin on <http://localhost:3000>:
+
+| Page                                         | Shows                                                                                                                     |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `/policy-reporter`                           | The standalone page and all three sub-page tabs, including Validating Admission Policies, which the plugin ships disabled |
+| `/catalog/default/component/policy-reporter` | The entity page, with its real header and tab bar, and the Policy Reporter tab                                            |
+
+Two fake clusters are offered in the plugin's own **Environment** dropdown:
+
+| Environment | Shows                                                      |
+| ----------- | ---------------------------------------------------------- |
+| `dev`       | Populated results and VAP policies                         |
+| `empty`     | The empty states, with every endpoint returning no results |
+
+The fixtures live in `plugins/policy-reporter/dev/mock`. `fixtures.ts` holds the
+data and `fetch.ts` maps it onto the API's routes; it is wired up in
+`dev/devApis.ts`, which swaps the API client's `fetch` rather than the client
+itself, so the generated request building still runs. A request to a route with
+no handler answers 404 rather than looking like no data, so a new endpoint shows
+up as a visible failure.
+
+The catalog is served by Backstage's own `InMemoryCatalogClient`, so the entity
+page works without a catalog backend. `@backstage/plugin-catalog` is installed as
+a dev dependency purely so that page exists to attach the tab to — the plugin
+itself does not depend on it.
+
+This dev app is only for working locally. It is not a test fixture and nothing in
+CI depends on it. For real policy data, use a cluster as described below.
 
 ## Example catalog
 
