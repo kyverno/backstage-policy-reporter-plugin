@@ -35,16 +35,16 @@ yarn workspace @kyverno/backstage-plugin-policy-reporter start
 
 This serves the plugin on <http://localhost:3000>:
 
-| Page                                         | Shows                                                                                                                     |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `/policy-reporter`                           | The standalone page and all three sub-page tabs, including Validating Admission Policies, which the plugin ships disabled |
-| `/catalog/default/component/policy-reporter` | The entity page, with its real header and tab bar, and the Policy Reporter tab                                            |
+| Page                                         | Shows                                                                                                                                              |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/policy-reporter`                           | The standalone page and all four sub-page tabs, including Validating Admission Policies and Trivy Vulnerabilities, which the plugin ships disabled |
+| `/catalog/default/component/policy-reporter` | The entity page, with its real header and tab bar, and the Policy Reporter tab                                                                     |
 
 Two fake clusters are offered in the plugin's own **Environment** dropdown:
 
 | Environment | Shows                                                      |
 | ----------- | ---------------------------------------------------------- |
-| `dev`       | Populated results and VAP policies                         |
+| `dev`       | Populated results, VAP policies and Trivy vulnerabilities  |
 | `empty`     | The empty states, with every endpoint returning no results |
 
 The fixtures live in `plugins/policy-reporter/dev/mock`. `fixtures.ts` holds the

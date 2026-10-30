@@ -1,0 +1,1 @@
+export { TrivyPoliciesTable } from './TrivyPoliciesTable';

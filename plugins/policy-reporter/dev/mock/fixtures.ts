@@ -11,6 +11,7 @@ import {
   KYVERNO_ENDPOINT_ANNOTATION,
   KYVERNO_KIND_ANNOTATION,
   KYVERNO_NAMESPACE_ANNOTATION,
+  KYVERNO_PLUGIN_TRIVY_ENDPOINT_ANNOTATION,
   KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION,
   KYVERNO_RESOURCE_NAME_ANNOTATION,
   type ListResult,
@@ -20,8 +21,18 @@ import {
 } from '@kyverno/backstage-plugin-policy-reporter-common';
 
 const CLUSTERS = [
-  { name: 'dev', description: 'Development Cluster — populated', vap: true },
-  { name: 'empty', description: 'Empty Cluster — no results', vap: false },
+  {
+    name: 'dev',
+    description: 'Development Cluster — populated',
+    vap: true,
+    trivy: true,
+  },
+  {
+    name: 'empty',
+    description: 'Empty Cluster — no results',
+    vap: false,
+    trivy: false,
+  },
 ];
 
 /** `metadata.namespace` is explicit because `useEnvironments` builds the
@@ -38,6 +49,9 @@ export const mockClusters: Entity[] = CLUSTERS.map(cluster => ({
       [KYVERNO_ENDPOINT_ANNOTATION]: 'http://localhost:8080/',
       ...(cluster.vap && {
         [KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION]: 'http://localhost:8081/',
+      }),
+      ...(cluster.trivy && {
+        [KYVERNO_PLUGIN_TRIVY_ENDPOINT_ANNOTATION]: 'http://localhost:8082/',
       }),
     },
   },
@@ -266,10 +280,88 @@ export const VAP_POLICIES: PluginPolicy[] = [
   },
 ];
 
+/**
+ * The sample response from the Trivy plugin's own README, kept verbatim:
+ * `category` is always `Vulnerability Scan`, `name` is a CVE or GHSA id, and
+ * `description` is multi-paragraph Markdown.
+ *
+ * Two rows are load-bearing rather than decoration. The gRPC-Go GHSA entry
+ * shows what multi-paragraph Markdown looks like clipped into a single-line
+ * table cell, and the three rows where `title` equals `name` show the id
+ * printed twice; both are known problems of this first table iteration, and the
+ * review pass needs them visible. Upstream severities are nearly uniform, so
+ * the table's severity ordering is exercised by its unit test rather than here.
+ */
+export const TRIVY_POLICIES: PluginPolicy[] = [
+  {
+    category: 'Vulnerability Scan',
+    name: 'GHSA-m425-mq94-257g',
+    title: 'gRPC-Go HTTP/2 Rapid Reset vulnerability',
+    description: `### Impact
+In affected releases of gRPC-Go, it is possible for an attacker to send HTTP/2 requests, cancel them, and send subsequent requests, which is valid by the HTTP/2 protocol, but would cause the gRPC-Go server to launch more concurrent method handlers than the configured maximum stream limit.
+
+### Patches
+This vulnerability was addressed by #6703 and has been included in patch releases: 1.56.3, 1.57.1, 1.58.3.  It is also included in the latest release, 1.59.0.
+
+Along with applying the patch, users should also ensure they are using the \`grpc.MaxConcurrentStreams\` server option to apply a limit to the server's resources used for any single connection.
+
+### Workarounds
+None.
+
+### References
+#6703
+`,
+    severity: 'high',
+  },
+  {
+    category: 'Vulnerability Scan',
+    name: 'GHSA-9763-4f94-gfch',
+    title: "CIRCL's Kyber: timing side-channel (kyberslash2)",
+    description: `### Impact
+On some platforms, when an attacker can time decapsulation of Kyber on forged cipher texts, they could possibly learn (parts of) the secret key.
+
+Does not apply to ephemeral usage, such as when used in the regular way in TLS.
+
+### Patches
+Patched in 1.3.7.
+
+### References
+- [kyberslash.cr.yp.to](https://kyberslash.cr.yp.to/)`,
+    severity: 'high',
+  },
+  {
+    category: 'Vulnerability Scan',
+    name: 'CVE-2021-3121',
+    title: 'CVE-2021-3121',
+    description:
+      'An issue was discovered in GoGo Protobuf before 1.3.2. plugin/unmarshal/unmarshal.go lacks certain index validation, aka the "skippy peanut butter" issue.',
+    severity: 'high',
+  },
+  {
+    category: 'Vulnerability Scan',
+    name: 'CVE-2023-44487',
+    title: 'CVE-2023-44487',
+    description:
+      'The HTTP/2 protocol allows a denial of service (server resource consumption) because request cancellation can reset many streams quickly, as exploited in the wild in August through October 2023.',
+    severity: 'high',
+  },
+  {
+    category: 'Vulnerability Scan',
+    name: 'CVE-2023-46219',
+    title: 'CVE-2023-46219',
+    description: `When saving HSTS data to an excessively long file name, curl could end up
+removing all contents, making subsequent requests using that file unaware of
+the HSTS status they should otherwise use.
+`,
+    severity: 'medium',
+  },
+];
+
 export type MockDataset = {
   namespacedResults: ListResult[];
   clusterResults: ListResult[];
   vapPolicies: PluginPolicy[];
+  trivyPolicies: PluginPolicy[];
 };
 
 const POPULATED: MockDataset = {
@@ -280,12 +372,14 @@ const POPULATED: MockDataset = {
   ),
   clusterResults: buildResults(CLUSTER_RESOURCES, CLUSTER_POLICIES, 'cluster'),
   vapPolicies: VAP_POLICIES,
+  trivyPolicies: TRIVY_POLICIES,
 };
 
 const EMPTY: MockDataset = {
   namespacedResults: [],
   clusterResults: [],
   vapPolicies: [],
+  trivyPolicies: [],
 };
 
 /**

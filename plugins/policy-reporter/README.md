@@ -16,6 +16,7 @@ policy result in a cluster.
   - [Extensions](#extensions)
   - [Configure extensions](#configure-extensions)
 - [Validating Admission Policies](#validating-admission-policies)
+- [Trivy Vulnerabilities](#trivy-vulnerabilities)
 - [Legacy frontend system](#legacy-frontend-system)
   - [EntityKyvernoPoliciesContent](#entitykyvernopoliciescontent)
   - [EntityCustomPoliciesContent](#entitycustompoliciescontent)
@@ -129,6 +130,7 @@ const app = createApp({
 | `sub-page:policy-reporter/namespaced-policy`             | Enabled  | **Namespaced Policies** tab: results for namespaced resources in a cluster.                                                                                 |
 | `sub-page:policy-reporter/cluster-policy`                | Enabled  | **Cluster Policies** tab: results for cluster-scoped resources in a cluster.                                                                                |
 | `sub-page:policy-reporter/validating-admission-policies` | Disabled | **Validating Admission Policies** tab. See [Validating Admission Policies](#validating-admission-policies).                                                 |
+| `sub-page:policy-reporter/trivy-vulnerabilities`         | Disabled | **Trivy Vulnerabilities** tab. See [Trivy Vulnerabilities](#trivy-vulnerabilities).                                                                         |
 | `entity-content:policy-reporter/policy-reporter`         | Enabled  | **Policy Reporter** tab on entity pages, showing results from the `kyverno` source. Only shown for entities with the `kyverno.io/resource-name` annotation. |
 | `api:policy-reporter`                                    | Enabled  | API client used by the extensions above.                                                                                                                    |
 
@@ -183,6 +185,48 @@ Reporter. This page is only available in the
 
 3. If the VAP plugin API requires authentication, configure
    `policyReporter.plugins.vap.requestHeaders` in the
+   [backend](https://github.com/kyverno/backstage-policy-reporter-plugin/tree/main/plugins/policy-reporter-backend#configuration).
+
+## Trivy Vulnerabilities
+
+The Policy Reporter page can list the vulnerabilities Trivy found in a cluster
+using the
+[Policy Reporter Trivy plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/trivy).
+The Trivy plugin runs as its own service, so it is set up separately from Policy
+Reporter. This page is only available in the
+[new frontend system](#new-frontend-system).
+
+The tab lists the whole cluster, sorted by severity, and is not scoped to an
+entity: the plugin API returns a flat list with no resource or namespace to
+filter on.
+
+1. Add the `kyverno.io/plugin-trivy-endpoint` annotation, set to the base URL of
+   the Trivy plugin API, to each cluster that runs the plugin. Only clusters with
+   this annotation appear on the tab. The `kyverno.io/endpoint` annotation does
+   not affect this.
+
+   ```yaml
+   apiVersion: backstage.io/v1alpha1
+   kind: Resource
+   metadata:
+     name: aks-dev
+     annotations:
+       kyverno.io/endpoint: https://your-domain/policy-reporter/api/
+       kyverno.io/plugin-trivy-endpoint: http://policy-reporter-trivy.policy-reporter:8080/
+   spec:
+     type: kubernetes-cluster
+   ```
+
+2. Enable the tab in `app-config.yaml`:
+
+   ```yaml
+   app:
+     extensions:
+       - sub-page:policy-reporter/trivy-vulnerabilities: true
+   ```
+
+3. If the Trivy plugin API requires authentication, configure
+   `policyReporter.plugins.trivy.requestHeaders` in the
    [backend](https://github.com/kyverno/backstage-policy-reporter-plugin/tree/main/plugins/policy-reporter-backend#configuration).
 
 ## Legacy frontend system
