@@ -218,6 +218,21 @@ export type GetSources = {
 /**
  * @public
  */
+export type GetTrivyPolicies = {
+  query: {
+    environment: string;
+  };
+  response:
+    | Array<PluginPolicy>
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError
+    | RequestError;
+};
+/**
+ * @public
+ */
 export type GetVapPolicies = {
   query: {
     environment: string;
@@ -253,6 +268,8 @@ export type EndpointMap = {
   '#get|/v1/namespaced-resources/policies': GetPolicies;
 
   '#get|/v1/namespaced-resources/sources': GetSources;
+
+  '#get|/plugins/trivy/v1/policies': GetTrivyPolicies;
 
   '#get|/plugins/vap/v1/policies': GetVapPolicies;
 };

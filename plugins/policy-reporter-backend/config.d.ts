@@ -15,6 +15,14 @@ export interface Config {
          */
         requestHeaders?: { [key: string]: string };
       };
+      trivy?: {
+        /**
+         * Optional HTTP headers forwarded with every outbound request to every Policy Reporter Trivy plugin API
+         * Typically used for the plugin's basic auth. Not shared with the Policy Reporter API or any other plugin.
+         * @visibility secret
+         */
+        requestHeaders?: { [key: string]: string };
+      };
     };
   };
 }

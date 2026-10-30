@@ -45,3 +45,6 @@ catalog:
 #     vap:
 #       requestHeaders:
 #         Authorization: Basic ${POLICY_REPORTER_VAP_BASIC_AUTH}
+#     trivy:
+#       requestHeaders:
+#         Authorization: Basic ${POLICY_REPORTER_TRIVY_BASIC_AUTH}

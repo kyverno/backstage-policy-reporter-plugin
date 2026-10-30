@@ -33,10 +33,11 @@ registered as a `kubernetes-cluster` resource. See
 
 All configuration is optional.
 
-| Key                                         | Type                     | Description                                                                                                  |
-| ------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| `policyReporter.requestHeaders`             | `Record<string, string>` | Headers sent with every request to every Policy Reporter API, for example to authenticate through a gateway. |
-| `policyReporter.plugins.vap.requestHeaders` | `Record<string, string>` | Headers sent with every request to every Policy Reporter VAP plugin API, for example basic auth.             |
+| Key                                           | Type                     | Description                                                                                                  |
+| --------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `policyReporter.requestHeaders`               | `Record<string, string>` | Headers sent with every request to every Policy Reporter API, for example to authenticate through a gateway. |
+| `policyReporter.plugins.vap.requestHeaders`   | `Record<string, string>` | Headers sent with every request to every Policy Reporter VAP plugin API, for example basic auth.             |
+| `policyReporter.plugins.trivy.requestHeaders` | `Record<string, string>` | Headers sent with every request to every Policy Reporter Trivy plugin API, for example basic auth.           |
 
 ```yaml
 # app-config.yaml
@@ -47,24 +48,40 @@ policyReporter:
     vap:
       requestHeaders:
         Authorization: Basic ${POLICY_REPORTER_VAP_BASIC_AUTH}
+    trivy:
+      requestHeaders:
+        Authorization: Basic ${POLICY_REPORTER_TRIVY_BASIC_AUTH}
 ```
 
 Each set of headers only goes to its own API. Headers in
-`policyReporter.requestHeaders` are never sent to the VAP plugin, and VAP headers
-are never sent to Policy Reporter.
+`policyReporter.requestHeaders` are never sent to a plugin, a plugin's headers
+are never sent to Policy Reporter, and no plugin receives another plugin's
+headers.
 
 > [!NOTE]
 > The same headers are used for every cluster. Per-cluster credentials are not
 > supported.
 
+## Policy Reporter plugins
+
+Policy Reporter plugins are deployed separately from Policy Reporter, so each one
+has its own cluster annotation, route, and headers configuration. Every route
+mirrors the upstream plugin path: `/plugins/trivy/v1/policies` proxies
+`<plugin-trivy-endpoint>/v1/policies`.
+
+| Plugin | Cluster annotation                 | Route                            | Headers config                                |
+| ------ | ---------------------------------- | -------------------------------- | --------------------------------------------- |
+| VAP    | `kyverno.io/plugin-vap-endpoint`   | `GET /plugins/vap/v1/policies`   | `policyReporter.plugins.vap.requestHeaders`   |
+| Trivy  | `kyverno.io/plugin-trivy-endpoint` | `GET /plugins/trivy/v1/policies` | `policyReporter.plugins.trivy.requestHeaders` |
+
 ## Errors
 
-| Status | Cause                                                                                             |
-| ------ | ------------------------------------------------------------------------------------------------- |
-| `400`  | The cluster entity has no `kyverno.io/endpoint` (or `kyverno.io/plugin-vap-endpoint`) annotation. |
-| `404`  | The cluster entity does not exist in the catalog.                                                 |
-| `502`  | Policy Reporter returned an unsuccessful response.                                                |
-| `503`  | The backend could not reach Policy Reporter.                                                      |
+| Status | Cause                                                                                                                                |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `400`  | The cluster entity has no `kyverno.io/endpoint` (or the `kyverno.io/plugin-<name>-endpoint` annotation of the plugin being queried). |
+| `404`  | The cluster entity does not exist in the catalog.                                                                                    |
+| `502`  | Policy Reporter returned an unsuccessful response.                                                                                   |
+| `503`  | The backend could not reach Policy Reporter.                                                                                         |
 
 The API is defined in
 [`openapi.yaml`](https://github.com/kyverno/backstage-policy-reporter-plugin/blob/main/plugins/policy-reporter-backend/src/schema/openapi.yaml).
