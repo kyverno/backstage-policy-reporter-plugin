@@ -2,7 +2,7 @@ import { mockServices } from '@backstage/backend-test-utils';
 import express from 'express';
 import request from 'supertest';
 import { setupServer } from 'msw/node';
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { Entity } from '@backstage/catalog-model';
 import { createRouter } from './router';
 import { catalogServiceMock } from '@backstage/plugin-catalog-node/testUtils';
@@ -65,125 +65,90 @@ describe('createRouter', () => {
 
   const server = setupServer(
     // Setup the mock response for Connector alter offset
-    rest.get(
+    http.get(
       'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/results',
-      (_req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json({
-            count: 0,
-            items: [],
-          }),
-        );
-      },
+      () =>
+        HttpResponse.json({
+          count: 0,
+          items: [],
+        }),
     ),
-    rest.get(
+    http.get(
       'http://kyverno.io/policy-reporter/api/v1/cluster-resources/results',
-      (_req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json({
-            count: 1,
-            items: [
-              {
-                source: 'kyverno',
-                kind: 'Namespace',
-                name: 'kube-system',
-                status: 'pass',
-              },
-            ],
-          }),
-        );
-      },
-    ),
-    rest.get(
-      'http://kyverno.io/policy-reporter/api/v1/namespaces',
-      (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(['default', 'kube-system']));
-      },
-    ),
-    rest.get(
-      'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/sources',
-      (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(['kyverno', 'trivy']));
-      },
-    ),
-    rest.get(
-      'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/kinds',
-      (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(['Deployment', 'Pod']));
-      },
-    ),
-
-    rest.get(
-      'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/categories',
-      (_req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json([
-            'Pod Security Standards (Default)',
-            'Pod Security Standards (Restricted)',
-          ]),
-        );
-      },
-    ),
-
-    rest.get(
-      'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/policies',
-      (_req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json(['require-non-root-groups', 'require-request-limits']),
-        );
-      },
-    ),
-    rest.get(
-      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/sources',
-      (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(['kyverno', 'trivy']));
-      },
-    ),
-    rest.get(
-      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/kinds',
-      (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(['ClusterRole', 'Namespace']));
-      },
-    ),
-    rest.get(
-      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/categories',
-      (_req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(['Cluster Security']));
-      },
-    ),
-    rest.get(
-      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/policies',
-      (_req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json(['require-labels', 'disallow-privileged']),
-        );
-      },
-    ),
-    rest.get(
-      'http://kyverno.io/policy-reporter-vap/v1/policies',
-      (_req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json([
+      () =>
+        HttpResponse.json({
+          count: 1,
+          items: [
             {
-              category: 'Pod Security',
-              name: 'deny-privileged',
-              title: 'Deny Privileged',
-              severity: 'high',
+              source: 'kyverno',
+              kind: 'Namespace',
+              name: 'kube-system',
+              status: 'pass',
             },
-          ]),
-        );
-      },
+          ],
+        }),
+    ),
+    http.get('http://kyverno.io/policy-reporter/api/v1/namespaces', () =>
+      HttpResponse.json(['default', 'kube-system']),
+    ),
+    http.get(
+      'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/sources',
+      () => HttpResponse.json(['kyverno', 'trivy']),
+    ),
+    http.get(
+      'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/kinds',
+      () => HttpResponse.json(['Deployment', 'Pod']),
+    ),
+
+    http.get(
+      'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/categories',
+      () =>
+        HttpResponse.json([
+          'Pod Security Standards (Default)',
+          'Pod Security Standards (Restricted)',
+        ]),
+    ),
+
+    http.get(
+      'http://kyverno.io/policy-reporter/api/v1/namespaced-resources/policies',
+      () =>
+        HttpResponse.json([
+          'require-non-root-groups',
+          'require-request-limits',
+        ]),
+    ),
+    http.get(
+      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/sources',
+      () => HttpResponse.json(['kyverno', 'trivy']),
+    ),
+    http.get(
+      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/kinds',
+      () => HttpResponse.json(['ClusterRole', 'Namespace']),
+    ),
+    http.get(
+      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/categories',
+      () => HttpResponse.json(['Cluster Security']),
+    ),
+    http.get(
+      'http://kyverno.io/policy-reporter/api/v1/cluster-resources/policies',
+      () => HttpResponse.json(['require-labels', 'disallow-privileged']),
+    ),
+    http.get('http://kyverno.io/policy-reporter-vap/v1/policies', () =>
+      HttpResponse.json([
+        {
+          category: 'Pod Security',
+          name: 'deny-privileged',
+          title: 'Deny Privileged',
+          severity: 'high',
+        },
+      ]),
     ),
   );
 
   beforeAll(async () => {
-    server.listen({});
+    // supertest issues real loopback requests to the Express server under
+    // test, so unhandled requests must be allowed through.
+    server.listen({ onUnhandledRequest: 'warn' });
     const logger = mockServices.logger.mock();
     const config = mockServices.rootConfig();
     const authService = mockServices.auth();
