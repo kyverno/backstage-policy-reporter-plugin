@@ -15,14 +15,15 @@ yarn add @kyverno/backstage-plugin-policy-reporter-common
 
 ## Annotations
 
-| Constant                                 | Annotation                          | Set on             | Description                                                    |
-| ---------------------------------------- | ----------------------------------- | ------------------ | -------------------------------------------------------------- |
-| `KYVERNO_ENDPOINT_ANNOTATION`            | `kyverno.io/endpoint`               | Cluster `Resource` | Base URL of the cluster's Policy Reporter API.                 |
-| `KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION` | `kyverno.io/plugin-vap-endpoint`    | Cluster `Resource` | Base URL of the cluster's Policy Reporter VAP plugin API.      |
-| `KYVERNO_RESOURCE_NAME_ANNOTATION`       | `kyverno.io/resource-name`          | Entity             | Name of the Kubernetes resource(s) to show policy results for. |
-| `KYVERNO_NAMESPACE_ANNOTATION`           | `kyverno.io/namespace`              | Entity             | Namespace(s) of the resource, comma-separated.                 |
-| `KYVERNO_KIND_ANNOTATION`                | `kyverno.io/kind`                   | Entity             | Kubernetes kind(s) of the resource, comma-separated.           |
-| `KUBERNETES_NAMESPACE_ANNOTATION`        | `backstage.io/kubernetes-namespace` | Entity             | Used for the namespace when `kyverno.io/namespace` is not set. |
+| Constant                                   | Annotation                          | Set on             | Description                                                    |
+| ------------------------------------------ | ----------------------------------- | ------------------ | -------------------------------------------------------------- |
+| `KYVERNO_ENDPOINT_ANNOTATION`              | `kyverno.io/endpoint`               | Cluster `Resource` | Base URL of the cluster's Policy Reporter API.                 |
+| `KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION`   | `kyverno.io/plugin-vap-endpoint`    | Cluster `Resource` | Base URL of the cluster's Policy Reporter VAP plugin API.      |
+| `KYVERNO_PLUGIN_TRIVY_ENDPOINT_ANNOTATION` | `kyverno.io/plugin-trivy-endpoint`  | Cluster `Resource` | Base URL of the cluster's Policy Reporter Trivy plugin API.    |
+| `KYVERNO_RESOURCE_NAME_ANNOTATION`         | `kyverno.io/resource-name`          | Entity             | Name of the Kubernetes resource(s) to show policy results for. |
+| `KYVERNO_NAMESPACE_ANNOTATION`             | `kyverno.io/namespace`              | Entity             | Namespace(s) of the resource, comma-separated.                 |
+| `KYVERNO_KIND_ANNOTATION`                  | `kyverno.io/kind`                   | Entity             | Kubernetes kind(s) of the resource, comma-separated.           |
+| `KUBERNETES_NAMESPACE_ANNOTATION`          | `backstage.io/kubernetes-namespace` | Entity             | Used for the namespace when `kyverno.io/namespace` is not set. |
 
 See [Catalog setup](https://github.com/kyverno/backstage-policy-reporter-plugin/tree/main/plugins/policy-reporter#catalog-setup)
 for how to use them.

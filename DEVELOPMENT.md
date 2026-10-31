@@ -35,16 +35,16 @@ yarn workspace @kyverno/backstage-plugin-policy-reporter start
 
 This serves the plugin on <http://localhost:3000>:
 
-| Page                                         | Shows                                                                                                                     |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `/policy-reporter`                           | The standalone page and all three sub-page tabs, including Validating Admission Policies, which the plugin ships disabled |
-| `/catalog/default/component/policy-reporter` | The entity page, with its real header and tab bar, and the Policy Reporter tab                                            |
+| Page                                         | Shows                                                                                                                                              |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/policy-reporter`                           | The standalone page and all four sub-page tabs, including Validating Admission Policies and Trivy Vulnerabilities, which the plugin ships disabled |
+| `/catalog/default/component/policy-reporter` | The entity page, with its real header and tab bar, and the Policy Reporter tab                                                                     |
 
 Two fake clusters are offered in the plugin's own **Environment** dropdown:
 
 | Environment | Shows                                                      |
 | ----------- | ---------------------------------------------------------- |
-| `dev`       | Populated results and VAP policies                         |
+| `dev`       | Populated results, VAP policies and Trivy vulnerabilities  |
 | `empty`     | The empty states, with every endpoint returning no results |
 
 The fixtures live in `plugins/policy-reporter/dev/mock`. `fixtures.ts` holds the
@@ -66,11 +66,11 @@ CI depends on it. For real policy data, use a cluster as described below.
 
 The example apps load their entities from `catalog/entities.yaml`:
 
-| Entity                      | Purpose                                                                                        |
-| --------------------------- | ---------------------------------------------------------------------------------------------- |
-| `resource:dev`              | Cluster with `kyverno.io/endpoint: http://localhost:8080/` and the VAP endpoint on port 8081.  |
-| `resource:test`             | Cluster with `kyverno.io/endpoint: http://localhost:8080/`.                                    |
-| `component:policy-reporter` | Entity annotated for the `kyverno-background-controller` resources in the `kyverno` namespace. |
+| Entity                      | Purpose                                                                                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `resource:dev`              | Cluster with `kyverno.io/endpoint: http://localhost:8080/`, the VAP endpoint on port 8081, and the Trivy endpoint on port 8082. |
+| `resource:test`             | Cluster with `kyverno.io/endpoint: http://localhost:8080/`.                                                                     |
+| `component:policy-reporter` | Entity annotated for the `kyverno-background-controller` resources in the `kyverno` namespace.                                  |
 
 Change the endpoints or entity annotations there to match your cluster.
 
@@ -118,6 +118,12 @@ To work on the Validating Admission Policies tab, deploy the
 and forward its API to `localhost:8081`. Then enable the tab in
 `app-config.yaml` (the line is already there, commented out) and run
 `yarn start:app-migrated`.
+
+### Optional: Policy Reporter Trivy plugin
+
+To work on the Trivy vulnerabilities page, deploy the
+[Policy Reporter Trivy plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/trivy)
+and forward its API to `localhost:8082`.
 
 To test request headers, uncomment the `policyReporter` block in
 `app-config.yaml`.

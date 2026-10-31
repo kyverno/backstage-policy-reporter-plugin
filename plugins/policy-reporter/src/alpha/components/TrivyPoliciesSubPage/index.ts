@@ -1,0 +1,1 @@
+export { TrivyPoliciesSubPage } from './TrivyPoliciesSubPage';

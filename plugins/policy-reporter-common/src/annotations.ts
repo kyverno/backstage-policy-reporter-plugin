@@ -19,3 +19,8 @@ export const KYVERNO_ENDPOINT_ANNOTATION = 'kyverno.io/endpoint';
 // EXAMPLE: http://policy-reporter-vap.policy-reporter:8080/
 export const KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION =
   'kyverno.io/plugin-vap-endpoint';
+
+// The endpoint for the Policy Reporter Trivy plugin API
+// EXAMPLE: http://policy-reporter-trivy.policy-reporter:8080/
+export const KYVERNO_PLUGIN_TRIVY_ENDPOINT_ANNOTATION =
+  'kyverno.io/plugin-trivy-endpoint';

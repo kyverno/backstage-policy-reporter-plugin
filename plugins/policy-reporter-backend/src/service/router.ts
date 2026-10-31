@@ -4,7 +4,7 @@ import express from 'express';
 import { MiddlewareFactory } from '@backstage/backend-defaults/rootHttpRouter';
 import { createOpenApiRouter } from '../schema/openapi';
 import { PolicyReporterApi } from './policyReporterService';
-import { VapPluginApi } from './plugins/vap/vapPluginService';
+import { PluginPolicyApi } from './plugins/pluginPolicyService';
 import {
   ForwardedError,
   InputError,
@@ -16,7 +16,8 @@ export interface RouterOptions {
   logger: LoggerService;
   config: RootConfigService;
   policyReporterService: PolicyReporterApi;
-  vapPluginService: VapPluginApi;
+  vapPluginService: PluginPolicyApi;
+  trivyPluginService: PluginPolicyApi;
 }
 
 function handleUpstreamError(
@@ -45,7 +46,13 @@ function handleUpstreamError(
 export async function createRouter(
   options: RouterOptions,
 ): Promise<express.Router> {
-  const { logger, config, policyReporterService, vapPluginService } = options;
+  const {
+    logger,
+    config,
+    policyReporterService,
+    vapPluginService,
+    trivyPluginService,
+  } = options;
 
   const router = await createOpenApiRouter();
   router.use(express.json());
@@ -220,7 +227,21 @@ export async function createRouter(
     try {
       const { environment } = request.query;
 
-      const result = await vapPluginService.getVapPolicies({
+      const result = await vapPluginService.listPolicies({
+        entityRef: decodeURIComponent(environment),
+      });
+
+      return response.status(200).json(result);
+    } catch (error) {
+      return handleUpstreamError(error, response);
+    }
+  });
+
+  router.get('/plugins/trivy/v1/policies', async (request, response) => {
+    try {
+      const { environment } = request.query;
+
+      const result = await trivyPluginService.listPolicies({
         entityRef: decodeURIComponent(environment),
       });
 

@@ -128,6 +128,23 @@ const policyReporterValidatingAdmissionPoliciesSubPage = SubPageBlueprint.make({
 });
 
 /** @alpha */
+// Disabled by default since it requires the separately deployed Policy Reporter Trivy plugin
+const policyReporterTrivyVulnerabilitiesSubPage = SubPageBlueprint.make({
+  name: 'trivy-vulnerabilities',
+  disabled: true,
+  params: {
+    path: 'plugins/trivy',
+    title: 'Trivy Vulnerabilities',
+    loader: () =>
+      import('./components/TrivyPoliciesSubPage').then(m => (
+        <Container>
+          <m.TrivyPoliciesSubPage />
+        </Container>
+      )),
+  },
+});
+
+/** @alpha */
 const policyReporterEntityContent = EntityContentBlueprint.make({
   name: 'policy-reporter',
   params: {
@@ -158,5 +175,6 @@ export default createFrontendPlugin({
     policyReporterNamespacedPoliciesSubPage,
     policyReporterClusterPoliciesSubPage,
     policyReporterValidatingAdmissionPoliciesSubPage,
+    policyReporterTrivyVulnerabilitiesSubPage,
   ],
 });

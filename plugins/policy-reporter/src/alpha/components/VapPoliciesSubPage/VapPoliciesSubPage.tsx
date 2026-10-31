@@ -4,7 +4,7 @@ import { KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION } from '@kyverno/backstage-plugi
 import { useEnvironments } from '../../../hooks/useEnvironments';
 import { EnvironmentProvider } from '../../../hooks/useEnvironment';
 import { SelectEnvironment } from '../../../components/SelectEnvironment';
-import { MissingVapPlugin } from '../../../components/MissingVapPlugin';
+import { MissingPlugin } from '../../../components/MissingPlugin';
 import { VapPoliciesTable } from '../../../components/VapPoliciesTable';
 
 export const VapPoliciesSubPage = () => {
@@ -16,7 +16,13 @@ export const VapPoliciesSubPage = () => {
   if (environmentsLoading) return <Progress />;
 
   // Environment missing
-  if (!environments?.length) return <MissingVapPlugin />;
+  if (!environments?.length)
+    return (
+      <MissingPlugin
+        plugin="VAP"
+        annotation={KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION}
+      />
+    );
 
   return (
     <EnvironmentProvider defaultEnvironment={environments[0].entityRef}>
