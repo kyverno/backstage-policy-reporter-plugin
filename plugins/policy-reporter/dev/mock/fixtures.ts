@@ -281,16 +281,7 @@ export const VAP_POLICIES: PluginPolicy[] = [
 ];
 
 /**
- * The sample response from the Trivy plugin's own README, kept verbatim:
- * `category` is always `Vulnerability Scan`, `name` is a CVE or GHSA id, and
- * `description` is multi-paragraph Markdown.
- *
- * Two rows are load-bearing rather than decoration. The gRPC-Go GHSA entry
- * shows what multi-paragraph Markdown looks like clipped into a single-line
- * table cell, and the three rows where `title` equals `name` show the id
- * printed twice; both are known problems of this first table iteration, and the
- * review pass needs them visible. Upstream severities are nearly uniform, so
- * the table's severity ordering is exercised by its unit test rather than here.
+ * The sample response from the Trivy plugin's own README
  */
 export const TRIVY_POLICIES: PluginPolicy[] = [
   {

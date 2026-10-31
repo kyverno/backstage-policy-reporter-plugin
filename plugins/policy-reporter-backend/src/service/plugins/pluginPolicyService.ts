@@ -11,13 +11,6 @@ import {
   getRequestHeaders,
 } from '../upstream';
 
-/**
- * Describes a Policy Reporter plugin API, which is deployed separately from
- * Policy Reporter and therefore has its own endpoint annotation and its own
- * request headers.
- *
- * @public
- */
 export interface PluginDescriptor {
   // The catalog annotation holding the plugin API base URL
   annotation: string;
@@ -27,11 +20,6 @@ export interface PluginDescriptor {
   displayName: string;
 }
 
-/**
- * The plugin policy listing a {@link RouterOptions} plugin service must provide.
- *
- * @public
- */
 export interface PluginPolicyApi {
   listPolicies(options: {
     entityRef: string;
