@@ -80,8 +80,8 @@ mirrors the upstream plugin path: `/plugins/trivy/v1/policies` proxies
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `400`  | The cluster entity has no `kyverno.io/endpoint` (or the `kyverno.io/plugin-<name>-endpoint` annotation of the plugin being queried). |
 | `404`  | The cluster entity does not exist in the catalog.                                                                                    |
-| `502`  | Policy Reporter returned an unsuccessful response.                                                                                   |
-| `503`  | The backend could not reach Policy Reporter.                                                                                         |
+| `502`  | Policy Reporter, or the plugin API being queried, returned an unsuccessful response.                                                 |
+| `503`  | The backend could not reach Policy Reporter, or the plugin API being queried.                                                        |
 
 The API is defined in
 [`openapi.yaml`](https://github.com/kyverno/backstage-policy-reporter-plugin/blob/main/plugins/policy-reporter-backend/src/schema/openapi.yaml).

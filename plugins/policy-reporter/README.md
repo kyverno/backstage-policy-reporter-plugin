@@ -15,8 +15,9 @@ policy result in a cluster.
 - [New frontend system](#new-frontend-system)
   - [Extensions](#extensions)
   - [Configure extensions](#configure-extensions)
-- [Validating Admission Policies](#validating-admission-policies)
-- [Trivy Vulnerabilities](#trivy-vulnerabilities)
+- [Plugin sub-pages](#plugin-sub-pages)
+  - [Validating Admission Policies](#validating-admission-policies)
+  - [Trivy Vulnerabilities](#trivy-vulnerabilities)
 - [Legacy frontend system](#legacy-frontend-system)
   - [EntityKyvernoPoliciesContent](#entitykyvernopoliciescontent)
   - [EntityCustomPoliciesContent](#entitycustompoliciescontent)
@@ -147,21 +148,24 @@ app:
     - sub-page:policy-reporter/validating-admission-policies: true
 ```
 
-## Validating Admission Policies
+## Plugin sub-pages
 
-The Policy Reporter page can list a cluster's Kubernetes
-ValidatingAdmissionPolicies (VAP) using the
-[Policy Reporter VAP plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/vap).
-The VAP plugin runs as its own service, so it is set up separately from Policy
-Reporter. This page is only available in the
-[new frontend system](#new-frontend-system).
+Policy Reporter's plugins each run as their own service, so each is set up
+separately from Policy Reporter, and each adds its own tab to the Policy
+Reporter page. These tabs are only available in the
+[new frontend system](#new-frontend-system) and are disabled by default.
 
-![Validating Admission Policies](https://raw.githubusercontent.com/kyverno/backstage-policy-reporter-plugin/main/plugins/policy-reporter/docs/images/vap-sub-page.png)
+| Tab                               | Upstream plugin                                                                     | Cluster annotation                 | Extension ID                                             | Request headers config                        |
+| --------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------------- | -------------------------------------------------------- | --------------------------------------------- |
+| **Validating Admission Policies** | [VAP](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/vap)     | `kyverno.io/plugin-vap-endpoint`   | `sub-page:policy-reporter/validating-admission-policies` | `policyReporter.plugins.vap.requestHeaders`   |
+| **Trivy Vulnerabilities**         | [Trivy](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/trivy) | `kyverno.io/plugin-trivy-endpoint` | `sub-page:policy-reporter/trivy-vulnerabilities`         | `policyReporter.plugins.trivy.requestHeaders` |
 
-1. Add the `kyverno.io/plugin-vap-endpoint` annotation, set to the base URL of
-   the VAP plugin API, to each cluster that runs the plugin. Only clusters with
-   this annotation appear on the tab. The `kyverno.io/endpoint` annotation does
-   not affect this.
+Each tab is set up the same way. The steps below use the VAP values; substitute
+the row for the tab you are enabling.
+
+1. Add the plugin's annotation, set to the base URL of the plugin API, to each
+   cluster that runs the plugin. Only clusters with that annotation appear on
+   the tab. The `kyverno.io/endpoint` annotation does not affect this.
 
    ```yaml
    apiVersion: backstage.io/v1alpha1
@@ -183,51 +187,24 @@ Reporter. This page is only available in the
        - sub-page:policy-reporter/validating-admission-policies: true
    ```
 
-3. If the VAP plugin API requires authentication, configure
-   `policyReporter.plugins.vap.requestHeaders` in the
+3. If the plugin API requires authentication, configure the plugin's request
+   headers in the
    [backend](https://github.com/kyverno/backstage-policy-reporter-plugin/tree/main/plugins/policy-reporter-backend#configuration).
 
-## Trivy Vulnerabilities
+### Validating Admission Policies
 
-The Policy Reporter page can list the vulnerabilities Trivy found in a cluster
-using the
-[Policy Reporter Trivy plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/trivy).
-The Trivy plugin runs as its own service, so it is set up separately from Policy
-Reporter. This page is only available in the
-[new frontend system](#new-frontend-system).
+Lists a cluster's Kubernetes ValidatingAdmissionPolicies, read from the
+[Policy Reporter VAP plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/vap).
 
-The tab lists the whole cluster, sorted by severity, and is not scoped to an
-entity: the plugin API returns a flat list with no resource or namespace to
-filter on.
+![Validating Admission Policies](https://raw.githubusercontent.com/kyverno/backstage-policy-reporter-plugin/main/plugins/policy-reporter/docs/images/vap-sub-page.png)
 
-1. Add the `kyverno.io/plugin-trivy-endpoint` annotation, set to the base URL of
-   the Trivy plugin API, to each cluster that runs the plugin. Only clusters with
-   this annotation appear on the tab. The `kyverno.io/endpoint` annotation does
-   not affect this.
+### Trivy Vulnerabilities
 
-   ```yaml
-   apiVersion: backstage.io/v1alpha1
-   kind: Resource
-   metadata:
-     name: aks-dev
-     annotations:
-       kyverno.io/endpoint: https://your-domain/policy-reporter/api/
-       kyverno.io/plugin-trivy-endpoint: http://policy-reporter-trivy.policy-reporter:8080/
-   spec:
-     type: kubernetes-cluster
-   ```
+Lists the vulnerabilities Trivy found in a cluster, read from the
+[Policy Reporter Trivy plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/trivy),
+sorted by severity.
 
-2. Enable the tab in `app-config.yaml`:
-
-   ```yaml
-   app:
-     extensions:
-       - sub-page:policy-reporter/trivy-vulnerabilities: true
-   ```
-
-3. If the Trivy plugin API requires authentication, configure
-   `policyReporter.plugins.trivy.requestHeaders` in the
-   [backend](https://github.com/kyverno/backstage-policy-reporter-plugin/tree/main/plugins/policy-reporter-backend#configuration).
+![Trivy Vulnerabilities](https://raw.githubusercontent.com/kyverno/backstage-policy-reporter-plugin/main/plugins/policy-reporter/docs/images/trivy-sub-page.png)
 
 ## Legacy frontend system
 
