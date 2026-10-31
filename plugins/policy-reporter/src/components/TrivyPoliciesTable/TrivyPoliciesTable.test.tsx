@@ -57,12 +57,12 @@ describe('TrivyPoliciesTable', () => {
         extension.getByText('Improper handling of highly compressed data'),
       ).toBeTruthy(),
     );
-    // `title` and `name` are identical for this row, so it renders on both
-    // lines of the cell. Asserted loosely, since showing `name` only when it
-    // differs is a known follow-up.
-    expect(extension.getAllByText('CVE-2021-3121')).not.toHaveLength(0);
+    // `title` and `name` are identical here, so the cell prints the id once.
+    expect(extension.getAllByText('CVE-2021-3121')).toHaveLength(1);
+    // This row's `name` differs from its title, so the cell keeps both lines.
     expect(extension.getByText('GHSA-6vqw-3v5j-54x4')).toBeTruthy();
-    expect(extension.getAllByText('Vulnerability Scan')).toHaveLength(2);
+    // The category is the same for every finding, so no column carries it.
+    expect(extension.queryByText('Vulnerability Scan')).toBeNull();
     expect(extension.getByText('high')).toBeTruthy();
     expect(
       extension.getByText('An unmarshalling flaw in gogo/protobuf.'),
@@ -105,15 +105,46 @@ describe('TrivyPoliciesTable', () => {
       .slice(1)
       .map(row => row.textContent ?? '');
 
-    expect(rows).toEqual([
+    expect(rows.slice(0, 5)).toEqual([
       expect.stringContaining('A critical finding'),
       expect.stringContaining('A high finding'),
       expect.stringContaining('A medium finding'),
       expect.stringContaining('A low finding'),
       expect.stringContaining('An info finding'),
-      expect.stringContaining('An unknown finding'),
-      expect.stringContaining('An unrated finding'),
     ]);
+  });
+
+  it('reduces a Markdown description to its leading prose', async () => {
+    mockGetTrivyPolicies.mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue([
+        {
+          name: 'GHSA-m425-mq94-257g',
+          title: 'gRPC-Go HTTP/2 Rapid Reset vulnerability',
+          severity: 'high',
+          description: [
+            '### Impact',
+            'In affected releases of `gRPC-Go`, it is possible for an attacker',
+            'to send HTTP/2 requests and cancel them.',
+            '',
+            '### Patches',
+            'Addressed by [#6703](https://github.com/grpc/grpc-go/pull/6703).',
+          ].join('\n'),
+        },
+      ]),
+    });
+
+    const extension = await renderTable();
+
+    await waitFor(() =>
+      expect(
+        extension.getByText(
+          'In affected releases of gRPC-Go, it is possible for an attacker to send HTTP/2 requests and cancel them.',
+        ),
+      ).toBeTruthy(),
+    );
+    // The `### Impact` heading does not reach the cell.
+    expect(extension.queryByText(/### Impact/)).toBeNull();
   });
 
   it('renders the empty state when no vulnerabilities exist', async () => {

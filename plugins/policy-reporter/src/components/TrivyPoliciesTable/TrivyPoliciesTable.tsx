@@ -33,14 +33,25 @@ const SEVERITY_RANK: Record<Severity, number> = {
   unknown: 5,
 };
 
-/** A vulnerability the scanner left unrated sorts after every rated one. */
-const UNRATED = Object.keys(SEVERITY_RANK).length;
+/** A vulnerability the scanner left unrated ranks with the unknown ones. */
+const severityRank = (severity: string | undefined) =>
+  SEVERITY_RANK[severity as Severity] ?? SEVERITY_RANK.unknown;
 
-const rankOf = (policy: PluginPolicy) =>
-  SEVERITY_RANK[policy.severity as Severity] ?? UNRATED;
-
-const mostSevereFirst = (a: PluginPolicy, b: PluginPolicy) =>
-  rankOf(a) - rankOf(b);
+/**
+ * Reduces a Markdown description to its opening paragraph as plain text.
+ *
+ * The paragraph is returned whole, not cut to a fixed length: `CellText` truncates it to the column width
+ */
+const summarize = (description: string | undefined = '') =>
+  description
+    .split(/\n{2,}/)
+    // Headings are not prose, and the heading after a short opening
+    // paragraph would otherwise run into the same line.
+    .map(paragraph => paragraph.replace(/^#{1,6}\s+.*$/gm, '').trim())
+    .find(paragraph => paragraph.length > 0)
+    // Advisories name the affected package in backticks, which a plain-text
+    // cell renders literally.
+    ?.replace(/[`*]/g, '') ?? '';
 
 export const TrivyPoliciesTable = () => {
   const policyReporterApi = useApi(policyReporterApiRef);
@@ -81,8 +92,11 @@ export const TrivyPoliciesTable = () => {
     initialSort: { column: 'severity', direction: 'descending' },
     sortFn: (data, sort) => {
       if (sort.column !== 'severity') return data;
-      const sorted = [...data].sort(mostSevereFirst);
-      return sort.direction === 'descending' ? sorted : sorted.reverse();
+      const direction = sort.direction === 'descending' ? 1 : -1;
+      return [...data].sort(
+        (a, b) =>
+          direction * (severityRank(a.severity) - severityRank(b.severity)),
+      );
     },
     paginationOptions: { pageSize: 20 },
   });
@@ -92,17 +106,20 @@ export const TrivyPoliciesTable = () => {
       id: 'title',
       label: 'Title',
       isRowHeader: true,
-      cell: item => <CellText title={item.title} description={item.name} />,
-    },
-    {
-      id: 'category',
-      label: 'Category',
-      cell: item => <CellText title={item.category ?? ''} />,
+      // A title is often the bare advisory id that `name` repeats, so the
+      // second line is drawn only when it differs.
+      cell: item => (
+        <CellText
+          title={item.title}
+          description={item.name === item.title ? undefined : item.name}
+        />
+      ),
     },
     {
       id: 'severity',
       label: 'Severity',
-      // Cap the badge column so the description gets the space
+      isSortable: true,
+      // Cap the badge column so the summary gets the space
       maxWidth: 120,
       cell: item => (
         <Cell>
@@ -116,7 +133,7 @@ export const TrivyPoliciesTable = () => {
       id: 'description',
       label: 'Description',
       width: '2fr',
-      cell: item => <CellText title={item.description ?? ''} />,
+      cell: item => <CellText title={summarize(item.description)} />,
     },
   ];
 
