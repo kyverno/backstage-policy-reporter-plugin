@@ -1,5 +1,16 @@
 # @kyverno/backstage-plugin-policy-reporter
 
+## 2.12.0
+
+### Minor Changes
+
+- 75b359e: NFS (/alpha): Add a new subpage for viewing Validating Admission Policies from the Policy Reporter VAP plugin. The subpage is disabled by default, enable it with the `sub-page:policy-reporter/validating-admission-policies` extension.
+
+### Patch Changes
+
+- Updated dependencies [75b359e]
+  - @kyverno/backstage-plugin-policy-reporter-common@2.7.0
+
 ## 2.11.0
 
 ### Minor Changes
