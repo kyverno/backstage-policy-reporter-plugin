@@ -1,5 +1,12 @@
 # @kyverno/backstage-plugin-policy-reporter-common
 
+## 2.7.0
+
+### Minor Changes
+
+- 5f7f9d7: Add support for the Policy Reporter Trivy plugin. Clusters annotated with `kyverno.io/plugin-trivy-endpoint` expose their vulnerabilities through the new `GET /plugins/trivy/v1/policies` route, and outbound requests to the plugin use the `policyReporter.plugins.trivy.requestHeaders` configuration.
+- 75b359e: Add support for the Policy Reporter ValidatingAdmissionPolicy (VAP) plugin. Clusters annotated with `kyverno.io/plugin-vap-endpoint` expose their policies through the new `GET /plugins/vap/v1/policies` backend route. Outbound requests to the VAP plugin use the dedicated `policyReporter.plugins.vap.requestHeaders` configuration.
+
 ## 2.6.0
 
 ### Minor Changes

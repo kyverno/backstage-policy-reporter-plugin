@@ -1,5 +1,18 @@
 # @kyverno/backstage-plugin-policy-reporter
 
+## 2.12.0
+
+### Minor Changes
+
+- 5f7f9d7: NFS (/alpha): Add a new subpage for viewing vulnerabilities from the Policy Reporter Trivy plugin, sorted by severity. Only clusters annotated with `kyverno.io/plugin-trivy-endpoint` are listed on it. The subpage is disabled by default, enable it with the `sub-page:policy-reporter/trivy-vulnerabilities` extension.
+- 75b359e: NFS (/alpha): Add a new subpage for viewing Validating Admission Policies from the Policy Reporter VAP plugin. The subpage is disabled by default, enable it with the `sub-page:policy-reporter/validating-admission-policies` extension.
+
+### Patch Changes
+
+- Updated dependencies [5f7f9d7]
+- Updated dependencies [75b359e]
+  - @kyverno/backstage-plugin-policy-reporter-common@2.7.0
+
 ## 2.11.0
 
 ### Minor Changes
