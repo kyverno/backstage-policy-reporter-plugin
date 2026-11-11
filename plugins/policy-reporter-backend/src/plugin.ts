@@ -5,7 +5,8 @@ import {
 import { createRouter } from './service/router';
 import { catalogServiceRef } from '@backstage/plugin-catalog-node';
 import { PolicyReporterService } from './service/policyReporterService';
-import { VapPluginService } from './service/plugins/vap/vapPluginService';
+import { PluginPolicyService } from './service/plugins/pluginPolicyService';
+import { TRIVY_PLUGIN, VAP_PLUGIN } from './service/plugins/descriptors';
 
 /**
  * kyvernoPolicyReportsPlugin backend plugin
@@ -31,11 +32,20 @@ export const kyvernoPolicyReportsPlugin = createBackendPlugin({
           authService,
         });
 
-        const vapPluginService = new VapPluginService({
+        const vapPluginService = new PluginPolicyService({
           logger,
           configService: config,
           catalogService,
           authService,
+          descriptor: VAP_PLUGIN,
+        });
+
+        const trivyPluginService = new PluginPolicyService({
+          logger,
+          configService: config,
+          catalogService,
+          authService,
+          descriptor: TRIVY_PLUGIN,
         });
 
         httpRouter.use(
@@ -44,6 +54,7 @@ export const kyvernoPolicyReportsPlugin = createBackendPlugin({
             config,
             policyReporterService,
             vapPluginService,
+            trivyPluginService,
           }),
         );
       },

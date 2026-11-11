@@ -162,6 +162,14 @@ export type GetSources = {
 /**
  * @public
  */
+export type GetTrivyPolicies = {
+  query: {
+    environment: string;
+  };
+};
+/**
+ * @public
+ */
 export type GetVapPolicies = {
   query: {
     environment: string;
@@ -505,6 +513,33 @@ export class DefaultApiClient {
     const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
 
     const uriTemplate = `/v1/namespaced-resources/sources{?environment}`;
+
+    const uri = parser.parse(uriTemplate).expand({
+      ...request.query,
+    });
+
+    return await this.fetchApi.fetch(`${baseUrl}${uri}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.token && { Authorization: `Bearer ${options?.token}` }),
+      },
+      method: 'GET',
+    });
+  }
+
+  /**
+   * List of all vulnerabilities exposed by the Policy Reporter Trivy plugin
+   * Get Trivy vulnerabilities
+   * @param environment - The environment entity reference (URL encoded)
+   */
+  public async getTrivyPolicies(
+    // @ts-ignore
+    request: GetTrivyPolicies,
+    options?: RequestOptions,
+  ): Promise<TypedResponse<Array<PluginPolicy>>> {
+    const baseUrl = await this.discoveryApi.getBaseUrl(pluginId);
+
+    const uriTemplate = `/plugins/trivy/v1/policies{?environment}`;
 
     const uri = parser.parse(uriTemplate).expand({
       ...request.query,

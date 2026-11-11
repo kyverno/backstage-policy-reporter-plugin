@@ -13,10 +13,11 @@ app:
     include: []
 
   extensions:
-    # The plugin ships this sub-page disabled because it needs the separately
-    # deployed Policy Reporter VAP plugin. The fake API serves it, so it is on
-    # here and the tab can be reviewed like any other.
+    # The plugin ships these sub-pages disabled because they need the separately
+    # deployed Policy Reporter VAP and Trivy plugins. The fake API serves both,
+    # so they are on here and the tabs can be reviewed like any other.
     - sub-page:policy-reporter/validating-admission-policies: true
+    - sub-page:policy-reporter/trivy-vulnerabilities: true
 
 backend:
   # Nothing should ever reach this. The fake fetch answers before a request

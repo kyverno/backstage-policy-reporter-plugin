@@ -30,7 +30,9 @@ sources, and policies.
 ### Policy Reporter plugins
 
 Policy Reporter plugins that are deployed as separate services, such as the
-[VAP plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/vap),
+[VAP plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/vap)
+and the
+[Trivy plugin](https://github.com/kyverno/policy-reporter-plugins/tree/main/plugins/trivy),
 follow the same flow with their own upstream:
 
 ```text
@@ -40,13 +42,22 @@ Backstage frontend --> Backstage backend --> Policy Reporter VAP plugin API
                                    Resolve kyverno.io/plugin-vap-endpoint
 ```
 
-- Each plugin has a dedicated backend service, for example
-  `service/plugins/vap/vapPluginService.ts`, that owns its endpoint
-  annotation, request headers, and upstream calls.
+- Every plugin implements the same upstream contract, so they share one backend
+  service, `service/plugins/pluginPolicyService.ts`. A plugin is a descriptor in
+  `service/plugins/descriptors.ts` holding its endpoint annotation, its request
+  headers config key, and its display name — not a service of its own.
 - Plugin routes are prefixed with the plugin name and mirror the upstream path,
   for example `/plugins/vap/v1/policies` proxies `<plugin-vap-endpoint>/v1/policies`.
+- A plugin may serve several route groups behind one base URL: the Kyverno plugin
+  serves `v1`, `vpol/v1` and `ivpol/v1`. The group is part of the mirrored path
+  rather than a second annotation, so it is a parameter of the list call.
 - Plugins follow the naming pattern `kyverno.io/plugin-<name>-endpoint` for the
   annotation and `policyReporter.plugins.<name>.requestHeaders` for headers.
+
+| Plugin | Annotation                         | Route                        | Headers config                                |
+| ------ | ---------------------------------- | ---------------------------- | --------------------------------------------- |
+| VAP    | `kyverno.io/plugin-vap-endpoint`   | `/plugins/vap/v1/policies`   | `policyReporter.plugins.vap.requestHeaders`   |
+| Trivy  | `kyverno.io/plugin-trivy-endpoint` | `/plugins/trivy/v1/policies` | `policyReporter.plugins.trivy.requestHeaders` |
 
 ## Catalog configuration
 
@@ -54,7 +65,9 @@ Register each environment as a `Resource` entity with
 `spec.type: kubernetes-cluster` and a `kyverno.io/endpoint` annotation pointing to
 its Policy Reporter API base URL.
 Add a `kyverno.io/plugin-vap-endpoint` annotation pointing to the VAP plugin API
-base URL to list the cluster on the Validating Admission Policies page.
+base URL to list the cluster on the Validating Admission Policies page, and a
+`kyverno.io/plugin-trivy-endpoint` annotation pointing to the Trivy plugin API
+base URL to list it for Trivy vulnerabilities.
 
 The entity-specific views find environments through the entity's `spec.dependsOn`
 references. The overview pages discover matching cluster resources across the
@@ -89,10 +102,10 @@ Reporter authentication.
 
 Configure outbound Policy Reporter authentication headers through
 `policyReporter.requestHeaders` in backend configuration. These headers apply
-to all environments; per-cluster credentials are not supported. Headers for the
-VAP plugin are configured separately through
-`policyReporter.plugins.vap.requestHeaders` and are never sent to the Policy
-Reporter API, and vice versa. Keep secrets in
+to all environments; per-cluster credentials are not supported. Each plugin's
+headers are configured separately through
+`policyReporter.plugins.<name>.requestHeaders` and are never sent to the Policy
+Reporter API or to another plugin, and vice versa. Keep secrets in
 backend configuration, not catalog annotations or frontend code.
 
 The backend returns `404` for a missing catalog entity, `400` for a missing

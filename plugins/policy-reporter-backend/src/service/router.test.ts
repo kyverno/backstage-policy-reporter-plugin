@@ -8,9 +8,11 @@ import { createRouter } from './router';
 import { catalogServiceMock } from '@backstage/plugin-catalog-node/testUtils';
 import { CatalogService } from '@backstage/plugin-catalog-node';
 import { PolicyReporterService } from './policyReporterService';
-import { VapPluginService } from './plugins/vap/vapPluginService';
+import { PluginPolicyService } from './plugins/pluginPolicyService';
+import { TRIVY_PLUGIN, VAP_PLUGIN } from './plugins/descriptors';
 import {
   KYVERNO_ENDPOINT_ANNOTATION,
+  KYVERNO_PLUGIN_TRIVY_ENDPOINT_ANNOTATION,
   KYVERNO_PLUGIN_VAP_ENDPOINT_ANNOTATION,
 } from '@kyverno/backstage-plugin-policy-reporter-common';
 
@@ -57,6 +59,63 @@ const mockEntities: Entity[] = [
       type: 'kubernetes-cluster',
       owner: 'user:guest',
     },
+  },
+  {
+    apiVersion: 'backstage.io/v1alpha1',
+    kind: 'Resource',
+    metadata: {
+      name: 'trivy',
+      description: 'Cluster with the Trivy plugin',
+      annotations: {
+        'kyverno.io/plugin-trivy-endpoint':
+          'http://kyverno.io/policy-reporter-trivy',
+      },
+    },
+    spec: {
+      type: 'kubernetes-cluster',
+      owner: 'user:guest',
+    },
+  },
+  {
+    apiVersion: 'backstage.io/v1alpha1',
+    kind: 'Resource',
+    metadata: {
+      name: 'trivy-failing',
+      description: 'Cluster whose Trivy plugin answers with an error',
+      annotations: {
+        'kyverno.io/plugin-trivy-endpoint':
+          'http://kyverno.io/policy-reporter-trivy-failing',
+      },
+    },
+    spec: {
+      type: 'kubernetes-cluster',
+      owner: 'user:guest',
+    },
+  },
+  {
+    apiVersion: 'backstage.io/v1alpha1',
+    kind: 'Resource',
+    metadata: {
+      name: 'trivy-unreachable',
+      description: 'Cluster whose Trivy plugin cannot be reached',
+      annotations: {
+        'kyverno.io/plugin-trivy-endpoint':
+          'http://kyverno.io/policy-reporter-trivy-unreachable',
+      },
+    },
+    spec: {
+      type: 'kubernetes-cluster',
+      owner: 'user:guest',
+    },
+  },
+];
+
+const TRIVY_POLICIES = [
+  {
+    category: 'Vulnerability Scan',
+    name: 'CVE-2021-3121',
+    title: 'CVE-2021-3121',
+    severity: 'high',
   },
 ];
 
@@ -143,6 +202,17 @@ describe('createRouter', () => {
         },
       ]),
     ),
+    http.get('http://kyverno.io/policy-reporter-trivy/v1/policies', () =>
+      HttpResponse.json(TRIVY_POLICIES),
+    ),
+    http.get(
+      'http://kyverno.io/policy-reporter-trivy-failing/v1/policies',
+      () => new HttpResponse(null, { status: 500 }),
+    ),
+    http.get(
+      'http://kyverno.io/policy-reporter-trivy-unreachable/v1/policies',
+      () => HttpResponse.error(),
+    ),
   );
 
   beforeAll(async () => {
@@ -164,11 +234,20 @@ describe('createRouter', () => {
       authService,
     });
 
-    const vapPluginService = new VapPluginService({
+    const vapPluginService = new PluginPolicyService({
       logger,
       configService: config,
       catalogService,
       authService,
+      descriptor: VAP_PLUGIN,
+    });
+
+    const trivyPluginService = new PluginPolicyService({
+      logger,
+      configService: config,
+      catalogService,
+      authService,
+      descriptor: TRIVY_PLUGIN,
     });
 
     const router = await createRouter({
@@ -176,6 +255,7 @@ describe('createRouter', () => {
       config,
       policyReporterService,
       vapPluginService,
+      trivyPluginService,
     });
     app = express().use(router);
   });
@@ -513,6 +593,53 @@ describe('createRouter', () => {
           severity: 'high',
         },
       ]);
+    });
+  });
+
+  describe('trivy plugin policies', () => {
+    it('Should return 400 if entity is missing kyverno.io/plugin-trivy-endpoint annotation', async () => {
+      const response = await request(app).get(
+        `/plugins/trivy/v1/policies?environment=resource%3Adefault%2Fprod`,
+      );
+
+      expect(response.status).toBe(400);
+      expect(response.body).toStrictEqual({
+        error: `Entity missing '${KYVERNO_PLUGIN_TRIVY_ENDPOINT_ANNOTATION}' annotation`,
+      });
+    });
+
+    it('Should return 404 if entity is not found in the catalog', async () => {
+      const response = await request(app).get(
+        `/plugins/trivy/v1/policies?environment=resource%3Adefault%2Finvalid`,
+      );
+
+      expect(response.status).toBe(404);
+      expect(response.body).toStrictEqual({ error: 'Entity not found' });
+    });
+
+    it('Should return 502 if the Trivy plugin answers with an error', async () => {
+      const response = await request(app).get(
+        `/plugins/trivy/v1/policies?environment=resource%3Adefault%2Ftrivy-failing`,
+      );
+
+      expect(response.status).toBe(502);
+    });
+
+    it('Should return 503 if the Trivy plugin cannot be reached', async () => {
+      const response = await request(app).get(
+        `/plugins/trivy/v1/policies?environment=resource%3Adefault%2Ftrivy-unreachable`,
+      );
+
+      expect(response.status).toBe(503);
+    });
+
+    it('Should return 200 and valid response when entity is valid', async () => {
+      const response = await request(app).get(
+        `/plugins/trivy/v1/policies?environment=resource%3Adefault%2Ftrivy`,
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body).toStrictEqual(TRIVY_POLICIES);
     });
   });
 });

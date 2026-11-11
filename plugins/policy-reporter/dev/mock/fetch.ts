@@ -93,7 +93,8 @@ const options = (results: ListResult[], pick: (r: ListResult) => string) =>
 /**
  * Keyed by the exact paths the generated client builds. Each handler takes the
  * whole dataset and picks the part it serves, so the namespaced, cluster and
- * VAP routes all read the same way.
+ * plugin routes all read the same way. The plugin routes (VAP, Trivy) serve a
+ * whole list with no filtering, which is the upstream contract.
  *
  * `/namespaced-resources/results` is the one route without a `/v1` prefix;
  * that matches the backend router, so it is reproduced rather than corrected.
@@ -128,6 +129,7 @@ const ROUTES: Record<
     options(d.clusterResults, r => r.policy),
 
   '/plugins/vap/v1/policies': d => d.vapPolicies,
+  '/plugins/trivy/v1/policies': d => d.trivyPolicies,
 };
 
 /** The generated client always passes a string, but cover the whole signature. */
